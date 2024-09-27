@@ -370,7 +370,7 @@
 - **Gamificação**: Não há sistema de gamificação.
 - **Plataforma**: Mobile (iOS, Android) e Web.
 
-![MyCivic](pictures/MyCivic.png)
+![MyCivic](pictures/myCivic.png)
 
 
 ## Análise das Interfaces da Concorrência
@@ -390,5 +390,5 @@
 
 4. **Funcionalidades Principais:**
    - **Mapas Interativos e Reportes**: *SeeClickFix e FixMyStreet* focam-se principalmente em permitir que os utilizadores reportem problemas urbanos e visualizem relatórios existentes num mapa.
-   - **Engajamento Comunitário e Cívico**: *CitizenLab e Commonplace* incentivam a participação em questões locais, votações e discussões sobre projetos de desenvolvimento.
+   - **Envolvimento Comunitário e Cívico**: *CitizenLab e Commonplace* incentivam a participação em questões locais, votações e discussões sobre projetos de desenvolvimento.
    - **Redes Sociais Locais**: *NextDoor* oferece uma plataforma social para comunicação entre vizinhos, troca de informações e discussões em fóruns.
