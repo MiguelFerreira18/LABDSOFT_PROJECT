@@ -12,6 +12,7 @@
 	<artifactId>Smart_cities</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Smart_cities</name>
+	<packaging>jar</packaging>
 	<description>Smart_cities_api</description>
 	<url/>
 	<licenses>
@@ -95,6 +96,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>SmartCityAPI</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

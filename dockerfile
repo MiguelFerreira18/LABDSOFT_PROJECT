@@ -1,7 +1,10 @@
 FROM openjdk:17
 
-COPY target/labdsoft-0.0.1-SNAPSHOT.jar labdsoft.jar
+COPY target/SmartCityAPI.jar /app/SmartCityAPI.jar
+
+
+WORKDIR /app
 
 EXPOSE 9092
 
-ENTRYPOINT ["java","-jar","labdsoft.jar"]
+ENTRYPOINT ["java","-jar","SmartCityAPI.jar"]

@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   mysql:
     container_name: Smart_Cities_MySql
     image: mysql:latest
@@ -26,29 +25,6 @@ services:
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-
-  labdsof-api:
-    container_name: labdsoft-api
-    build: ./
-    ports:
-    - "9092:9092"
-    depends_on:
-      mysql:
-        condition: service_healthy
-    environment:
-      - LABDSOFT_DB_USER=${LABDSOFT_DB_USER}
-      - LABDSOFT_DB_PASS=${LABDSOFT_DB_PASS}
-      - LABDSOFT_DB_HOST=${LABDSOFT_DB_HOST}
-      - LABDSOFT_DB_DEV_DB_NAME=${LABDSOFT_DB_DEV_DB_NAME}
-      - OPEN_API_KEY=${OPEN_API_KEY}
-
-  labdsof-flutter:
-    container_name: labdsoft-flutter
-    build: ./public
-    ports:
-    - "5173:5173"
-    depends_on:
-    - labdsof-api
 
 networks:
   Smart_city:
