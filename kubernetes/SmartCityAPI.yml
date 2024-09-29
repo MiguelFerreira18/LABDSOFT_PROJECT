@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-city-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-city-api
+  template:
+    metadata:
+      labels:
+        app: smart-city-api
+    spec:
+      containers:
+        - name: smart-city-api
+          image: 1230199/smart-city-api
+          ports:
+            - containerPort: 9092
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "400Mi" 
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: LABDSOFT_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: LABDSOFT_DB_PASS 
+            - name: LABDSOFT_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: LABDSOFT_DB_USER 
+            - name: LABDSOFT_APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: LABDSOFT_APP_SECRET 
+            - name: LABDSOFT_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: LABDSOFT_DB_HOST
+            - name: LABDSOFT_DB_DEV_DB_NAME
+              valueFrom:
+                secretKeyRef:  # Correct indentation and key name
+                  name: mysql-secret
+                  key: LABDSOFT_DB_DEV_DB_NAME
+            - name: OPEN_API_KEY
+              valueFrom:
+                secretKeyRef:  # Fixed typo here
+                  name: mysql-secret
+                  key: OPEN_API_KEY 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-city-api-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: smart-city-api
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
+      nodePort: 31590
+
