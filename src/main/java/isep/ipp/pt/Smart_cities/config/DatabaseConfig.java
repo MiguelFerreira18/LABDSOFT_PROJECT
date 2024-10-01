@@ -22,13 +22,13 @@ public class DatabaseConfig {
 
     @Bean
     public DataSource dataSource() {
-        //NOTE: in case there is a need to debug it
-//        System.out.println("username");
-//        System.out.println(username);
-//        System.out.println("password");
-//        System.out.println(pass);
-//        System.out.println("URL");
-//        System.out.println(url);
+        // NOTE: in case there is a need to debug it
+        // System.out.println("username");
+        // System.out.println(username);
+        // System.out.println("password");
+        // System.out.println(pass);
+        // System.out.println("URL");
+        // System.out.println(url);
 
         return DataSourceBuilder.create()
                 .url(url).username(username).password(pass).build();

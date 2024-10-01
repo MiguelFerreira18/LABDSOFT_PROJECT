@@ -28,9 +28,9 @@ func main() {
 		log.Fatalf("Failed to copy docker-compose.yml: %v", err)
 	}
 	fmt.Println("Running docker-compose up")
-	// if err := runDockerCompose(envDestination); err != nil {
-	// 	log.Fatalf("Failed to run docker-compose: ", err)
-	// }
+	if err := runDockerCompose(databaseFolder); err != nil {
+		log.Fatalf("Failed to run docker-compose: ", err)
+	}
 }
 
 func copyFile(source, dest string) error {

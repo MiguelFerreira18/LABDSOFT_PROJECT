@@ -3,7 +3,7 @@ version: "3"
 services:
 
   mysql:
-    container_name: Smart_Cities_MySql
+    container_name: ${LABDSOFT_DB_HOST}
     image: mysql:latest
     ports:
       - 3306:3306

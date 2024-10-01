@@ -28,7 +28,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: LABDSOFT_DB_HOST
+              key: LABDSOFT_DB_DEV_DB_NAME
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:

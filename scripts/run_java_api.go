@@ -31,7 +31,7 @@ func main() {
 }
 
 func runJavaAPI() (bool, error) {
-	javaCmd := exec.Command("java", "-jar", "./target/Smart_cities-0.0.1-SNAPSHOT.jar")
+	javaCmd := exec.Command("java", "-Dspring.profiles.active=dev", "-jar", "./target/SmartCityAPI.jar")
 	javaCmd.Stdout = os.Stdout
 	javaCmd.Stderr = os.Stderr
 	javaCmd.Env = os.Environ()
