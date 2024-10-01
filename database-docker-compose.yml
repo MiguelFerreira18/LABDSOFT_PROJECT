@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  mysql:
+    container_name: Smart_Cities_MySql
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${LABDSOFT_DB_DEV_DB_NAME}
+      - MYSQL_USER=${LABDSOFT_DB_USER}
+      - MYSQL_PASSWORD=${LABDSOFT_DB_PASS}
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8090:80
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+networks:
+  Smart_city:
+    driver: bridge

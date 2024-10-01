@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flutter-ui
+  labels:
+    app: flutter-ui
+spec:
+  replicas: 1   
+  selector:
+    matchLabels:
+      app: flutter-ui
+  template:
+    metadata:
+      labels:
+        app: flutter-ui
+    spec:
+      containers:
+        - name: flutter-ui
+          image: 1230199/flutter-ui:latest   
+          ports:
+            - containerPort: 5173  
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-flutter-app-service
+  labels:
+    app: flutter-ui
+spec:
+  type: LoadBalancer
+  selector:
+    app: flutter-ui
+  ports:
+    - protocol: TCP
+      port: 5173   
+      targetPort: 5173
+      nodePort: 31570
