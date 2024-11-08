@@ -3,7 +3,7 @@
 ## Technologies
 
 - Java (Springboot)
-- Dart (Flutter)
+- VueJS (IonicFramework)
 - Golang
 - Mysql
 - OPen AI API
@@ -55,20 +55,19 @@ Follow the steps on this [link](https://go.dev/doc/install)
 
 <br>
 
-**The first way**
+## **The first way**
 
-> **NOTE**
-> You will need to [install golang](https://go.dev/doc/install)
-> And you will need to [install the maven](https://maven.apache.org/download.cgi) cli
+> **NOTE:** You will need to [install golang](https://go.dev/doc/install)
 
-Execute the script to create a temporary folder on your system just before your current project 
+> **NOTE:** You will need to [install the maven](https://maven.apache.org/download.cgi) cli
+
+> **NOTE:** You will need to have **docker** installed
+
+Execute the script to create a temporary folder on your system just before your current project. Don't go into the scripts folder, execute the go command in the home directory of the project
+
 ```bash
 go run ./scripts/create_database_folder.go
 ```
-
-> **Note**
-> Don't go into the scripts folder, execute the go command in the home directory of the project
-
 
 <details>What is happening
 
@@ -87,13 +86,22 @@ docker-compose --env-file up
 ```
 
 </details>
+
+### Run backend 
 After that setup just run the script in the /scripts file
 
 ```bash
 go run run_java_api.go 
 ```
 
-**The Second Way**
+### Run Frontend
+
+```bash
+cd public
+ionic serve
+```
+
+## **The Second Way**
 
 Use this if you want to test the system as a whole (might break)
 
@@ -102,7 +110,7 @@ Use this if you want to test the system as a whole (might break)
 mv ./template.env .env # if you dont have it yet
 docker-compose --env-file up
 ```
-**The Third Way**
+## **The Third Way**
 > Note Check the version that is on dockerhub for the flutter ui and spring api, as they need a release for each new change
 > This should only be used to test if the app can scale and the connections are working
 
@@ -157,7 +165,6 @@ or if you want only one
 kubectl get services <SERVICE_NAME>
 ```
 </details>
-
 
 # Next step: Creating the pipeline
 - Test both flutter(if we have tests) and Spring API
