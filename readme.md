@@ -166,6 +166,14 @@ kubectl get services <SERVICE_NAME>
 ```
 </details>
 
+# Check Helths API
+
+Once the application is running, you can access the health check at:
+
+```bash
+http://localhost:9091/actuator/health
+```
+
 # Next step: Creating the pipeline
 - Test both flutter(if we have tests) and Spring API
 - Send the flutter and api to docker hub
