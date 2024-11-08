@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
+/*
 @Configuration
 @EnableTransactionManagement
 public class DatabaseConfig {
@@ -34,3 +35,5 @@ public class DatabaseConfig {
                 .url(url).username(username).password(pass).build();
     }
 }
+*/
+
