@@ -42,13 +42,13 @@ services:
       - LABDSOFT_DB_DEV_DB_NAME=${LABDSOFT_DB_DEV_DB_NAME}
       - OPEN_API_KEY=${OPEN_API_KEY}
 
-  labdsof-flutter:
-    container_name: labdsoft-flutter
-    build: ./public
+  frontend-ionic:
+    container_name: frontend-ionic
+    build:
+      context: ./public
+      dockerfile: Dockerfile
     ports:
-    - "5173:5173"
-    depends_on:
-    - labdsof-api
+      - "8080:80"
 
 networks:
   Smart_city:
