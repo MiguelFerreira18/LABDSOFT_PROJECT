@@ -7,18 +7,22 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@Setter
 @Entity
+@Setter
 @ToString
 public class User implements UserDetails {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -31,7 +35,7 @@ public class User implements UserDetails {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
     private String name;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> authorities = new HashSet<>();
 
     private String password;
@@ -53,6 +57,18 @@ public class User implements UserDetails {
         this.authorities.add(role);
     }
 
+    public void setPassword(String password, PasswordEncoder encoder) {
+        // Verify the follows these conditions: at least 8 characters, one uppercase, one lowercase, one number and one special character
+
+        if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
+            this.password = encoder.encode(password);
+        } else {
+            throw new IllegalArgumentException("Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character");
+        }
+    }
+    public void addAuthority(Role role) {
+        authorities.add(role);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

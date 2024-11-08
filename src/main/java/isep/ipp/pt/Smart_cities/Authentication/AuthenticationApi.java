@@ -7,9 +7,12 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
 import isep.ipp.pt.Smart_cities.Service.InstitutionService;
 import isep.ipp.pt.Smart_cities.Service.UserService;
+import isep.ipp.pt.Smart_cities.Util.EncryptionUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,8 @@ public class AuthenticationApi {
     private PasswordEncoder encoder;
     @Autowired
     private InstitutionService institutionService;
+    @Autowired
+    private EncryptionUtil encryptionUtil;
 
     private static final String ISSUER = "example.com";
     private static final Long EXPIRATION_TIME = 36000L;
@@ -59,28 +64,44 @@ public class AuthenticationApi {
     @PostMapping("login")
     public ResponseEntity<UserView> login(@RequestBody @Valid final SignInRequest request) {
         try {
-            Authentication authentication = authenticate(request);
+            SignInRequest decryptedRequest = decryptLogin(request).orElseThrow(() -> {
+                LOGGER.error("Error decrypting login request");
+                return new Exception("Error decrypting login request");
+            });
+
+            Authentication authentication = authenticate(decryptedRequest);
             Object principal = authentication.getPrincipal();
             if (principal == null) {
-                LOGGER.warn("Authentication successful but principal is null for user: {}", request.username);
+                LOGGER.warn("Authentication successful but principal is null for user: {}", encryptionUtil.encrypt(decryptedRequest.email).orElse("Unknown"));
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-
             return buildAuthenticationResponse(authentication, principal);
 
         } catch (BadCredentialsException e) {
-            LOGGER.warn("Failed login attempt for user: {}", request.username);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            // Identifiable data is logged here, ense why its showing the encripted value
+            LOGGER.warn("Failed login attempt for user: {}", request.email);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception ex) {
-            LOGGER.error("Unexpected error during login for user: {}", request.username, ex);
+            LOGGER.error("Unexpected error during login for user: {}", request.email, ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
     }
+    private Optional<SignInRequest> decryptLogin(SignInRequest encryptedData) {
+        try {
+            SignInRequest decryptedRequest = new SignInRequest();
+            decryptedRequest.setEmail(encryptionUtil.decrypt(encryptedData.getEmail()).orElseThrow(() -> new Exception("Error decrypting username")));
+            decryptedRequest.setPassword(encryptionUtil.decrypt(encryptedData.getPassword()).orElseThrow(() -> new Exception("Error decrypting password")));
+            return Optional.of(decryptedRequest);
+        } catch (Exception ex) {
+            LOGGER.error("Error decrypting sign-up request", ex);
+            return Optional.empty();
+        }
+    }
 
     private Authentication authenticate(SignInRequest request) {
         return authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.username, request.password));
+                .authenticate(new UsernamePasswordAuthenticationToken(request.email, request.password));
     }
 
     private ResponseEntity<UserView> buildAuthenticationResponse(Authentication authentication, Object principal) {
@@ -121,13 +142,13 @@ public class AuthenticationApi {
         if (principal instanceof User) {
             User user = (User) principal;
             return baseClaimsBuilder
-                    .subject(format("User,%s,%s", user.getId(), user.getName()))
+                    .subject(format("User,%s,%s", encryptionUtil.encrypt(user.getId()).orElse("Unknown"), encryptionUtil.encrypt(user.getUsername()).orElse("Unknown")))
                     .claim("type", "User")
                     .build();
         } else if (principal instanceof Institution) {
             Institution institution = (Institution) principal;
             return baseClaimsBuilder
-                    .subject(format("Institution,%s,%s", institution.getId(), institution.getUsername()))
+                    .subject(format("Institution,%s,%s", encryptionUtil.encrypt(institution.getId()).orElse("Unknown"), encryptionUtil.encrypt(institution.getUsername()).orElse("Unknown")))
                     .claim("type", "Institution")
                     .claim("rating", institution.getRating())
                     .build();
@@ -143,27 +164,35 @@ public class AuthenticationApi {
 
     @PostMapping("signup")
     public ResponseEntity<UserView> signup(@RequestBody @Valid final SignUpRequest request) {
+        if (request.password == null || !request.password.equals(request.repeatPassword)) {
+            LOGGER.warn("Password and repeat password do not match for user: {}", request.name);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
-            // Handle different types of registration based on request type
-            if (request.getType() == Types.USER) {
-                User newUser = userMapper.toUser(request);
 
+            SignUpRequest decryptedRequest = decryptSignUpRequest(request).orElseThrow(() -> {
+                LOGGER.error("Error decrypting sign-up request");
+                return new Exception("Error decrypting sign-up request");
+            });
+
+            if (decryptedRequest.getType() == Types.USER) {
+                User newUser = userMapper.toUser(decryptedRequest);
                 return userService.saveUser(newUser)
                         .map(savedUser -> {
-                            LOGGER.info("New user registered successfully: {}", savedUser.getName());
+                            LOGGER.info("New user registered successfully: {}", encryptionUtil.encrypt(savedUser.getEmail()).orElse("Unknown"));
                             return ResponseEntity.status(HttpStatus.CREATED)
                                     .body(userMapper.toUserView(savedUser));
                         })
                         .orElseGet(() -> {
-                            LOGGER.warn("Failed to register new user: {}", newUser.getName());
-                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                            LOGGER.warn("Failed to register new user: {}", newUser.getEmail());
+                            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                         });
 
-            } else if (request.getType() == Types.INSTITUTION) {
-                Institution newInstitution = userMapper.toInstitution(request);
+            } else if (decryptedRequest.getType() == Types.INSTITUTION) {
+                Institution newInstitution = userMapper.toInstitution(decryptedRequest);
                 return institutionService.saveInstitution(newInstitution)
                         .map(savedInstitution -> {
-                            LOGGER.info("New institution registered successfully: {}", savedInstitution.getUsername());
+                            LOGGER.info("New institution registered successfully: {}", encryptionUtil.encrypt(savedInstitution.getUsername()).orElse("Unknown"));
                             return ResponseEntity.status(HttpStatus.CREATED)
                                     .body(userMapper.fromInstitutionToUserView(savedInstitution));
                         })
@@ -173,7 +202,7 @@ public class AuthenticationApi {
                         });
 
             } else {
-                LOGGER.warn("Invalid registration type requested: {}", request.getType());
+                LOGGER.warn("Invalid registration type requested: {}", decryptedRequest.getType());
                 return ResponseEntity.badRequest().build();
             }
 
@@ -181,7 +210,21 @@ public class AuthenticationApi {
             LOGGER.error("Error during registration for username: {}", request.getName(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
 
+    private Optional<SignUpRequest> decryptSignUpRequest(SignUpRequest encryptedData) {
+        try {
+            SignUpRequest decryptedRequest = new SignUpRequest();
+            decryptedRequest.setName(encryptionUtil.decrypt(encryptedData.getName()).orElseThrow(() -> new Exception("Error decrypting name")));
+            decryptedRequest.setEmail(encryptionUtil.decrypt(encryptedData.getEmail()).orElseThrow(() -> new Exception("Error decrypting email")));
+            decryptedRequest.setPassword(encryptionUtil.decrypt(encryptedData.getPassword()).orElseThrow(() -> new Exception("Error decrypting password")));
+            decryptedRequest.setRepeatPassword(encryptionUtil.decrypt(encryptedData.getRepeatPassword()).orElseThrow(() -> new Exception("Error decrypting repeat password")));
+            decryptedRequest.setType(encryptedData.getType());
+            return Optional.of(decryptedRequest);
 
+        } catch (Exception ex) {
+            LOGGER.error("Error decrypting sign-up request", ex);
+            return Optional.empty();
+        }
     }
 }

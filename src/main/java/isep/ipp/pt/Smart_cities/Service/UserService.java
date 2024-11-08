@@ -1,9 +1,11 @@
 package isep.ipp.pt.Smart_cities.Service;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
+import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Respository.InstitutionRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,18 +18,33 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
     @Autowired
-    private PasswordEncoder encoder;
+    public PasswordEncoder encoder;
 
     @Autowired
-    private UserRepo userRepo;
+    public UserRepo userRepo;
     @Autowired
-    private InstitutionRepo institutionRepo;
+    public InstitutionRepo institutionRepo;
+
 
     public Optional<User> saveUser(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        return Optional.of(userRepo.save(user));
+
+        Optional<User> userOptional;
+        try {
+            user.setPassword(user.getPassword(), encoder);
+            user.addAuthority(new Role(Role.USER));
+            userOptional = Optional.of(userRepo.save(user));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+        return userOptional;
     }
 
+    public void DeleteAllUsers() {
+        userRepo.deleteAll();
+    }
+
+
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepo.findByEmail(email);
