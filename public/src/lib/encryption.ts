@@ -28,22 +28,6 @@ export async function Decrypt(encryptedData: string): Promise<string> {
   const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) =>
     c.charCodeAt(0)
   );
-
-  console.log("Encrypted Bytes:", encryptedBytes);
-  console.log("Key:", key);
-  console.log("IV:", IV);
-  console.log(
-    "Decrypted:",
-    await crypto.subtle.decrypt(
-      {
-        name: "AES-CBC",
-        iv: IV,
-      },
-      key,
-      encryptedBytes
-    )
-  );
-
   const decrypted = await crypto.subtle.decrypt(
     {
       name: "AES-CBC",
