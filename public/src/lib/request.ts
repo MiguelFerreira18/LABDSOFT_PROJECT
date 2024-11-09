@@ -1,5 +1,5 @@
 import { apiConfig, apiKey } from "./config";
-import { Decrypt, Encrypt } from "./encryption";
+import { Encrypt } from "./encryption";
 
 const { baseUrl } = apiConfig;
 
