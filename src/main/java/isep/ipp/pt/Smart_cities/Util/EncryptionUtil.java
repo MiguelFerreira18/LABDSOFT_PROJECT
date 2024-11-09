@@ -37,7 +37,7 @@ public class EncryptionUtil {
     public Optional<String> encrypt(String data) {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            IvParameterSpec ivSpec = new IvParameterSpec(IV); // Use the same IV as the front-end
+            IvParameterSpec ivSpec = new IvParameterSpec(IV);
             cipher.init(Cipher.ENCRYPT_MODE, getKey(), ivSpec);
             byte[] encryptedBytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
             return Optional.of(Base64.getEncoder().encodeToString(encryptedBytes));
