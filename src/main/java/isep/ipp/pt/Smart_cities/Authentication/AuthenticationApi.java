@@ -2,7 +2,9 @@ package isep.ipp.pt.Smart_cities.Authentication;
 
 import groovy.util.logging.Slf4j;
 import isep.ipp.pt.Smart_cities.Mapper.UserMapper;
+import isep.ipp.pt.Smart_cities.Mapper.UserMapperImpl;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
+import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
 import isep.ipp.pt.Smart_cities.Service.InstitutionService;
@@ -12,7 +14,11 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +52,6 @@ public class AuthenticationApi {
     @Autowired
     private JwtEncoder jwtEncoder;
     @Autowired
-    private UserMapper userMapper;
-    @Autowired
     private UserService userService;
     @Autowired
     private PasswordEncoder encoder;
@@ -55,6 +59,8 @@ public class AuthenticationApi {
     private InstitutionService institutionService;
     @Autowired
     private EncryptionUtil encryptionUtil;
+    @Autowired
+    private UserMapperImpl userMapper;
 
     private static final String ISSUER = "example.com";
     private static final Long EXPIRATION_TIME = 36000L;
@@ -124,7 +130,6 @@ public class AuthenticationApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
     private String extractScope(Authentication authentication) {
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -227,4 +232,7 @@ public class AuthenticationApi {
             return Optional.empty();
         }
     }
+
+
+
 }

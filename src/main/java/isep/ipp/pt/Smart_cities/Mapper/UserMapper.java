@@ -7,8 +7,7 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-@Component
+
 public interface UserMapper {
 
     public UserView toUserView(User user);

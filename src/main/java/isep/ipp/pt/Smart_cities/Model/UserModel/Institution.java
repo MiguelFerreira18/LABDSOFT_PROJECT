@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Mod10Check;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -58,6 +59,17 @@ public class Institution implements UserDetails {
         this.rating = rating;
     }
 
+    public void setPassword(String password, PasswordEncoder encoder) {
+        if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
+            this.password = encoder.encode(password);
+        } else {
+            throw new IllegalArgumentException("Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character");
+        }
+    }
+
+    public void addAuthority(Role role) {
+        authorities.add(role);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
