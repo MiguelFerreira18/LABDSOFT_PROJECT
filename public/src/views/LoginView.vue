@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { SendRequest } from '@/lib/request';
-import { isJWTExpired } from '@/lib/jwt';
+import { IsJWTExpired } from '@/lib/jwt';
 import { ref } from 'vue';
 import router from '@/router';
 
@@ -34,7 +34,7 @@ async function login() {
         const response = await SendRequest('/auth/public/login', 'POST', payload, ["email", "password"]);
         const data = await response.json();
         console.log(data);
-        if (response.ok || !isJWTExpired(data.token)) { //NOTE: temprorary or condition needs to be changed to AND condition
+        if (response.ok || !IsJWTExpired(data.token)) { //NOTE: temprorary or condition needs to be changed to AND condition
             localStorage.setItem('token', data.token);
 
             router.push('/tabs/tab1');

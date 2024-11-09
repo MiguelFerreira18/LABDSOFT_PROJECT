@@ -18,7 +18,7 @@
                 institution?</ion-checkbox>
 
             <ion-button expand="block" @click="signUp">Submit</ion-button>
-            <ion-toast :is-open="true" message="Sign up successful" :duration="5000" :color="toastColor"
+            <ion-toast :is-open="true" :message="message" :duration="5000" :color="toastColor"
                 @didDismiss="setIsOpen(false)"></ion-toast>
         </div>
     </ion-content>
@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import { SendRequest } from '@/lib/request';
+import { ConfirmPasswordMatch, IsAGoodPassword } from '@/lib/signUpUtil';
 import router from '@/router';
 import { ref } from 'vue';
 
@@ -34,16 +35,24 @@ const name = ref<HTMLInputElement | null>(null);
 const password = ref<HTMLInputElement | null>(null);
 const confirmPassword = ref<HTMLInputElement | null>(null);
 const isInstitution = ref<HTMLInputElement | null>(null);
+const message = ref('');
 const isOpen = ref(false);
 const toastColor = ref('primary');
 
 async function signUp() {
-    if (!confirmPasswordMatch()) {
-        toastColor.value = 'danger';
-        isOpen.value = true;
-        console.log('Passwords do not match');
+    if (areFieldsEmpty()) {
+        callToast('danger', 'Please fill all fields');
         return;
     }
+    if (!ConfirmPasswordMatch(password.value?.value.trim() || '0', confirmPassword.value?.value.trim() || '1')) {
+        callToast('danger', 'Passwords do not match');
+        return;
+    }
+    if (!IsAGoodPassword(password.value?.value.trim() || '')) {
+        callToast('danger', 'Password is not strong enough');
+        return;
+    }
+
 
     const payload = {
         email: email.value?.value.trim() || '',
@@ -52,13 +61,13 @@ async function signUp() {
         repeatPassword: confirmPassword.value?.value.trim() || '',
         type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER'
     }
-    console.log(payload);
 
     try {
         const response = await SendRequest('/auth/public/signup', 'POST', payload, ["email", "name", "password", "repeatPassword"]);
         const data = await response.json();
         console.log(data);
         if (response.ok) {
+            //TODO Acceptance criteria requires for a pop up to be shown
             router.push('/login');
         }
     } catch (error) {
@@ -66,8 +75,17 @@ async function signUp() {
     }
 }
 
-function confirmPasswordMatch() {
-    return password.value?.value === confirmPassword.value?.value;
+
+function areFieldsEmpty() {
+    return email.value?.value.trim() === '' || name.value?.value.trim() === '' || password.value?.value.trim() === '' || confirmPassword.value?.value.trim() === '';
+}
+
+function callToast(color: string, passMessage: string) {
+    toastColor.value = color;
+    isOpen.value = true;
+    message.value = passMessage;
+
+    console.log(passMessage);
 }
 
 function setIsOpen(value: boolean) {
