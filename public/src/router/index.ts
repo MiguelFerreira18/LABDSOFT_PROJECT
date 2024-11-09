@@ -2,12 +2,19 @@ import { createRouter, createWebHistory } from "@ionic/vue-router";
 import { RouteRecordRaw } from "vue-router";
 import TabsPage from "../views/TabsPage.vue";
 import LoginView from "@/views/LoginView.vue";
+import SignUpPage from "@/views/SignUpPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     name: "login",
     component: LoginView,
+    meta: { public: true },
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: SignUpPage,
     meta: { public: true },
   },
   {
@@ -32,6 +39,7 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  { path: "/:pathMatch(.*)*", redirect: "/login" },
 ];
 
 const router = createRouter({
