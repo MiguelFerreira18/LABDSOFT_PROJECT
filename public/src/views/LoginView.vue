@@ -1,22 +1,18 @@
 <template>
-    <div>
-        <div>
-            <h2>Login</h2>
-            <div>
-                <div>
-                    <input name="email" v-model="email" type="text" placeholder="" aria-label="Your email">
+    <ion-content class="ion-padding">
+        <div class="centered-square">
+            <ion-input ref="email" type="email" fill="solid" label="Email" label-placement="floating"
+                error-text="Invalid email" @ionBlur="markTouched"></ion-input>
 
-                    <label for="email" class="">Email</label>
-                </div>
-                <div>
-                    <input name="password" v-model="password" type="password" placeholder="" aria-label="Your password">
+            <ion-input ref="password" type="password" fill="solid" label="password" label-placement="floating"
+                error-text="Invalid email" @ionBlur="markTouched"></ion-input>
 
-                    <label for="password">Password</label>
-                </div>
-                <button @click="login" type="button">Login</button>
-            </div>
+            <ion-button expand="block" @click="login">Submit</ion-button>
+            <ion-text class="signup-link" @click="pushToSignUp">
+                <p>Sign up</p>
+            </ion-text>
         </div>
-    </div>
+    </ion-content>
 </template>
 
 
@@ -26,14 +22,14 @@ import { isJWTExpired } from '@/lib/jwt';
 import { ref } from 'vue';
 import router from '@/router';
 
-const email = ref('');
-const password = ref('');
+const password = ref<HTMLInputElement | null>(null);
+const email = ref<HTMLInputElement | null>(null);
+
 async function login() {
     const payload = {
-        email: email.value,
-        password: password.value
+        email: email.value?.value || '',
+        password: password.value?.value || ''
     }
-
     try {
         const response = await SendRequest('/auth/public/login', 'POST', payload, ["email", "password"]);
         const data = await response.json();
@@ -47,4 +43,43 @@ async function login() {
         console.log(error);
     }
 }
+
+function pushToSignUp() {
+    router.push('/signup');
+}
+
+function markTouched() {
+    const input = document.querySelector('ion-input[ref="input"]');
+    if (input) {
+        input.classList.add('ion-touched');
+    }
+}
+
 </script>
+
+<style>
+.centered-square {
+    width: 80%;
+    max-width: 320px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.signup-link {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: var(--ion-color-primary);
+    cursor: pointer;
+}
+</style>
