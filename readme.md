@@ -91,7 +91,7 @@ docker-compose --env-file up
 After that setup just run the script in the /scripts file
 
 ```bash
-go run run_java_api.go
+go run ./scripts/run_java_api.go
 ```
 
 ### Run Frontend
