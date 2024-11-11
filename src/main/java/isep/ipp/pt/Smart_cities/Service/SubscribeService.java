@@ -80,4 +80,8 @@ public class SubscribeService {
         }
     }
 
+    public void deleteAll(){
+        subscribeRepo.deleteAll();
+    }
+
 }

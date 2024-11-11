@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -51,10 +52,25 @@ public class User implements UserDetails {
         this.authorities = new HashSet<>();
     }
 
-    public User(String email, String password, Role role) {
+    public User(String email,String username, String password, Role role) {
         this.email = email;
+        this.name = username;
         this.password = password;
         this.authorities.add(role);
+    }
+    public User(String email,String username, String password) {
+        this.email = email;
+        this.name = username;
+        this.password = password;
+        this.authorities = new HashSet<>();
+    }
+
+    public User(String id, String email, String name, String password) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = new HashSet<>();
+        this.password = password;
     }
 
     public void setPassword(String password, PasswordEncoder encoder) {
@@ -103,5 +119,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @PrePersist
+    public void ensureId() {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
     }
 }

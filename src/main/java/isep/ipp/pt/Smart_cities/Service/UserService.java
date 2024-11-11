@@ -58,4 +58,16 @@ public class UserService implements UserDetailsService {
         }
         throw new UsernameNotFoundException("User not found with email: " + email);
     }
+
+    public void deleteUser(String email) {
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isPresent()) {
+            userRepo.delete(user.get());
+        }
+    }
+
+    public User findUserByEmail(String email) {
+        Optional<User> user = userRepo.findByEmail(email);
+        return user.orElse(null);
+    }
 }

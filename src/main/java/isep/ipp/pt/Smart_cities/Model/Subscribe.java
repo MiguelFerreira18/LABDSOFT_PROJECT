@@ -50,6 +50,14 @@ public class Subscribe {
         this.subscriptionStatus = subscriptionStatus;
     }
 
+    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus) {
+        this.id = id;
+        this.user = user;
+        this.event = event;
+        this.code = code;
+        this.subscriptionStatus = subscriptionStatus;
+    }
+
     public EncryptedSubscribe returnEncryptedSubscribe(EncryptionUtil util){
         return new EncryptedSubscribe(util, this);
     }
