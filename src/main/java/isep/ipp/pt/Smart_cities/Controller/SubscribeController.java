@@ -61,6 +61,39 @@ public class SubscribeController {
                 .orElse(ResponseEntity.internalServerError().build());
     }
 
+    @GetMapping("/subscribe")
+    public ResponseEntity<Response> getSubscription(@RequestBody @Valid SubscribeRequestDTO subscribeRequestDTO) {
+        String uuidDecrypted = subscribeRequestDTO.decryptUuid(encryptionUtil);
+        String eventIdDecrypted = subscribeRequestDTO.decryptEventId(encryptionUtil);
+        Long eventId = isLong(eventIdDecrypted);
+
+        if (uuidDecrypted == null || eventId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return subscribeService.isSubscribed(uuidDecrypted, eventId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.internalServerError().build());
+    }
+
+    @PutMapping("/reSubscribe/{subscribeIdEncrypted}")
+    public ResponseEntity<Response> reSubscribe(@PathVariable @Valid String subscribeIdEncrypted) {
+        String subscribeIdDecrypted = encryptionUtil.decrypt(subscribeIdEncrypted).orElse(null);
+        if (subscribeIdDecrypted == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Long subscribeId = isLong(subscribeIdDecrypted);
+        if (subscribeId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return subscribeService.reSubscribeAnEvent(subscribeId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.internalServerError().build());
+    }
+
+
     private Long isLong(String eventId) {
         try {
             return Long.parseLong(eventId);
