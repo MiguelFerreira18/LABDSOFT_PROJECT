@@ -4,7 +4,7 @@ public enum SubscriptionStatus {
     SUBSCRIBED("Subscribed"),
     UNSUBSCRIBED("Unsubscribed"),
     CANCELLED("Cancelled"),
-    PARTICIPATED("Participated");
+    ATTENDED("Attended");
 
     private final String status;
 
