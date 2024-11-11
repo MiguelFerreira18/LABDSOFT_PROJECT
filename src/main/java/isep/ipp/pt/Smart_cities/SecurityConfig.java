@@ -83,14 +83,16 @@ public class SecurityConfig {
 					config.setAllowCredentials(true);
 					return config;
 				}))
-				.csrf(Customizer.withDefaults()).csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/auth/public/**"))
+				.csrf(Customizer.withDefaults()).csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/**"))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						auth -> auth
+								.requestMatchers("/subscription/**").permitAll()
 								.requestMatchers("/auth/public/signup").permitAll()
 								.requestMatchers("/auth/public/login").permitAll()
 								.requestMatchers("/api-docs/**").permitAll()
 								.requestMatchers("/swagger-ui/**").permitAll()
+								.anyRequest().permitAll()
 
 				)
 				.httpBasic(Customizer.withDefaults()).oauth2ResourceServer((oauth) -> oauth.jwt(Customizer.withDefaults()))
