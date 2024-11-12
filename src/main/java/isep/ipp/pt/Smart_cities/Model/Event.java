@@ -1,7 +1,5 @@
 package isep.ipp.pt.Smart_cities.Model;
 
-import isep.ipp.pt.Smart_cities.Model.Encrypted.EncryptedEvent;
-import isep.ipp.pt.Smart_cities.Util.EncryptionUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -21,7 +19,4 @@ public class Event {
         this.id = id;
     }
 
-    public EncryptedEvent returnEncryoedEvent(EncryptionUtil util){
-        return new EncryptedEvent(util, this);
-    }
 }

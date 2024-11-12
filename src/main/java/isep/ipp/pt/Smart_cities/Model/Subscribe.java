@@ -1,9 +1,6 @@
 package isep.ipp.pt.Smart_cities.Model;
 
-import isep.ipp.pt.Smart_cities.Model.Encrypted.EncryptedEvent;
-import isep.ipp.pt.Smart_cities.Model.Encrypted.EncryptedSubscribe;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
-import isep.ipp.pt.Smart_cities.Util.EncryptionUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,10 +53,6 @@ public class Subscribe {
         this.event = event;
         this.code = code;
         this.subscriptionStatus = subscriptionStatus;
-    }
-
-    public EncryptedSubscribe returnEncryptedSubscribe(EncryptionUtil util){
-        return new EncryptedSubscribe(util, this);
     }
 
 

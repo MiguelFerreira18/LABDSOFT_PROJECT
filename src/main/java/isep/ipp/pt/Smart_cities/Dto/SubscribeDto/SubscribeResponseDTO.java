@@ -1,54 +1,53 @@
 package isep.ipp.pt.Smart_cities.Dto.SubscribeDto;
 
-import isep.ipp.pt.Smart_cities.Model.Encrypted.EncryptedEvent;
-
-import java.util.List;
+import isep.ipp.pt.Smart_cities.Model.Event;
+import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
 
 public class SubscribeResponseDTO {
-    private String uuid;
-    private EncryptedEvent events;
-    private String code;
-    private String status;
+    private Long id;
+    private Event events;
+    private int code;
+    private SubscriptionStatus status;
 
     public SubscribeResponseDTO() {
     }
 
-    public SubscribeResponseDTO(String uuid, EncryptedEvent event, String code, String status) {
-        this.uuid = uuid;
+    public SubscribeResponseDTO(Long id, Event event, int code, SubscriptionStatus status) {
+        this.id = id;
         this.events = event;
         this.code = code;
         this.status = status;
     }
 
-    public String getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public EncryptedEvent getEvents() {
+    public Event getEvents() {
         return events;
     }
 
-    public void setEvent(EncryptedEvent event) {
-        this.events = event;
+    public void setEvents(Event events) {
+        this.events = events;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 
-    public String getStatus() {
+    public SubscriptionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SubscriptionStatus status) {
         this.status = status;
     }
 }

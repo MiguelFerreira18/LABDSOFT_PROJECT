@@ -9,7 +9,6 @@ import isep.ipp.pt.Smart_cities.Responses.Response;
 import isep.ipp.pt.Smart_cities.Respository.EventRepo;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
-import isep.ipp.pt.Smart_cities.Util.EncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +26,6 @@ public class SubscribeService {
     private EventRepo eventRepo;
     @Autowired
     private SubscribeMapperImpl subscribeMapper;
-    @Autowired
-    private EncryptionUtil encryptionUtil;
 
 
     public Optional<Response> subscribe(String uuid, long eventId) {
@@ -52,7 +49,7 @@ public class SubscribeService {
             subscribeRequest.setCode((int) (Math.random() * 10000));
             subscribeRequest.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
             return Optional.of(Response.success("Subscribe Request created",
-                    subscribeRepo.save(subscribeRequest).returnEncryptedSubscribe(encryptionUtil)));
+                    subscribeRepo.save(subscribeRequest)));
         } catch (Exception e) {
             return Optional.of(Response.error("Error creating Subscribe Request", e));
         }
@@ -61,7 +58,7 @@ public class SubscribeService {
         return subscribeRepo.findById(id).map(subscribe -> {
             try {
                 subscribe.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
-                return Response.success("Event resubscribed", subscribeRepo.save(subscribe).returnEncryptedSubscribe(encryptionUtil));
+                return Response.success("Event resubscribed", subscribeRepo.save(subscribe));
             } catch (Exception e) {
                 return Response.error("Error resubscribing event", e, subscribe);
             }
@@ -71,7 +68,7 @@ public class SubscribeService {
         return subscribeRepo.findById(id).map(subscribe -> {
             try {
                 subscribe.setSubscriptionStatus(SubscriptionStatus.UNSUBSCRIBED);
-                return Response.success("Event unsubscribed", subscribeRepo.save(subscribe).returnEncryptedSubscribe(encryptionUtil));
+                return Response.success("Event unsubscribed", subscribeRepo.save(subscribe));
             } catch (Exception e) {
                 return Response.error("Error unsubscribing event", e, subscribe);
             }
@@ -84,7 +81,7 @@ public class SubscribeService {
                     StreamSupport
                             .stream(subscribeRepo.findAllSubscribedEventsFromUser(uuid)
                                     .spliterator(), false)
-                            .map(subscribe -> subscribeMapper.toSubscribeResponseDTO(subscribe, encryptionUtil))
+                            .map(subscribe -> subscribeMapper.toSubscribeResponseDTO(subscribe))
                             .toList()));
 
         }catch (Exception e){
