@@ -2,6 +2,8 @@ package isep.ipp.pt.Smart_cities.Model.UserModel;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Mod10Check;
@@ -26,6 +28,7 @@ public class Institution implements UserDetails {
     @Email
     private String email;
 
+    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
     private String name;
 
     @ElementCollection
@@ -33,6 +36,7 @@ public class Institution implements UserDetails {
 
     private String password;
 
+    @Size(min = 0, max = 5)
     private float rating;
 
     public Institution() {

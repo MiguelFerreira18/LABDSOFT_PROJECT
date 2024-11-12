@@ -1,9 +1,18 @@
-export function ParseJwt(token: string) {
+export function ParseJwt(header: string) {
+  const token = header.substring(7);
   const base64Url = token.split(".")[1];
   const payloadJson = atob(base64Url);
   return JSON.parse(payloadJson);
 }
 
+export function SaveJwtFieldsToLocaStorate(payload: any) {
+  if (!payload) {
+    return;
+  }
+  for (const key in payload) {
+    localStorage.setItem(key, payload[key]);
+  }
+}
 export function IsJWTExpired(token: string) {
   const payload = ParseJwt(token);
 

@@ -74,8 +74,6 @@ public class User implements UserDetails {
     }
 
     public void setPassword(String password, PasswordEncoder encoder) {
-        // Verify the follows these conditions: at least 8 characters, one uppercase, one lowercase, one number and one special character
-
         if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
             this.password = encoder.encode(password);
         } else {
