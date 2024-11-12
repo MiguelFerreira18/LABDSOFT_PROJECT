@@ -35,6 +35,7 @@ async function login() {
         const authHeader = response.headers.get('authorization');
         if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
+            localStorage.setItem('token', ParseJwt(authHeader));
             router.push('/tabs/tab1');
         }
     } catch (error) {
