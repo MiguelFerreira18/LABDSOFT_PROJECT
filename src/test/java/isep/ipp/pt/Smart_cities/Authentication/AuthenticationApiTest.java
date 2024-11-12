@@ -1,37 +1,18 @@
 package isep.ipp.pt.Smart_cities.Authentication;
 
-import isep.ipp.pt.Smart_cities.Mapper.UserMapper;
-import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
-import isep.ipp.pt.Smart_cities.Respository.UserRepo;
-import isep.ipp.pt.Smart_cities.Service.InstitutionService;
 import isep.ipp.pt.Smart_cities.Service.UserService;
-import isep.ipp.pt.Smart_cities.Util.EncryptionUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class AuthenticationApiTest {
