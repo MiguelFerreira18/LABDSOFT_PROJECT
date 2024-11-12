@@ -63,9 +63,7 @@ async function signUp() {
     }
 
     try {
-        const response = await SendRequest('/auth/public/signup', 'POST', payload, ["email", "name", "password", "repeatPassword"]);
-        const data = await response.json();
-        console.log(data);
+        const response = await SendRequest('/auth/public/signup', 'POST', payload);
         if (response.ok) {
             //TODO Acceptance criteria requires for a pop up to be shown
             router.push('/login');

@@ -31,9 +31,8 @@ async function login() {
         password: password.value?.value || ''
     }
     try {
-        const response = await SendRequest('/auth/public/login', 'POST', payload, ["email", "password"]);
+        const response = await SendRequest('/auth/public/login', 'POST', payload);
         const data = await response.json();
-        console.log(data);
         if (response.ok || !IsJWTExpired(data.token)) { //NOTE: temprorary or condition needs to be changed to AND condition
             localStorage.setItem('token', data.token);
 
