@@ -38,8 +38,11 @@ export async function SendRequest(
     headers: headers,
     mode: "cors",
     credentials: "include",
-    body: JSON.stringify(processedData),
   };
+
+  if (Object.keys(data).length > 0) {
+    options.body = JSON.stringify(processedData);
+  }
 
   const response = await fetch(`${baseUrl}${path}`, options);
 
