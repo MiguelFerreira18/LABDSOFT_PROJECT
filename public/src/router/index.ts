@@ -3,6 +3,7 @@ import { RouteRecordRaw } from "vue-router";
 import TabsPage from "../views/TabsPage.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
+import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "signup",
     component: SignUpPage,
     meta: { public: true },
+  },
+  {
+    path: "/event/EventDetail/:id",
+    name: "EventDetails",
+    component: RefactorAfterHavingEventsList,
   },
   {
     path: "/tabs/",
