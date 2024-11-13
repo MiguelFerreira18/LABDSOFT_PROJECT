@@ -1,6 +1,7 @@
 package isep.ipp.pt.Smart_cities.Controller;
 
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeRequestDTO;
+import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Responses.Response;
 import isep.ipp.pt.Smart_cities.Service.SubscribeService;
@@ -8,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/subscription")
@@ -32,7 +35,7 @@ public class SubscribeController {
     }
     
     @GetMapping("/subscriptions/user/{uuid}")
-    public ResponseEntity<Subscribe> getSubscriptionsByUserUUID(@PathVariable @Valid String uuid) {
+    public ResponseEntity<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(@PathVariable @Valid String uuid) {
         return subscribeService.getSubscriptionsByUserUUID(uuid)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

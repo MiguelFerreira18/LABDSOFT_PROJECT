@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
@@ -170,7 +171,7 @@ class SubscribeServiceTest {
     @Test
     void testGetAllSubscriptions() {
         User u = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
-        Optional<Subscribe> response = subscribeService.getSubscriptionsByUserUUID(u.getId());
+        Optional<List<SubscribeResponseDTO>> response = subscribeService.getSubscriptionsByUserUUID(u.getId());
         assertTrue(response.isPresent());
         assertNotNull(response.get());
 
@@ -178,7 +179,7 @@ class SubscribeServiceTest {
 
     @Test
     void testGetAllSubscriptionsWithUnkownUser() {
-        Optional<Subscribe> response = subscribeService.getSubscriptionsByUserUUID("87518d5a-ed00-4a52-8040-3ee883b98asd");
+        Optional<List<SubscribeResponseDTO>> response = subscribeService.getSubscriptionsByUserUUID("87518d5a-ed00-4a52-8040-3ee883b98asd");
         assertTrue(!response.isPresent());
     }
 

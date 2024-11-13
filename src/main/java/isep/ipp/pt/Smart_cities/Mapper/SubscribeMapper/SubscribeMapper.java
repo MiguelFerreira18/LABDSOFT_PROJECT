@@ -5,4 +5,6 @@ import isep.ipp.pt.Smart_cities.Model.Subscribe;
 
 public interface SubscribeMapper {
     SubscribeResponseDTO toSubscribeResponseDTO(Subscribe subscribel);
+
+
 }

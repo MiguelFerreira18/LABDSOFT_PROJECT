@@ -24,9 +24,7 @@ public class SubscribeMapperImpl implements SubscribeMapper {
         SubscribeResponseDTO subscribeResponseDTO = new SubscribeResponseDTO(id, event, code, status);
 
         return subscribeResponseDTO;
-
-
-
-
     }
+
+
 }

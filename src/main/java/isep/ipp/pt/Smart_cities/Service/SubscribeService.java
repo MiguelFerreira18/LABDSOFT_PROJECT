@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Mapper.SubscribeMapper.SubscribeMapperImpl;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -77,12 +79,13 @@ public class SubscribeService {
         });
     }
 
-    public Optional<Subscribe> getSubscriptionsByUserUUID(String uuid) {
-        return StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+    public Optional<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(String uuid) {
+        return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
                         && subscribe.getEvent().getEndDate().isAfter(LocalDate.now()))
-                .findFirst();
+                .map(subscribeMapper::toSubscribeResponseDTO)
+                .toList());
     }
 
     public Optional<Response> isSubscribed(String uuid, String eventId) {
