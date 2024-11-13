@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Model;
 
+import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import jakarta.persistence.*;
@@ -56,6 +57,10 @@ public class Subscribe {
         this.event = event;
         this.code = code;
         this.subscriptionStatus = subscriptionStatus;
+    }
+
+    public SubscribeResponseDTO toDTO(){
+        return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus);
     }
 
 

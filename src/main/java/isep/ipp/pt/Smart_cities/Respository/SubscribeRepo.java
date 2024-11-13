@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface SubscribeRepo extends CrudRepository<Subscribe, Long> {
 
 
-    @Query("SELECT s FROM Subscribe s WHERE s.user.id = ?1")
-    Iterable<Subscribe> findAllSubscribedEventsFromUser(String id);
+    @Query("SELECT s FROM Subscribe s WHERE s.user.email = ?1")
+    Iterable<Subscribe> findAllSubscribedEventsFromUser(String email);
 
     @Query("SELECT s FROM Subscribe s WHERE s.event.id = ?1 AND s.user.id = ?2")
     Optional<Subscribe> findByEventIdAndUserId(String eventId, String userId);

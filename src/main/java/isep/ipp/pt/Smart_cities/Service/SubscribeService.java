@@ -32,6 +32,8 @@ public class SubscribeService {
         Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
             return Optional.of(Response.error("User already subscribed to event", null, eventId));
+        }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
+            return reSubscribeAnEvent(isAlreadySubscribed.get());
         }
 
         Optional<User> user= userService.findById(uuid);
@@ -49,54 +51,43 @@ public class SubscribeService {
             subscribeRequest.setCode((int) (Math.random() * 10000));
             subscribeRequest.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
             return Optional.of(Response.success("Subscribe Request created",
-                    subscribeRepo.save(subscribeRequest)));
+                    subscribeRepo.save(subscribeRequest).toDTO()));
         } catch (Exception e) {
             return Optional.of(Response.error("Error creating Subscribe Request", e));
         }
     }
-    public Optional<Response> reSubscribeAnEvent(long id) {
-        return subscribeRepo.findById(id).map(subscribe -> {
-            try {
-                subscribe.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
-                return Response.success("Event resubscribed", subscribeRepo.save(subscribe));
-            } catch (Exception e) {
-                return Response.error("Error resubscribing event", e, subscribe);
-            }
-        });
+
+    public Optional<Response> reSubscribeAnEvent(Subscribe subscription) {
+        try {
+            subscription.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
+            return Optional.of(Response.success("Event resubscribed", subscribeRepo.save(subscription).toDTO()));
+        } catch (Exception e) {
+            return Optional.of(Response.error("Error resubscribing event", e, subscription.toDTO()));
+        }
     }
     public Optional<Response> unsubscribe(long id) {
         return subscribeRepo.findById(id).map(subscribe -> {
             try {
                 subscribe.setSubscriptionStatus(SubscriptionStatus.UNSUBSCRIBED);
-                return Response.success("Event unsubscribed", subscribeRepo.save(subscribe));
+                return Response.success("Event unsubscribed", subscribeRepo.save(subscribe).toDTO());
             } catch (Exception e) {
-                return Response.error("Error unsubscribing event", e, subscribe);
+                return Response.error("Error unsubscribing event", e, subscribe.toDTO());
             }
         });
     }
 
-    public Optional<Response> getSubscriptions(String uuid) {
-        try{
-            return Optional.of(Response.success("Subscriptions retrieved",
-                    StreamSupport
-                            .stream(subscribeRepo.findAllSubscribedEventsFromUser(uuid)
-                                    .spliterator(), false)
-                            .map(subscribe -> subscribeMapper.toSubscribeResponseDTO(subscribe))
-                            .toList()));
-
-        }catch (Exception e){
-            return Optional.of(Response.error("Error getting Subscriptions", e));
-        }
+    public Optional<Subscribe> getSubscriptionsByUserUUID(String uuid) {
+        return StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid))
+                .findFirst();
     }
 
     public Optional<Response> isSubscribed(String uuid, String eventId) {
         Optional<Subscribe> subscribe = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
-        if (subscribe.isEmpty()) {
+        if (subscribe.isEmpty() || subscribe.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)) {
             return Optional.of(Response.error("User not subscribed to event", null, eventId));
-        }else if(subscribe.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
-            return Optional.of(Response.success("User unsubscribed to event",  eventId));
         }
-        return Optional.of(Response.success("User subscribed to event", eventId));
+        return Optional.of(Response.success("User subscribed to event", subscribe.get().toDTO()));
     }
 
     public void deleteAll(){

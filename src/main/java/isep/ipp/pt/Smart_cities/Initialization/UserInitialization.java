@@ -22,9 +22,17 @@ public class UserInitialization implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
+            User user = User.builder()
+                    .email("AnyNormalUser@gmail.com")
+                    .name("NormalUser")
+                    .password(passwordEncoder.encode("UserPassword$123"))
+                    .build();
+            user.addAuthority(new Role(Role.USER));
+            userRepository.save(user);
+        }
         if (userRepository.findByEmail("admin@smartcity.com").isEmpty()) {
             User admin = User.builder()
-                    .id("478413fc-37fd-4ded-bcbf-1616be5cc647")
                     .email("admin@smartcity.com")
                     .name("NormalAdmin")
                     .password(passwordEncoder.encode("AdminPassword$123"))
@@ -34,7 +42,6 @@ public class UserInitialization implements CommandLineRunner {
         }
         if (userRepository.findByEmail("dev@smartcity.com").isEmpty()) {
             User devAdmin = User.builder()
-                    .id("6ba33f06-098a-4ddb-ada6-c689532a458f")
                     .email("dev@smartcity.com")
                     .name("devUserAdmin")
                     .password(passwordEncoder.encode("DevPassword$123"))
@@ -44,7 +51,6 @@ public class UserInitialization implements CommandLineRunner {
         }
         if (institutionRepo.findByEmail("devInstitution@smartcity.com").isEmpty()) {
             Institution institution = Institution.builder()
-                    .id("2b804dbc-ce7a-4316-a1e4-553445046a12")
                     .email("devInstitution@smartcity.com")
                     .name("devInstitution")
                     .password(passwordEncoder.encode("DevPassword$123"))

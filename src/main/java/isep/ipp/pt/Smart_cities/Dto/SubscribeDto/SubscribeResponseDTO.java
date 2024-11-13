@@ -5,7 +5,7 @@ import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
 
 public class SubscribeResponseDTO {
     private Long id;
-    private Event events;
+    private Event event;
     private int code;
     private SubscriptionStatus status;
 
@@ -14,7 +14,7 @@ public class SubscribeResponseDTO {
 
     public SubscribeResponseDTO(Long id, Event event, int code, SubscriptionStatus status) {
         this.id = id;
-        this.events = event;
+        this.event = event;
         this.code = code;
         this.status = status;
     }
@@ -27,12 +27,12 @@ public class SubscribeResponseDTO {
         this.id = id;
     }
 
-    public Event getEvents() {
-        return events;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEvents(Event events) {
-        this.events = events;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public int getCode() {
