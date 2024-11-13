@@ -1,6 +1,6 @@
 package isep.ipp.pt.Smart_cities.Dto.SubscribeDto;
 
-import isep.ipp.pt.Smart_cities.Model.Event;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
 
 public class SubscribeResponseDTO {

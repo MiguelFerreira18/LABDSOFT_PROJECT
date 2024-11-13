@@ -19,7 +19,7 @@ public class SubscribeController {
     public ResponseEntity<Response> subscribe(@RequestBody @Valid SubscribeRequestDTO subscribeRequestDTO) {
         return subscribeService.subscribe(subscribeRequestDTO.getUuid(), subscribeRequestDTO.getEventId())
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.internalServerError().build());
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     @PostMapping("/unsubscribe/{subscribeId}")
@@ -27,27 +27,27 @@ public class SubscribeController {
 
         return subscribeService.unsubscribe(subscribeId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.internalServerError().build());
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     @GetMapping("/subscriptions/{uuid}")
     public ResponseEntity<Response> getSubscriptions(@PathVariable @Valid String uuid) {
         return subscribeService.getSubscriptions(uuid)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.internalServerError().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/subscribe")
     public ResponseEntity<Response> getSubscription(@RequestBody @Valid SubscribeRequestDTO subscribeRequestDTO) {
         return subscribeService.isSubscribed(subscribeRequestDTO.getUuid(), subscribeRequestDTO.getEventId())
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.internalServerError().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/reSubscribe/{subscribeId}")
     public ResponseEntity<Response> reSubscribe(@PathVariable @Valid Long subscribeId) {
         return subscribeService.reSubscribeAnEvent(subscribeId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.internalServerError().build());
+                .orElse(ResponseEntity.badRequest().build());
     }
 }

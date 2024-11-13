@@ -12,5 +12,5 @@ public class SubscribeRequestDTO {
     @NotNull
     private String uuid;
     @NotNull
-    private Long eventId;
+    private String eventId;
 }

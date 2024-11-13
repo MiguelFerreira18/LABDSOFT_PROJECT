@@ -23,17 +23,33 @@ public class UserInitialization implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (userRepository.findByEmail("admin@smartcity.com").isEmpty()) {
-            User admin = new User("admin@smartcity.com", passwordEncoder.encode("AdminPassword$123"));
+            User admin = User.builder()
+                    .id("478413fc-37fd-4ded-bcbf-1616be5cc647")
+                    .email("admin@smartcity.com")
+                    .name("NormalAdmin")
+                    .password(passwordEncoder.encode("AdminPassword$123"))
+                    .build();
             admin.addAuthority(new Role(Role.ADMIN));
             userRepository.save(admin);
         }
         if (userRepository.findByEmail("dev@smartcity.com").isEmpty()) {
-            User admin = new User("dev@smartcity.com", passwordEncoder.encode("DevPassword$123"));
-            admin.addAuthority(new Role(Role.ADMIN));
-            userRepository.save(admin);
+            User devAdmin = User.builder()
+                    .id("6ba33f06-098a-4ddb-ada6-c689532a458f")
+                    .email("dev@smartcity.com")
+                    .name("devUserAdmin")
+                    .password(passwordEncoder.encode("DevPassword$123"))
+                    .build();
+            devAdmin.addAuthority(new Role(Role.ADMIN));
+            userRepository.save(devAdmin);
         }
         if (institutionRepo.findByEmail("devInstitution@smartcity.com").isEmpty()) {
-            Institution institution = new Institution("devInstitution@smartcity.com",  passwordEncoder.encode("DevInstiPassword$123"));
+            Institution institution = Institution.builder()
+                    .id("2b804dbc-ce7a-4316-a1e4-553445046a12")
+                    .email("devInstitution@smartcity.com")
+                    .name("devInstitution")
+                    .password(passwordEncoder.encode("DevPassword$123"))
+                    .rating(0)
+                    .build();
             institution.addAuthority(new Role(Role.INSTITUTION));
             institutionRepo.save(institution);
         }

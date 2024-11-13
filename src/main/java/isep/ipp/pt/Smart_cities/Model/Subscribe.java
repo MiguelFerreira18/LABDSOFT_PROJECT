@@ -1,7 +1,9 @@
 package isep.ipp.pt.Smart_cities.Model;
 
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,6 +11,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @ToString
 @Entity
 public class Subscribe {

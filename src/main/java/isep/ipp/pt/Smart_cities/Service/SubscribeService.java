@@ -1,12 +1,12 @@
 package isep.ipp.pt.Smart_cities.Service;
 
 import isep.ipp.pt.Smart_cities.Mapper.SubscribeMapper.SubscribeMapperImpl;
-import isep.ipp.pt.Smart_cities.Model.Event;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Responses.Response;
-import isep.ipp.pt.Smart_cities.Respository.EventRepo;
+import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ public class SubscribeService {
     @Autowired
     private UserRepo userService;
     @Autowired
-    private EventRepo eventRepo;
+    private EventRepository eventRepo;
     @Autowired
     private SubscribeMapperImpl subscribeMapper;
 
 
-    public Optional<Response> subscribe(String uuid, long eventId) {
+    public Optional<Response> subscribe(String uuid, String eventId) {
         Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
             return Optional.of(Response.error("User already subscribed to event", null, eventId));
@@ -89,7 +89,7 @@ public class SubscribeService {
         }
     }
 
-    public Optional<Response> isSubscribed(String uuid, long eventId) {
+    public Optional<Response> isSubscribed(String uuid, String eventId) {
         Optional<Subscribe> subscribe = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (subscribe.isEmpty()) {
             return Optional.of(Response.error("User not subscribed to event", null, eventId));

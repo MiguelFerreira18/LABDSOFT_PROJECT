@@ -41,7 +41,7 @@ public class Event {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> categories = new HashSet<>();
 
     @NotBlank(message = "Description is required")

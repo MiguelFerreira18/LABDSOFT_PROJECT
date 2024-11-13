@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,8 +19,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Getter
-@Entity
 @Setter
+@Builder
+@Entity
 @ToString
 public class User implements UserDetails {
 
@@ -36,6 +38,7 @@ public class User implements UserDetails {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
     private String name;
 
+    @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> authorities = new HashSet<>();
 
@@ -73,6 +76,14 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public User(String id, String email, String name, Set<Role> authorities, String password) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+    }
+
     public void setPassword(String password, PasswordEncoder encoder) {
         if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
             this.password = encoder.encode(password);
@@ -83,6 +94,7 @@ public class User implements UserDetails {
     public void addAuthority(Role role) {
         authorities.add(role);
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

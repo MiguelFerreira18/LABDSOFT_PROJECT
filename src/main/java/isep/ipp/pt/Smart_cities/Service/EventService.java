@@ -38,4 +38,8 @@ public class EventService {
     public void deleteEvent(String id) {
         eventRepository.deleteById(id);
     }
+
+    public void delteAllEvents() {
+        eventRepository.deleteAll();
+    }
 }
