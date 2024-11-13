@@ -2,6 +2,7 @@ package isep.ipp.pt.Smart_cities.Controller;
 
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeRequestDTO;
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Responses.Response;
 import isep.ipp.pt.Smart_cities.Service.SubscribeService;
@@ -37,6 +38,13 @@ public class SubscribeController {
     @GetMapping("/subscriptions/user/{uuid}")
     public ResponseEntity<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(@PathVariable @Valid String uuid) {
         return subscribeService.getSubscriptionsByUserUUID(uuid)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/subscriptions/attended/event/{userId}")
+    public ResponseEntity<List<Event>> getAttendedSubscriptionsByEventId(@PathVariable @Valid String userId) {
+        return subscribeService.getAttendedEventsByUserUUID(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
