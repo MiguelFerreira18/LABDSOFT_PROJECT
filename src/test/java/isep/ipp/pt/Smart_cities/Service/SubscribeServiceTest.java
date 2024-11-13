@@ -7,6 +7,7 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Responses.Response;
 import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
+import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,14 +32,14 @@ class SubscribeServiceTest {
     private SubscribeRepo subscribeRepo;
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private UserRepo userRepo;
 
     //In the future the event should be created in the test
     @BeforeAll
-    static void init(@Autowired SubscribeRepo subscribeRepo, @Autowired EventService eventService) {
+    static void init(@Autowired UserRepo userRepo,@Autowired SubscribeRepo subscribeRepo, @Autowired EventService eventService) {
 
-        User user = new User();
-        user.setId("b4f90eca-c844-4605-9a9c-20b098100fbe");
-        user.setEmail("admin@smartcity.com");
+        User user = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
 
         Event event1 = new Event();
         event1.setTitle("AnyTitle1");
@@ -105,14 +106,15 @@ class SubscribeServiceTest {
     //Create Subscription
     @ParameterizedTest
     @CsvSource({
-            "'478413fc-37fd-4ded-bcbf-1616be5cc647'",
-            "'478413fc-37fd-4ded-bcbf-1616be5cc647'",
-            "'478413fc-37fd-4ded-bcbf-1616be5cc647'",
+            "AnyNormalUser@gmail.com",
+            "admin@smartcity.com",
+            "dev@smartcity.com",
     })
-    void testSubscribeToAnEvent(String userId) {
+    void testSubscribeToAnEvent(String userEmail) {
+        User u = userRepo.findByEmail(userEmail).get();
         List<Event> events = eventRepository.findAll();
         for (Event event : events) {
-            Optional<Response> response = subscribeService.subscribe(userId, event.getId());
+            Optional<Response> response = subscribeService.subscribe(u.getId(), event.getId());
             assertTrue(response.isPresent());
             assertTrue(response.get().success());
         }
@@ -132,12 +134,13 @@ class SubscribeServiceTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'478413fc-37fd-4ded-bcbf-1616be5cc647',10",
-            "'478413fc-37fd-4ded-bcbf-1616be5cc647',11",
-            "'478413fc-37fd-4ded-bcbf-1616be5cc647',12",
+            "'AnyNormalUser@gmail.com',10",
+            "'admin@smartcity.com',11",
+            "'dev@smartcity.com',12",
     })
-    void testSubscribeToAnEventWithUnkownEventId(String userId, String eventId) {
-        Optional<Response> response = subscribeService.subscribe(userId, eventId);
+    void testSubscribeToAnEventWithUnkownEventId(String email, String eventId) {
+        User u = userRepo.findByEmail(email).get();
+        Optional<Response> response = subscribeService.subscribe(u.getId(), eventId);
         assertTrue(response.isPresent());
         assertFalse(response.get().success());
     }
@@ -145,10 +148,10 @@ class SubscribeServiceTest {
     //Unsub
     @Test
     void testUnsubscribeToEvent() {
-        List<Response> subscribes = StreamSupport.stream(subscribeRepo.findAllSubscribedEventsFromUser("478413fc-37fd-4ded-bcbf-1616be5cc647").spliterator(), false)
+        List<Response> subscribes = StreamSupport.stream(subscribeRepo.findAllSubscribedEventsFromUser("AnyNormalUser@gmail.com").spliterator(), false)
                 .map(subscribe -> subscribeService.unsubscribe(subscribe.getId()).get()).toList();
         assertTrue(subscribes.stream().allMatch(Response::success));
-        StreamSupport.stream(subscribeRepo.findAllSubscribedEventsFromUser("478413fc-37fd-4ded-bcbf-1616be5cc647").spliterator(), false)
+        StreamSupport.stream(subscribeRepo.findAllSubscribedEventsFromUser("AnyNormalUser@gmail.com").spliterator(), false)
                 .forEach(subscribe -> assertEquals(SubscriptionStatus.UNSUBSCRIBED, subscribe.getSubscriptionStatus()));
     }
 
@@ -166,17 +169,17 @@ class SubscribeServiceTest {
     //GetAll
     @Test
     void testGetAllSubscriptions() {
-        Optional<Response> response = subscribeService.getSubscriptions("478413fc-37fd-4ded-bcbf-1616be5cc647");
+        User u = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
+        Optional<Subscribe> response = subscribeService.getSubscriptionsByUserUUID(u.getId());
         assertTrue(response.isPresent());
-        assertTrue(response.get().success());
+        assertNotNull(response.get());
 
     }
 
     @Test
     void testGetAllSubscriptionsWithUnkownUser() {
-        Optional<Response> response = subscribeService.getSubscriptions("87518d5a-ed00-4a52-8040-3ee883b98asd");
-        assertTrue(response.isPresent());
-        assertTrue(response.get().success());
+        Optional<Subscribe> response = subscribeService.getSubscriptionsByUserUUID("87518d5a-ed00-4a52-8040-3ee883b98asd");
+        assertTrue(!response.isPresent());
     }
 
     @AfterEach
