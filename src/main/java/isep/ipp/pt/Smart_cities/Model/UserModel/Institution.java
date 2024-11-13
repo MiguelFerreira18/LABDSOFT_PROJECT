@@ -1,9 +1,8 @@
 package isep.ipp.pt.Smart_cities.Model.UserModel;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Mod10Check;
@@ -17,6 +16,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
 @Entity
 public class Institution implements UserDetails {
 
@@ -31,12 +31,14 @@ public class Institution implements UserDetails {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
     private String name;
 
+    @Builder.Default
     @ElementCollection
     private Set<Role> authorities = new HashSet<>();
 
     private String password;
 
-    @Size(min = 0, max = 5)
+    @Min(value = 0, message = "Rating must be a positive number")
+    @Max(value = 5, message = "Rating must be a number between 0 and 5")
     private float rating;
 
     public Institution() {
@@ -47,6 +49,13 @@ public class Institution implements UserDetails {
         this.password = password;
         this.rating = 0;
     }
+    public Institution(String email,String name, String password) {
+        this.email = email;
+        this.authorities = new HashSet<>();
+        this.password = password;
+        this.name = name;
+        this.rating = 0;
+    }
 
     public Institution(String email, String password, float rating) {
         this.email = email;
@@ -54,10 +63,18 @@ public class Institution implements UserDetails {
         this.password = password;
         this.rating = rating;
     }
+    public Institution(String uuid,String email,String name, String password, float rating) {
+        this.id = uuid;
+        this.email = email;
+        this.authorities = new HashSet<>();
+        this.password = password;
+        this.rating = rating;
+    }
 
-    public Institution(String id, String email, Set<Role> authorities, String password, float rating) {
+    public Institution(String id, String email,String name ,Set<Role> authorities, String password, float rating) {
         this.id = id;
         this.email = email;
+        this.name = name;
         this.authorities = authorities;
         this.password = password;
         this.rating = rating;
