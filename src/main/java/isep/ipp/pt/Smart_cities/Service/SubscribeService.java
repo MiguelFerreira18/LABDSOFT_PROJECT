@@ -12,6 +12,7 @@ import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -78,7 +79,9 @@ public class SubscribeService {
 
     public Optional<Subscribe> getSubscriptionsByUserUUID(String uuid) {
         return StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
-                .filter(subscribe -> subscribe.getUser().getId().equals(uuid))
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
+                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now()))
                 .findFirst();
     }
 
