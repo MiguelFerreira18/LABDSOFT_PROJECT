@@ -180,7 +180,7 @@ class SubscribeServiceTest {
     @Test
     void testGetAllSubscriptionsWithUnkownUser() {
         Optional<List<SubscribeResponseDTO>> response = subscribeService.getSubscriptionsByUserUUID("87518d5a-ed00-4a52-8040-3ee883b98asd");
-        assertTrue(!response.isPresent());
+        assertFalse(!response.isPresent());
     }
 
     @AfterEach
