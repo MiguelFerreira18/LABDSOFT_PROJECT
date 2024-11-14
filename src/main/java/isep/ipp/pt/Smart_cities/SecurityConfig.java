@@ -91,6 +91,7 @@ public class SecurityConfig {
 								.requestMatchers("/auth/public/login").permitAll()
 								.requestMatchers("/api-docs/**").permitAll()
 								.requestMatchers("/swagger-ui/**").permitAll()
+								.requestMatchers("/userInfo/info").permitAll()
 
 				)
 				.httpBasic(Customizer.withDefaults()).oauth2ResourceServer((oauth) -> oauth.jwt(Customizer.withDefaults()))
