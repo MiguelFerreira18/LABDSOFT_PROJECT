@@ -1,44 +1,65 @@
 <template>
-    <ion-content>
-        <ion-list v-for="event in events" :key="event.id">
-            <ion-card @click="handlePagePush(event.id)">
-                <ion-card-header>
-                    <ion-card-subtitle>
-                        <ion-list v-for="category in event.categories" :key="category">
+    <ion-content class="ion-padding">
+        <ion-list v-if="events.length > 0">
+
+
+            <!-- Events list -->
+            <div class="event-grid">
+                <ion-card v-for="event in events" :key="event.id" @click="handlePagePush(event.id)" class="event-card">
+                    <!-- Category chips -->
+                    <div class="ion-padding-horizontal ion-padding-top">
+                        <ion-chip v-for="category in event.categories" :key="category" color="primary" outline>
+                            <ion-label>{{ category }}</ion-label>
+                        </ion-chip>
+                    </div>
+
+                    <ion-card-header>
+                        <ion-card-title class="ion-padding-bottom">{{ event.title }}</ion-card-title>
+                    </ion-card-header>
+
+                    <ion-card-content>
+                        <!-- Description with truncation -->
+                        <p class="event-description">{{ event.description }}</p>
+
+                        <!-- Event details with icons -->
+                        <ion-list lines="none">
                             <ion-item>
-                                {{ category }}
+                                <ion-icon :icon="locationOutline" slot="start"></ion-icon>
+                                <ion-label>
+                                    <p>Location</p>
+                                    <h3>{{ event.location }}</h3>
+                                </ion-label>
+                            </ion-item>
+
+                            <ion-item>
+                                <ion-icon :icon="calendarOutline" slot="start"></ion-icon>
+                                <ion-label>
+                                    <p>Date</p>
+                                    <h3>{{ formatDateRange(event.startDate, event.endDate) }}</h3>
+                                </ion-label>
+                            </ion-item>
+
+                            <ion-item>
+                                <ion-icon :icon="personOutline" slot="start"></ion-icon>
+                                <ion-label>
+                                    <p>Creator</p>
+                                    <h3>{{ event.creator.name }}</h3>
+                                    <p>{{ event.creator.email }}</p>
+                                </ion-label>
                             </ion-item>
                         </ion-list>
-                    </ion-card-subtitle>
-                    <ion-card-title> {{ event.title }}</ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                    {{ event.description }}
-                    <ion-item>
-                        <ion-label>Location</ion-label>
-                        <ion-note slot="end">{{ event.location }}</ion-note>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Start Date</ion-label>
-                        <ion-note slot="end">{{ event.startDate }}</ion-note>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>End Date</ion-label>
-                        <ion-note slot="end">{{ event.endDate }}</ion-note>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Creator</ion-label>
-                        <ion-note slot="end">{{ event.creator.name }}</ion-note>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Creator Email</ion-label>
-                        <ion-note slot="end">{{ event.creator.email }}</ion-note>
-                    </ion-item>
-                </ion-card-content>
-            </ion-card>
+                    </ion-card-content>
+                </ion-card>
+            </div>
         </ion-list>
-    </ion-content>
 
+        <!-- Empty state -->
+        <div v-else class="empty-state ion-text-center ion-padding">
+            <ion-icon :icon="calendarClearOutline" class="empty-state-icon"></ion-icon>
+            <h2>No Events Yet</h2>
+            <p>Your upcoming events will appear here</p>
+        </div>
+    </ion-content>
 </template>
 
 
@@ -48,6 +69,7 @@
 import { SendRequest } from '@/lib/request';
 import router from '@/router';
 import { onMounted, ref } from 'vue';
+import { calendarOutline, locationOutline, personOutline, calendarClearOutline } from 'ionicons/icons';
 interface Event {
     id: number;
     title: string;
@@ -64,7 +86,7 @@ const events = ref<Event[]>([]);
 onMounted(async () => {
     console.log('Component is mounted');
     const userId = localStorage.getItem('uuid') || '';
-    const response = await SendRequest(`/subscription/subscriptions/attended/event/${userId}`, 'GET');
+    const response = await SendRequest(`/subscription/attended/event/${userId}`, 'GET');
     const data = await response.json();
     if (response.ok && data) {
         console.log(data);
@@ -79,6 +101,11 @@ onMounted(async () => {
 async function handlePagePush(eventId: number) {
     console.log('Pushing to event detail page');
     router.push({ path: `/event/EventDetail/${eventId}` });
+}
+function formatDateRange(startDate: string, endDate: string) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return `${start.toDateString()} - ${end.toDateString()}`;
 }
 
 </script>

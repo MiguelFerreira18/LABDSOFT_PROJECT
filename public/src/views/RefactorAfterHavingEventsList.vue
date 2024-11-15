@@ -82,12 +82,7 @@ async function handleUnsubscribe() {
 
 async function getIsSubscribed() {
     const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
-    const response = await SendRequest(`/subscription/isSubscribed`, 'POST',
-        {
-            uuid: localStorage.getItem('uuid') || '',
-            eventId: eventId || ''
-        },
-        [],
+    const response = await SendRequest(`/subscription/isSubscribed/${localStorage.getItem('uuid')}/${eventId}`, 'GET', {}, [],
         localStorage.getItem('jwt') || '');
     const { data } = await response.json();
     return { data, response };
