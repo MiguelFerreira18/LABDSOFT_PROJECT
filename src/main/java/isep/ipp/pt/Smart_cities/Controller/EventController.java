@@ -43,4 +43,22 @@ public class EventController {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllEvents() {
+        eventService.deleteAllEvents();
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/delsub")
+    public ResponseEntity<Void> deleteEventWithSubscriptions(@PathVariable String id) {
+        eventService.deleteEventWithSubscriptions(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<Void> deleteAllEventsWithSubscriptions() {
+        eventService.deleteAllEventsWithSubscriptions();
+        return ResponseEntity.noContent().build();
+    }
 }
