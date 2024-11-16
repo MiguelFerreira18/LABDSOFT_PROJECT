@@ -9,17 +9,16 @@ export async function fetchAllEvents(token: string = ""): Promise<any[]> {
         headers: {
           "Content-Type": "application/json", 
           "X-API-KEY": apiKey,  
-          // Remova o cabeçalho de Authorization completamente, já que o backend permite sem autenticação
         },
       });
   
       if (!response.ok) {
-        throw new Error("Erro ao buscar eventos");
+        throw new Error("Error fetching evetns");
       }
   
       return await response.json(); 
     } catch (error) {
-      console.error("Erro ao buscar eventos:", error);
+      console.error("Error fetching events:", error);
       return []; 
     }
   }

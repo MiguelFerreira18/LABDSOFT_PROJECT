@@ -4,12 +4,18 @@
 
     <div class="event-cards-container">
       <div class="event-cards">
-        <router-link :to="`/event/EventDetail/${event.id}`" v-for="event in events" :key="event.id"
-          class="clickable-card">
+        <router-link
+          :to="`/event/EventDetail/${event.id}`"
+          v-for="event in events"
+          :key="event.id"
+          class="clickable-card"
+        >
           <ion-card :color="getCardColor(event)">
             <ion-card-header>
               <ion-card-title>{{ event.title }}</ion-card-title>
-              <ion-card-subtitle>{{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}</ion-card-subtitle>
+              <ion-card-subtitle>
+                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+              </ion-card-subtitle>
             </ion-card-header>
 
             <ion-card-content>
@@ -25,48 +31,63 @@
 </template>
 
 <script>
-// Importando a função formatDate do arquivo de utilidades
-import { formatDate } from '@/lib/dateFormatter';
+import { ref, onMounted } from 'vue';
+import { formatDate } from '@/lib/dateFormatter'; // Supondo que formatDate esteja em dateFormatter.js
 import { fetchAllEvents } from '@/lib/eventRequests';
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+} from '@ionic/vue';
 
-export default defineComponent({
-  components: { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle },
-  data() {
+export default {
+  components: {
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+  },
+  setup() {
+    const events = ref([]);
+
+    // Função para carregar os eventos
+    const loadEvents = async () => {
+      try {
+        // Chama a função fetchAllEvents para pegar os dados
+        const data = await fetchAllEvents(); 
+        events.value = data; // Atribui os dados obtidos à variável events
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    // Função para definir a cor do cartão com base nas categorias
+    const getCardColor = (event) => {
+      const categories = event.categories.map((category) => category.toLowerCase());
+      /*if (categories.includes('concert')) {
+        return 'primary';
+      } else if (categories.includes('workshop')) {
+        return 'secondary';
+      } else if (categories.includes('conference')) {
+        return 'tertiary';
+      } else {}*/
+        return 'light'; // Cor padrão
+      
+    };
+
+    // Chama a função loadEvents quando o componente é montado
+    onMounted(loadEvents);
+
     return {
-      events: [],  // Armazena os eventos recebidos
+      events,
+      getCardColor,
+      formatDate,
     };
   },
-  created() {
-    this.loadEvents();  // Carrega eventos ao criar o componente
-  },
-  methods: {
-    async loadEvents() {
-      const token = "token";
-      const events = await fetchAllEvents(token);  // Chama a função para buscar eventos
-      this.events = events;  // Armazena os eventos no estado
-    },
-    getCardColor(event) {
-      // Por enquanto, retorna uma cor fixa para todos os eventos
-      return 'light';  // Todos os eventos terão a mesma cor por enquanto
-
-      // Lógica futura que pode ser ativada posteriormente
-      // const categories = event.categories.map(category => category.toLowerCase());
-      // if (categories.includes('concert')) {
-      //   return 'primary';
-      // } else if (categories.includes('workshop')) {
-      //   return 'secondary';
-      // } else if (categories.includes('conference')) {
-      //   return 'tertiary';
-      // } else {
-      //   return 'light';  // Cor padrão
-      // }
-    }
-    ,
-    formatDate // A função formatDate agora é parte dos métodos do componente
-  }
-});
+};
 </script>
 
 <style scoped>
@@ -74,21 +95,16 @@ export default defineComponent({
   text-align: center;
   font-size: 2rem;
   font-weight: bold;
-  color: var(--ion-color-primary);
-  margin-bottom: 20px;
   color: aliceblue;
-
-  /* Efeito de animação de fade-in */
+  margin-bottom: 20px;
   animation: fadeIn 1s ease-out;
 }
 
-/* Animação para o efeito de fade-in */
 @keyframes fadeIn {
   0% {
     opacity: 0;
     transform: translateY(-20px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
