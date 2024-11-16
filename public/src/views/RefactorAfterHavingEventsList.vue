@@ -18,16 +18,13 @@
                 AnyItemCOntent3
             </ion-item>
         </ion-list>
-
-        <ion-button v-if="!isSubscribed" @click="handleSubscription" expand="block" fill="clear" shape="round"
-            color="success">
+        <ion-button v-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block" fill="clear"
+            shape="round" color="success">
             Subscribe
         </ion-button>
-        <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" shape="round" color="danger">
+        <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" :disabled="hasAttended" shape="round"
+            color="danger">
             Unsubscribe
-        </ion-button>
-        <ion-button @click="() => console.log(isSubscribed)" expand="block" fill="clear" shape="round">
-            Click me
         </ion-button>
     </ion-card>
 
@@ -39,19 +36,25 @@ import { SendRequest } from '@/lib/request';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
+const isSubscribed = ref(false);
+const hasAttended = ref(false);
 const subbedEvent = ref({})
+const route = useRoute();
 
 onMounted(async () => {
     const { data, response } = await getIsSubscribed();
-    if (response.ok && data.status === 'SUBSCRIBED') {
+    if (response.ok && data.status === 'ATTENDED') {
+        hasAttended.value = true;
+        isSubscribed.value = true;
+    }
+    else if (response.ok && data.status === 'SUBSCRIBED') {
         subbedEvent.value = data;
         isSubscribed.value = true;
     }
 });
-const isSubscribed = ref(false);
-const route = useRoute();
 
 async function handleSubscription() {
+    if (isSubscribed.value) return;
     const payload: Record<string, string> = {
         uuid: localStorage.getItem('uuid') || '',
         eventId: Array.isArray(route.params.id) ? route.params.id[0] : route.params.id || ''
@@ -64,7 +67,7 @@ async function handleSubscription() {
     }
 }
 async function handleUnsubscribe() {
-    if (!isSubscribed.value) return;
+    if (!isSubscribed.value && hasAttended.value) return;
     if (subbedEvent.value === undefined) {
         const { data, response } = await getIsSubscribed();
         if (response.ok && data.status === 'SUBSCRIBED') {
@@ -79,12 +82,7 @@ async function handleUnsubscribe() {
 
 async function getIsSubscribed() {
     const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
-    const response = await SendRequest(`/subscription/isSubscribed`, 'POST',
-        {
-            uuid: localStorage.getItem('uuid') || '',
-            eventId: eventId || ''
-        },
-        [],
+    const response = await SendRequest(`/subscription/isSubscribed/${localStorage.getItem('uuid')}/${eventId}`, 'GET', {}, [],
         localStorage.getItem('jwt') || '');
     const { data } = await response.json();
     return { data, response };

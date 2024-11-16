@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -182,6 +183,30 @@ class SubscribeServiceTest {
         Optional<List<SubscribeResponseDTO>> response = subscribeService.getSubscriptionsByUserUUID("87518d5a-ed00-4a52-8040-3ee883b98asd");
         assertFalse(!response.isPresent());
     }
+
+    //GetAttendedEvents
+    @Test
+    void testGetAttendedEvents() {
+
+        User u = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
+        Event event = new Event("AlreadyAttended", "AnyLocation", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription", u);
+        eventRepository.save(event);
+        Event pastEvent = eventRepository.findByTitle("AlreadyAttended").get();
+        pastEvent.setStartDate(LocalDate.now().minusDays(5));
+        pastEvent.setEndDate(LocalDate.now().minusDays(4));
+
+        Subscribe sub = Subscribe.builder()
+                .user(u)
+                .event(pastEvent)
+                .subscriptionStatus(SubscriptionStatus.ATTENDED)
+                .build();
+        subscribeRepo.save(sub);
+
+        Optional<List<Event>> response = subscribeService.getAttendedEventsByUserUUID(u.getId());
+        assertTrue(response.isPresent());
+        assertNotNull(response.get());
+    }
+
 
     @AfterEach
     void tearDown(@Autowired SubscribeService subscribeService, @Autowired EventService eventService) {

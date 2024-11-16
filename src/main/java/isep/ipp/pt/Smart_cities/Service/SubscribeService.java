@@ -88,6 +88,15 @@ public class SubscribeService {
                 .toList());
     }
 
+    public Optional<List<Event>> getAttendedEventsByUserUUID(String uuid) {
+        return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.ATTENDED)
+                        && subscribe.getEvent().getEndDate().isBefore(LocalDate.now()))
+                .map(Subscribe::getEvent)
+                .toList());
+    }
+
     public Optional<Response> isSubscribed(String uuid, String eventId) {
         Optional<Subscribe> subscribe = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (subscribe.isEmpty() || subscribe.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)) {
