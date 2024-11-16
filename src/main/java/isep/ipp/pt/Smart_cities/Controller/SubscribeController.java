@@ -2,7 +2,7 @@ package isep.ipp.pt.Smart_cities.Controller;
 
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeRequestDTO;
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
-import isep.ipp.pt.Smart_cities.Model.Subscribe;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Responses.Response;
 import isep.ipp.pt.Smart_cities.Service.SubscribeService;
 import jakarta.validation.Valid;
@@ -34,16 +34,23 @@ public class SubscribeController {
                 .orElse(ResponseEntity.badRequest().build());
     }
     
-    @GetMapping("/subscriptions/user/{uuid}")
+    @GetMapping("/user/{uuid}")
     public ResponseEntity<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(@PathVariable @Valid String uuid) {
         return subscribeService.getSubscriptionsByUserUUID(uuid)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/isSubscribed")
-    public ResponseEntity<Response> getSubscription(@RequestBody @Valid SubscribeRequestDTO subscribeRequestDTO) {
-        return subscribeService.isSubscribed(subscribeRequestDTO.getUuid(), subscribeRequestDTO.getEventId())
+    @GetMapping("/attended/event/{userId}")
+    public ResponseEntity<List<Event>> getAttendedSubscriptionsByUserId(@PathVariable @Valid String userId) {
+        return subscribeService.getAttendedEventsByUserUUID(userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/isSubscribed/{uuid}/{eventId}")
+    public ResponseEntity<Response> getSubscription(@PathVariable @Valid String uuid, @PathVariable @Valid String eventId) {
+        return subscribeService.isSubscribed(uuid, eventId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
