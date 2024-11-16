@@ -24,22 +24,22 @@ public class EventInitialization implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        // Verifica se o usuário já existe, caso contrário, cria um novo
+        if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
+            User user = User.builder()
+                    .email("AnyNormalUser@gmail.com")
+                    .name("NormalUser")
+                    .password(passwordEncoder.encode("UserPassword$123"))
+                    .build();
+            user.addAuthority(new Role(Role.USER));
+            userRepository.save(user);
+        }
 
-            if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
-                User user = User.builder()
-                        .email("AnyNormalUser@gmail.com")
-                        .name("NormalUser")
-                        .password(passwordEncoder.encode("UserPassword$123"))
-                        .build();
-                user.addAuthority(new Role(Role.USER));
-                userRepository.save(user);
-            }
-            
+        User user = userRepository.findByEmail("AnyNormalUser@gmail.com").get();
 
-            User user = userRepository.findByEmail("AnyNormalUser@gmail.com").get();
+        // Criação de eventos com verificação para evitar duplicados
 
-            
-
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e5f")) {
             Event event1 = new Event();
             event1.setId("0b2f589d-b5c2-4616-958c-504eeca80e5f");
             event1.setTitle("Tech Innovators Conference");
@@ -50,7 +50,9 @@ public class EventInitialization implements CommandLineRunner {
             event1.setCreator(user);
             event1.setCategories(Set.of("Conference", "Technology"));
             eventRepository.save(event1);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e60")) {
             Event event2 = new Event();
             event2.setId("0b2f589d-b5c2-4616-958c-504eeca80e60");
             event2.setTitle("Summer Music Festival");
@@ -61,7 +63,9 @@ public class EventInitialization implements CommandLineRunner {
             event2.setCreator(user);
             event2.setCategories(Set.of("Music", "Festival"));
             eventRepository.save(event2);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e61")) {
             Event event3 = new Event();
             event3.setId("0b2f589d-b5c2-4616-958c-504eeca80e61");
             event3.setTitle("Modern Art Expo");
@@ -72,7 +76,9 @@ public class EventInitialization implements CommandLineRunner {
             event3.setCreator(user);
             event3.setCategories(Set.of("Art", "Exhibition"));
             eventRepository.save(event3);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e62")) {
             Event event4 = new Event();
             event4.setId("0b2f589d-b5c2-4616-958c-504eeca80e62");
             event4.setTitle("International Football Tournament");
@@ -83,7 +89,9 @@ public class EventInitialization implements CommandLineRunner {
             event4.setCreator(user);
             event4.setCategories(Set.of("Sports", "Competition"));
             eventRepository.save(event4);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e63")) {
             Event event5 = new Event();
             event5.setId("0b2f589d-b5c2-4616-958c-504eeca80e63");
             event5.setTitle("Java Programming Bootcamp");
@@ -94,7 +102,9 @@ public class EventInitialization implements CommandLineRunner {
             event5.setCreator(user);
             event5.setCategories(Set.of("Workshop", "Education"));
             eventRepository.save(event5);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e64")) {
             Event event6 = new Event();
             event6.setId("0b2f589d-b5c2-4616-958c-504eeca80e64");
             event6.setTitle("Startup Networking Event");
@@ -105,7 +115,9 @@ public class EventInitialization implements CommandLineRunner {
             event6.setCreator(user);
             event6.setCategories(Set.of("Networking", "Business"));
             eventRepository.save(event6);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e65")) {
             Event event7 = new Event();
             event7.setId("0b2f589d-b5c2-4616-958c-504eeca80e65");
             event7.setTitle("Health and Wellness Seminar");
@@ -116,7 +128,9 @@ public class EventInitialization implements CommandLineRunner {
             event7.setCreator(user);
             event7.setCategories(Set.of("Health", "Seminar"));
             eventRepository.save(event7);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e66")) {
             Event event8 = new Event();
             event8.setId("0b2f589d-b5c2-4616-958c-504eeca80e66");
             event8.setTitle("Gastronomy Festival");
@@ -127,7 +141,9 @@ public class EventInitialization implements CommandLineRunner {
             event8.setCreator(user);
             event8.setCategories(Set.of("Food", "Festival"));
             eventRepository.save(event8);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e67")) {
             Event event9 = new Event();
             event9.setId("0b2f589d-b5c2-4616-958c-504eeca80e67");
             event9.setTitle("Charity Run for Children");
@@ -138,7 +154,9 @@ public class EventInitialization implements CommandLineRunner {
             event9.setCreator(user);
             event9.setCategories(Set.of("Charity", "Fundraising"));
             eventRepository.save(event9);
-            
+        }
+
+        if (!eventRepository.existsById("0b2f589d-b5c2-4616-958c-504eeca80e68")) {
             Event event10 = new Event();
             event10.setId("0b2f589d-b5c2-4616-958c-504eeca80e68");
             event10.setTitle("Innovation and Startup Forum");
@@ -149,5 +167,6 @@ public class EventInitialization implements CommandLineRunner {
             event10.setCreator(user);
             event10.setCategories(Set.of("Innovation", "Startup"));
             eventRepository.save(event10);
+        }
     }
 }

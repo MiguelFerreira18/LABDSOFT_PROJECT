@@ -9,7 +9,7 @@ public class SingleEventTest {
     public static void main(String[] args) {
         try {
 
-            String eventId = "1b27ffaf-ccb7-4b8b-b3d4-00b088e618c8";
+            String eventId = "1a3fda68-e3fa-4ac9-88d7-5202acc47233";
             String url = "http://localhost:9091/api/events/" + eventId;
 
             URL obj = new URL(url);
