@@ -211,6 +211,6 @@ class SubscribeServiceTest {
     @AfterEach
     void tearDown(@Autowired SubscribeService subscribeService, @Autowired EventService eventService) {
         subscribeService.deleteAll();
-        eventService.delteAllEvents();
+        eventService.deleteAllEvents();
     }
 }

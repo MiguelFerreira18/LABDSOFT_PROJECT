@@ -14,4 +14,7 @@ public interface SubscribeRepo extends CrudRepository<Subscribe, Long> {
 
     @Query("SELECT s FROM Subscribe s WHERE s.event.id = ?1 AND s.user.id = ?2")
     Optional<Subscribe> findByEventIdAndUserId(String eventId, String userId);
+
+    @Query("SELECT s FROM Subscribe s WHERE s.event.id = ?1")
+    Iterable<Subscribe> findAllByEventId(String eventId);
 }
