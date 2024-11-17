@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends CrudRepository<Event, String> {
 
-    @Query("SELECT e FROM Event e WHERE e.creator.email = ?1")
-    public List<Event> findByCreatorEmail(String email);
+    //@Query("SELECT e FROM Event e WHERE e.creator.email = ?1")
+    //public List<Event> findByCreatorEmail(String email);
 
     @Query("SELECT e FROM Event e WHERE e.title = ?1")
     public Optional<Event> findByTitle(String title);
@@ -25,4 +25,6 @@ public interface EventRepository extends CrudRepository<Event, String> {
 
     // Spring Data JPA provides findAll() by default, so no need for a custom query.
     public List<Event> findAll();
+
+    List<Event> findByCreatorEmail(String email);
 }

@@ -1,4 +1,6 @@
-package isep.ipp.pt.Smart_cities.Initialization;
+
+
+package isep.ipp.pt.Smart_cities.Mapper.Initialization;
 
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Role;

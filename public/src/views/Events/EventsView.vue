@@ -4,8 +4,12 @@
 
     <div class="event-cards-container">
       <div class="event-cards">
-        <router-link :to="`/event/EventDetail/${event.id}`" v-for="event in events" :key="event.id"
-          class="clickable-card">
+        <router-link
+          :to="`/event/EventDetail/${event.id}`"
+          v-for="event in events"
+          :key="event.id"
+          class="clickable-card"
+        >
           <ion-card :color="getCardColor(event)">
             <ion-card-header>
               <ion-card-title>{{ event.title }}</ion-card-title>
@@ -26,10 +30,10 @@
   </ion-content>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, onMounted } from 'vue';
-import { formatDate } from '@/lib/dateFormatter'; // Supondo que formatDate esteja em dateFormatter.js
-import { fetchAllEvents } from '@/lib/eventRequests';
+import { fetchAllEvents, Event } from '@/lib/eventRequests';
+import { formatDate } from '@/lib/dateFormatter'; // Assuming dateFormatter is a utility
 import {
   IonCard,
   IonCardContent,
@@ -47,44 +51,43 @@ export default {
     IonCardTitle,
   },
   setup() {
-    const events = ref([]);
+    const events = ref<Event[]>([]); // Strongly typed ref array
 
-    // Função para carregar os eventos
-    const loadEvents = async () => {
+    // Load all events
+    const loadEvents = async (): Promise<void> => {
       try {
-        // Chama a função fetchAllEvents para pegar os dados
         const data = await fetchAllEvents();
-        events.value = data; // Atribui os dados obtidos à variável events
+        events.value = data; // Assign fetched data to events
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
 
-    // Função para definir a cor do cartão com base nas categorias
-    const getCardColor = (event) => {
+    // Assign card colors based on event categories
+    const getCardColor = (event: Event): string => {
       const categories = event.categories.map((category) => category.toLowerCase());
-      /*if (categories.includes('concert')) {
+      if (categories.includes('concert')) {
         return 'primary';
       } else if (categories.includes('workshop')) {
         return 'secondary';
       } else if (categories.includes('conference')) {
         return 'tertiary';
-      } else {}*/
-      return 'light'; // Cor padrão
-
+      } else {
+        return 'light'; // Default card color
+      }
     };
 
-// Chama a função loadEvents quando o componente é montado
-      onMounted(loadEvents);
-  
-      return {
-        events,
-        getCardColor,
-        formatDate,
-      };
-    },
-  };
-  </script>
+    // Load events when the component mounts
+    onMounted(loadEvents);
+
+    return {
+      events,
+      getCardColor,
+      formatDate,
+    };
+  },
+};
+</script>
 
 <style scoped>
 .title {
@@ -101,7 +104,6 @@ export default {
     opacity: 0;
     transform: translateY(-20px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -144,14 +146,12 @@ ion-card-title {
 }
 
 ion-card-subtitle {
-    font-size: 14px;
-    color: var(--ion-color-medium);
-  }
-  
-  .clickable-card {
-    text-decoration: none;
-    color: inherit;
-  }
-  
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
+.clickable-card {
+  text-decoration: none;
+  color: inherit;
+}
 </style>
-  

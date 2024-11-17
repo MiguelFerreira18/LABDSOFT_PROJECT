@@ -10,10 +10,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+
 
 @Getter
 @Setter
@@ -50,9 +53,18 @@ public class Event {
 
     private String imagePath;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User creator;
+
+     //Many-to-Many relationship with users as attendees
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(
+            name = "event_attendees",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> attendees = new HashSet<>();
 
     public Event() {}
 
@@ -63,14 +75,28 @@ public class Event {
         this.endDate = endDate;
         this.description = description;
         this.creator = creator;
+         this.attendees = new HashSet<>(); // Initialize attendees to prevent NullPointerException
     }
-    
+
     public void addCategory(String category) {
         categories.add(category);
     }
-    
+
     public void removeCategory(String category) {
         categories.remove(category);
     }
-}
 
+    public Collection<Object> getAttendees() {
+        return List.of(this.attendees.toArray());
+    }
+
+    public void addAttendee(User attendee) {
+        attendees.add(attendee);
+    }
+
+    public void removeAttendee(User attendee) {
+        attendees.remove(attendee);
+    }
+
+
+}
