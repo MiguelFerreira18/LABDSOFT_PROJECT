@@ -61,9 +61,7 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(String email) {
         Optional<User> user = userRepo.findByEmail(email);
-        if (user.isPresent()) {
-            userRepo.delete(user.get());
-        }
+        user.ifPresent(value -> userRepo.delete(value));
     }
 
     public User findUserByEmail(String email) {

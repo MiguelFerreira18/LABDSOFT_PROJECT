@@ -2,15 +2,18 @@ package isep.ipp.pt.Smart_cities.Service;
 
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
+import isep.ipp.pt.Smart_cities.Model.EventModel.EventSummary;
 import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 
-import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+
 
 @Service
 public class EventService {
@@ -59,7 +62,42 @@ public class EventService {
 
     public void deleteAllEventsWithSubscriptions() {
         subscribeRepository.deleteAll();
+    }
 
+    // New method to get summaries of events created by a specific promoter
+    public List<EventSummary> getEventSummariesByPromoter(User promoter) {
+        List<Event> events = eventRepository.findByCreatorEmail(promoter.getEmail());
+        return events.stream().map(EventSummary::new).collect(Collectors.toList());
+    }
+
+    // New method to get the total attendees for a specific event
+    public int getTotalAttendees(String eventId) {
+        return eventRepository.findById(eventId)
+                .map(event -> event.getAttendees().size())
+                .orElse(0);
+    }
+
+
+    public Event getEventDetails(String eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    }
+
+
+    public void delteAllEvents() {
         eventRepository.deleteAll();
     }
+
+
+
+
+    public List<EventSummary> generateCurrentEventSummaries() {
+            List<Event> currentEvents = eventRepository.findAll(); // Fetch all events
+            return currentEvents.stream()
+                    .map(EventSummary::new) // Convert each Event to an EventSummary
+                    .collect(Collectors.toList());
+    }
+
+
+
 }
