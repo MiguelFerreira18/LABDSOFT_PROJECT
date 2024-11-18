@@ -33,8 +33,19 @@ public class RewardsService {
     private EventRepository eventRepo;
 
     public Optional<Response> givePointsByAttendingAnEvent(String userId, String eventId){
-        return validateSubscription(userId,eventId)
-                .map(subscribe -> processRewards(userId,eventId));
+        return checkIfThereIsAlreadyRewards(userId,eventId) ?
+                changSubscriptionStatusToAttended(userRepo.findById(userId).get(),eventRepo.findById(eventId).get())
+                        .map(subscribe -> Response.ok("You have already received points for this event",subscribe.toDTO())) :
+                processRewardsIfSubscriptionIsValid(userId, eventId);
+    }
+
+    private Optional<Response> processRewardsIfSubscriptionIsValid(String userId, String eventId) {
+        return validateSubscription(userId, eventId)
+                .map(subscribe -> processRewards(userId, eventId));
+    }
+    private boolean checkIfThereIsAlreadyRewards(String userId, String eventId){
+        return StreamSupport.stream(rewardsRepo.findAllByUserId(userId).spliterator(),false)
+                .anyMatch(rewards -> rewards.getEvent().getId().equals(eventId));
     }
 
     private Optional<Subscribe> validateSubscription(String userId,String eventId){
@@ -67,8 +78,19 @@ public class RewardsService {
 
     private Optional<Response> createRewards(User user, String eventId, int points) {
         return eventRepo.findById(eventId)
-                .map(event -> buildAndSaveRewards(user, event, points))
-                .map(rewards -> Response.created("Points given", rewards.toDTO()));
+                .map(event -> {
+                    Optional<Subscribe> subcription = changSubscriptionStatusToAttended(user,event);
+                    return subcription.map(subscribe -> buildAndSaveRewards(user, event, points))
+                            .map(rewards -> Response.ok("Points given", rewards))
+                            .orElse(Response.internalError("An error occurred while processing the request."));
+                });
+    }
+    private Optional<Subscribe> changSubscriptionStatusToAttended(User user,Event event){
+        return subscribeRepo.findByEventIdAndUserId(event.getId(),user.getId())
+                .map(subscribe -> {
+                    subscribe.setSubscriptionStatus(SubscriptionStatus.ATTENDED);
+                    return subscribeRepo.save(subscribe);
+                });
     }
 
     private Rewards buildAndSaveRewards(User user, Event event, int points) {
