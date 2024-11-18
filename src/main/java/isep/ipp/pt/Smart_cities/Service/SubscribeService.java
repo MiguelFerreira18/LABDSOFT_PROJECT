@@ -34,47 +34,47 @@ public class SubscribeService {
     public Optional<Response> subscribe(String uuid, String eventId) {
         Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
-            return Optional.of(Response.error("User already subscribed to event", null, eventId));
+            return Optional.of(Response.forbidden("User already subscribed to event"));
         }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
             return reSubscribeAnEvent(isAlreadySubscribed.get());
         }
 
         Optional<User> user= userService.findById(uuid);
         if(user.isEmpty()){
-            return Optional.of(Response.error("User not found", null,uuid));
+            return Optional.of(Response.notFound("User not found"));
         }
 
         Optional<Event> event = eventRepo.findById(eventId);
         if(event.isEmpty()){
-            return Optional.of(Response.error("Event not found", null, eventId));
+            return Optional.of(Response.notFound("Event not found"));
         }
 
         Subscribe subscribeRequest = new Subscribe(user.get(), event.get());
         try {
             subscribeRequest.setCode((int) (Math.random() * 10000));
             subscribeRequest.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
-            return Optional.of(Response.success("Subscribe Request created",
+            return Optional.of(Response.created("Subscribe Request created",
                     subscribeRepo.save(subscribeRequest).toDTO()));
         } catch (Exception e) {
-            return Optional.of(Response.error("Error creating Subscribe Request", e));
+            return Optional.of(Response.internalError("Error creating Subscribe Request"));
         }
     }
 
     public Optional<Response> reSubscribeAnEvent(Subscribe subscription) {
         try {
             subscription.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
-            return Optional.of(Response.success("Event resubscribed", subscribeRepo.save(subscription).toDTO()));
+            return Optional.of(Response.ok("Event resubscribed", subscribeRepo.save(subscription).toDTO()));
         } catch (Exception e) {
-            return Optional.of(Response.error("Error resubscribing event", e, subscription.toDTO()));
+            return Optional.of(Response.internalError("Error resubscribing event"));
         }
     }
     public Optional<Response> unsubscribe(long id) {
         return subscribeRepo.findById(id).map(subscribe -> {
             try {
                 subscribe.setSubscriptionStatus(SubscriptionStatus.UNSUBSCRIBED);
-                return Response.success("Event unsubscribed", subscribeRepo.save(subscribe).toDTO());
+                return Response.ok("Event unsubscribed", subscribeRepo.save(subscribe).toDTO());
             } catch (Exception e) {
-                return Response.error("Error unsubscribing event", e, subscribe.toDTO());
+                return Response.internalError("Error unsubscribing event");
             }
         });
     }
@@ -100,9 +100,9 @@ public class SubscribeService {
     public Optional<Response> isSubscribed(String uuid, String eventId) {
         Optional<Subscribe> subscribe = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (subscribe.isEmpty() || subscribe.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)) {
-            return Optional.of(Response.error("User not subscribed to event", null, eventId));
+            return Optional.of(Response.notFound("User not subscribed to event"));
         }
-        return Optional.of(Response.success("User subscribed to event", subscribe.get().toDTO()));
+        return Optional.of(Response.created("User subscribed to event", subscribe.get().toDTO()));
     }
 
     public void deleteAll(){
