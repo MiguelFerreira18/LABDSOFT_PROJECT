@@ -7,9 +7,10 @@ export async function SendRequest(
   path: string,
   method: string,
   data: Record<string, string> = {},
-  fieldsToEncrypt: string[] = [],
-  token = ""
+  fieldsToEncrypt: string[] = []
 ): Promise<Response> {
+  const token = localStorage.getItem("token") || "";
+
   const headers: Record<string, string> = {
     "Content-type": "application/json",
     Authorization: "",
