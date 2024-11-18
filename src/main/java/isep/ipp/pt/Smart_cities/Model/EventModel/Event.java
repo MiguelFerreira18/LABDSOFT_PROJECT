@@ -72,5 +72,10 @@ public class Event {
     public void removeCategory(String category) {
         categories.remove(category);
     }
+
+    public Boolean isInCurrentMonth() {
+        LocalDate now = LocalDate.now();
+        return endDate.getMonthValue() == now.getMonthValue() && endDate.getYear() == now.getYear();
+    }
 }
 
