@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.Dto.RewardsDto.RewardResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Rewards;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
@@ -11,9 +12,12 @@ import isep.ipp.pt.Smart_cities.Respository.RewardsRepo;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -25,10 +29,13 @@ public class RewardsService {
 
     @Autowired
     private RewardsRepo rewardsRepo;
+
     @Autowired
     private SubscribeRepo subscribeRepo;
+
     @Autowired
     private UserRepo userRepo;
+
     @Autowired
     private EventRepository eventRepo;
 
@@ -37,6 +44,58 @@ public class RewardsService {
                 changSubscriptionStatusToAttended(userRepo.findById(userId).get(),eventRepo.findById(eventId).get())
                         .map(subscribe -> Response.ok("You have already received points for this event",subscribe.toDTO())) :
                 processRewardsIfSubscriptionIsValid(userId, eventId);
+    }
+
+    public Optional<Response> calculateTotalRewardsFromUserId(String userId){
+        return StreamSupport.stream(rewardsRepo.findAllByUserId(userId).spliterator(), false)
+                .map(Rewards::getPoints)
+                .reduce(Integer::sum)
+                .map(points -> Response.ok("Total points", points));
+    }
+
+    public Optional<RewardResponseDTO> givePointsByStreakLogin(User user){
+
+        // Retrieve the current rewards or create a new entry if none exists
+        Rewards rewards = rewardsRepo.findLoginPointsByUser(user.getId())
+                .orElseGet(() -> {
+                    Rewards newReward = new Rewards();
+                    newReward.setUser(user);
+                    newReward.setPoints(0);
+                    newReward.setDailyStreakDays(0);
+                    return newReward;
+                });
+
+        if(rewards.hasLoggedInToday(user.getLastLoginAt())){
+            return Optional.of(rewards.toDTO(0));
+        }
+
+        int streakDays = rewards.getDailyStreakDays() + 1;
+
+        // Determine points based on the streak
+        int pointsToAdd;
+        if (streakDays >= 7) {
+            pointsToAdd = 15; // Weekly streak
+        } else if (streakDays >= 4) {
+            pointsToAdd = 10; // Medium streak
+        } else {
+            pointsToAdd = 5; // Base streak
+        }
+
+        // Update the rewards
+        rewards.setDailyStreakDays(streakDays);
+        rewards.setPoints(rewards.getPoints() + pointsToAdd);
+        rewards.setLastLoginAt(LocalDateTime.now());
+        rewardsRepo.save(rewards);
+
+        // Update the user's last login timestamp
+
+        // user.setLastLoginTime(LocalDateTime.now());
+        // userRepository.save(user);
+
+        // Create response DTO
+        RewardResponseDTO responseDTO = rewards.toDTO(pointsToAdd);
+
+        return Optional.of(responseDTO);
     }
 
     private Optional<Response> processRewardsIfSubscriptionIsValid(String userId, String eventId) {
@@ -101,12 +160,4 @@ public class RewardsService {
                 .build();
         return rewardsRepo.save(rewards);
     }
-
-    public Optional<Response> calculateTotalRewardsFromUserId(String userId){
-        return StreamSupport.stream(rewardsRepo.findAllByUserId(userId).spliterator(), false)
-                .map(Rewards::getPoints)
-                .reduce(Integer::sum)
-                .map(points -> Response.ok("Total points", points));
-    }
-
 }

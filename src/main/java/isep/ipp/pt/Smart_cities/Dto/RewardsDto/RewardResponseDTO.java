@@ -9,14 +9,21 @@ import lombok.Setter;
 @Builder
 public class RewardResponseDTO {
 
-    private Long id;
     private int points;
 
+    private int dailyStreakDays;
+
+    private int pointsEarned;
 
     public RewardResponseDTO() {
     }
-    public RewardResponseDTO(Long id, int points) {
-        this.id = id;
+    public RewardResponseDTO(int points) {
         this.points = points;
+    }
+
+    public RewardResponseDTO(int points, int dailyStreakDays, int pointsEarned) {
+        this.points = points;
+        this.dailyStreakDays = dailyStreakDays;
+        this.pointsEarned = pointsEarned;
     }
 }
