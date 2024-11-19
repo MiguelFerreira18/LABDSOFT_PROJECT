@@ -1,5 +1,6 @@
 import { apiConfig, apiKey } from "./config";
 import { Encrypt } from "./encryption";
+import { IsJWTExpired } from "./jwt";
 
 const { baseUrl } = apiConfig;
 
@@ -16,7 +17,7 @@ export async function SendRequest(
     Authorization: "",
   };
   headers["X-API-KEY"] = apiKey;
-  if (token !== "") {
+  if (token !== "" && !IsJWTExpired(token)) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
