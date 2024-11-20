@@ -116,7 +116,7 @@ jobs:
       # run: docker tag labdsoft_project-frontend-ionic:latest ${{ secrets.DOCKER_USERNAME }}/desofs2024_m1b_2-desof-web:latest
 
       - name: Tag Backend image
-        run: docker tag labdsoft_project-labdsof-api:latest ${{ secrets.DOCKER_USERNAME }}/flutter-ui:latest
+        run: docker tag labdsoft_project-labdsof-api:latest ${{ secrets.DOCKER_USERNAME }}/smart-city-api:latest
 
       # - name: Build and push frontend
       #   run: docker push ${{ secrets.DOCKER_USERNAME }}/flutter-ui:latest
