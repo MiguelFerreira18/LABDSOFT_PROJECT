@@ -46,6 +46,8 @@ class AuthenticationApiTest {
         request.setRepeatPassword(repeatPassword);
 
         ResponseEntity<UserView> response = authenticationApi.signup(request);
+        System.out.println("THIS IS A TEST");
+        System.out.println(response.getBody());
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         UserView userView = response.getBody();
         assertNotNull(userView);
@@ -159,6 +161,8 @@ class AuthenticationApiTest {
         request.setEmail(email);
         request.setPassword(password);
         ResponseEntity<UserView> response = authenticationApi.login(request);
+        System.out.println("THIS IS A TEST");
+        System.out.println(response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
