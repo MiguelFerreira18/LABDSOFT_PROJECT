@@ -106,17 +106,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Check Docker installation
-        run: |
-          docker --version
-          docker version
-
-      - name: Try Docker Compose
-        run: |
-          docker-compose --version || docker compose version
-
       - name: Build docker compose file
-        run: docker-compose build
+        run: docker compose build
 
       - name: Print docker images
         run: docker images
