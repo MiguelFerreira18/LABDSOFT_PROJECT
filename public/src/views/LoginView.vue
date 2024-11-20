@@ -17,6 +17,9 @@
 
 
 <script setup lang="ts">
+
+import { IonButton, IonContent, IonToast } from '@ionic/vue';
+import { defineComponent } from 'vue';
 import { SendRequest } from '@/lib/request';
 import { IsJWTExpired, ParseJwt, SaveJwtFieldsToLocaStorate } from '@/lib/jwt';
 import { ref } from 'vue';
@@ -32,8 +35,14 @@ async function login() {
     }
     try {
         const response = await SendRequest('/auth/public/login', 'POST', payload);
+        const user = await response.json();
         const authHeader = response.headers.get('authorization');
         if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
+
+            localStorage.setItem('userId', user.id);
+            // Make an API call to post user daily rewards
+            //const rewards = await SendRequest('/api/rewards/${response.id}/daily', 'POST', {});
+
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
             localStorage.setItem('token', authHeader);
             router.push('/tabs/tab1');
@@ -52,6 +61,21 @@ function markTouched() {
     if (input) {
         input.classList.add('ion-touched');
     }
+}
+
+interface RewardsResponse {
+    points: number;
+    dailyStreakDays: number;
+    pointsEarned: number;
+}
+
+async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
+    // Make an API call to post user daily rewards
+    const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
+    console.log(res);
+    const rewards: RewardsResponse = await res.json();
+    console.log(rewards);
+    return rewards as RewardsResponse;
 }
 
 </script>
