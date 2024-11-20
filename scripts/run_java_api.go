@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,6 +10,9 @@ import (
 )
 
 func main() {
+	testFlag := flag.Bool("test", false, "enable test mode")
+
+	flag.Parse()
 	fmt.Println("DEFINING OS ENV")
 
 	hasSetEnvs, err := setEnvs()
@@ -17,17 +21,17 @@ func main() {
 		return
 	}
 
-	hasRunMaven, err := packageJava()
+	hasRunMaven, err := packageJava(*testFlag)
 	if err != nil && !hasRunMaven {
 		fmt.Println("An Error occurred running the maven package: ", err)
 		return
 	}
-
-	hasRunJavaAPI, err := runJavaAPI()
-	if err != nil && !hasRunJavaAPI {
-		fmt.Println("An Error occurred running the run command for the jar: ", err)
+	if !*testFlag {
+		hasRunJavaAPI, err := runJavaAPI()
+		if err != nil && !hasRunJavaAPI {
+			fmt.Println("An Error occurred running the run command for the jar: ", err)
+		}
 	}
-
 }
 
 func runJavaAPI() (bool, error) {
@@ -42,8 +46,13 @@ func runJavaAPI() (bool, error) {
 	return true, nil
 }
 
-func packageJava() (bool, error) {
-	mvnCmd := exec.Command("mvn", "package", "-DskipTests")
+func packageJava(shouldTest bool) (bool, error) {
+	var mvnCmd *exec.Cmd
+	if shouldTest {
+		mvnCmd = exec.Command("mvn", "package")
+	} else {
+		mvnCmd = exec.Command("mvn", "package", "-DskipTests")
+	}
 	mvnCmd.Stdout = os.Stdout
 	mvnCmd.Stderr = os.Stderr
 	err := mvnCmd.Run()
