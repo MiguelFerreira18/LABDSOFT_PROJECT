@@ -6,6 +6,7 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
 import isep.ipp.pt.Smart_cities.Service.InstitutionService;
+import isep.ipp.pt.Smart_cities.Service.RewardsService;
 import isep.ipp.pt.Smart_cities.Service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -37,43 +38,58 @@ import static java.util.stream.Collectors.joining;
 @RestController
 @RequestMapping("auth/public")
 public class AuthenticationApi {
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private JwtEncoder jwtEncoder;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private PasswordEncoder encoder;
+
     @Autowired
     private InstitutionService institutionService;
+
     @Autowired
     private UserMapperImpl userMapper;
 
     private static final String ISSUER = "example.com";
+
     private static final Long EXPIRATION_TIME = 36000L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationApi.class);
 
     @PostMapping("login")
     public ResponseEntity<UserView> login(@RequestBody @Valid final SignInRequest request) {
+        
         try {
-
-
             Authentication authentication = authenticate(request);
             Object principal = authentication.getPrincipal();
+
             if (principal == null) {
                 LOGGER.warn("Authentication successful but principal is null for user: {}", request.email);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+
+            // Save last login autentication
+            userService.updateUserLastLogin(request.email);
+
             return buildAuthenticationResponse(authentication, principal);
 
         } catch (BadCredentialsException e) {
+
             // Identifiable data is logged here, ense why its showing the encripted value
             LOGGER.warn("Failed login attempt for user: {}", request.email);
+
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception ex) {
+
             LOGGER.error("Unexpected error during login for user: {}", request.email, ex);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
@@ -89,13 +105,11 @@ public class AuthenticationApi {
         JwtClaimsSet claims = buildClaims(principal, scope);
         String token = generateToken(claims);
 
-        if (principal instanceof User) {
-            User user = (User) principal;
+        if (principal instanceof User user) {
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, token)
                     .body(userMapper.toUserView(user));
-        } else if (principal instanceof Institution) {
-            Institution institution = (Institution) principal;
+        } else if (principal instanceof Institution institution) {
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, token)
                     .body(userMapper.fromInstitutionToUserView(institution));
@@ -104,6 +118,7 @@ public class AuthenticationApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
     private String extractScope(Authentication authentication) {
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

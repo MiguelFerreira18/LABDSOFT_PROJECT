@@ -1,5 +1,26 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import isep.ipp.pt.Smart_cities.Dto.RewardsDto.RewardResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Rewards;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
@@ -10,20 +31,6 @@ import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.RewardsRepo;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RewardsServiceTest {
@@ -62,7 +69,6 @@ class RewardsServiceTest {
                 .build();
 
         testRewards = Rewards.builder()
-                .id(1L)
                 .points(10)
                 .user(testUser)
                 .event(testEvent)
@@ -150,14 +156,111 @@ class RewardsServiceTest {
         when(subscribeRepo.save(any(Subscribe.class))).thenReturn(testSubscription);
         when(rewardsRepo.save(any(Rewards.class))).thenReturn(testRewards);
 
-        // Act
         Optional<Response> result = rewardsService.givePointsByAttendingAnEvent("user1", "event1");
 
-        // Assert
         assertTrue(result.isPresent());
         verify(rewardsRepo).save(argThat(rewards ->
                 rewards.getPoints() == 15
         ));
-;
+    }
+
+    @Test
+    void whenFirstLogin_shouldCreateNewRewardWithBasePoints() {
+        when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.empty());
+        when(rewardsRepo.save(any(Rewards.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        Optional<RewardResponseDTO> result = rewardsService.givePointsByStreakLogin(testUser);
+
+        assertTrue(result.isPresent());
+        assertEquals(5, result.get().getPointsEarned());
+        assertEquals(1, result.get().getDailyStreakDays());
+        verify(rewardsRepo).save(any(Rewards.class));
+    }
+
+    @Test
+    void whenAlreadyLoggedInToday_shouldNotGivePoints() {
+        Rewards existingRewards = new Rewards();
+        existingRewards.setPoints(10);
+        existingRewards.setDailyStreakDays(1);
+        existingRewards.setLastLoginAt(LocalDateTime.now());
+        existingRewards.setUser(testUser);
+
+        testUser.setLastLoginAt(LocalDateTime.now());
+
+        when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.of(existingRewards));
+
+        Optional<RewardResponseDTO> result = rewardsService.givePointsByStreakLogin(testUser);
+
+        assertTrue(result.isPresent());
+        assertEquals(0, result.get().getPointsEarned());
+        assertEquals(1, result.get().getDailyStreakDays());
+        verify(rewardsRepo, never()).save(any(Rewards.class));
+    }
+
+    @Test
+    void whenMediumStreak_shouldGiveMediumPoints() {
+
+        LocalDateTime previousLogin = LocalDateTime.now().minusDays(1);
+        Rewards existingRewards = new Rewards();
+        existingRewards.setPoints(15);
+        existingRewards.setDailyStreakDays(3);
+        existingRewards.setLastLoginAt(previousLogin);
+        existingRewards.setUser(testUser);
+
+        testUser.setLastLoginAt(LocalDateTime.now());
+
+        when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.of(existingRewards));
+        when(rewardsRepo.save(any(Rewards.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        Optional<RewardResponseDTO> result = rewardsService.givePointsByStreakLogin(testUser);
+
+        assertTrue(result.isPresent());
+        assertEquals(10, result.get().getPointsEarned());
+        assertEquals(4, result.get().getDailyStreakDays());
+        verify(rewardsRepo).save(any(Rewards.class));
+    }
+
+    @Test
+    void whenWeeklyStreak_shouldGiveWeeklyPoints() {
+        LocalDateTime previousLogin = LocalDateTime.now().minusDays(1);
+        Rewards existingRewards = new Rewards();
+        existingRewards.setPoints(50);
+        existingRewards.setDailyStreakDays(6);
+        existingRewards.setLastLoginAt(previousLogin);
+        existingRewards.setUser(testUser);
+
+        testUser.setLastLoginAt(LocalDateTime.now());
+
+        when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.of(existingRewards));
+        when(rewardsRepo.save(any(Rewards.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        Optional<RewardResponseDTO> result = rewardsService.givePointsByStreakLogin(testUser);
+
+        assertTrue(result.isPresent());
+        assertEquals(15, result.get().getPointsEarned());
+        assertEquals(7, result.get().getDailyStreakDays());
+        verify(rewardsRepo).save(any(Rewards.class));
+    }
+
+    @Test
+    void whenStreakBroken_shouldResetToBasePoints() {
+        LocalDateTime previousLogin = LocalDateTime.now().minusDays(2);
+        Rewards existingRewards = new Rewards();
+        existingRewards.setPoints(50);
+        existingRewards.setDailyStreakDays(5);
+        existingRewards.setLastLoginAt(previousLogin);
+        existingRewards.setUser(testUser);
+
+        testUser.setLastLoginAt(previousLogin);
+
+        when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.of(existingRewards));
+        when(rewardsRepo.save(any(Rewards.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        Optional<RewardResponseDTO> result = rewardsService.givePointsByStreakLogin(testUser);
+
+        assertTrue(result.isPresent());
+        assertEquals(5, result.get().getPointsEarned());
+        assertEquals(1, result.get().getDailyStreakDays());
+        verify(rewardsRepo).save(any(Rewards.class));
     }
 }

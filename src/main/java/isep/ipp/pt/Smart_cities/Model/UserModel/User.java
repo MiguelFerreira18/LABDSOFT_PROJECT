@@ -8,11 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,6 +43,7 @@ public class User implements UserDetails {
 
     private String password;
 
+    private LocalDateTime lastLoginAt = LocalDateTime.now();
 
     public User() {
 
@@ -82,6 +82,15 @@ public class User implements UserDetails {
         this.name = name;
         this.authorities = authorities;
         this.password = password;
+    }
+
+    public User(String id, String email, String name, Set<Role> authorities, String password, LocalDateTime lastLoginAt) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+        this.lastLoginAt = lastLoginAt;
     }
 
     public void setPassword(String password, PasswordEncoder encoder) {
