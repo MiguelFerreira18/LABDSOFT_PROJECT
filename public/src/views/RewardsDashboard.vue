@@ -13,20 +13,15 @@
             <ion-card-content>
             <ion-grid>
                 <ion-row>
-                <ion-col size="4" class="ion-text-center">
+                <ion-col size="6" class="ion-text-center">
                     <ion-icon name="star" size="large" color="primary"></ion-icon>
                     <p><strong>Points</strong></p>
                     <p>{{ rewards.points }}</p>
                 </ion-col>
-                <ion-col size="4" class="ion-text-center">
+                <ion-col size="6" class="ion-text-center">
                     <ion-icon name="calendar" size="large" color="success"></ion-icon>
                     <p><strong>Daily Streak</strong></p>
                     <p>{{ rewards.dailyStreakDays }} days</p>
-                </ion-col>
-                <ion-col size="4" class="ion-text-center">
-                    <ion-icon name="trophy" size="large" color="warning"></ion-icon>
-                    <p><strong>Points Earned</strong></p>
-                    <p>{{ rewards.pointsEarned }}</p>
                 </ion-col>
                 </ion-row>
             </ion-grid>
