@@ -64,8 +64,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.16.1"
-      - run: go run run_java_api.go -test=true
-        working-directory: ./scripts
+      - run: go run scripts/run_java_api.go -test=true
+        working-directory: ./
       # - name: Maven Package
       #   run: mvn package
       #   working-directory: ./
