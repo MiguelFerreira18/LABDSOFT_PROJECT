@@ -19,7 +19,7 @@
 <script setup lang="ts">
 
 import { IonButton, IonContent, IonToast } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { toastController } from '@ionic/vue';
 import { SendRequest } from '@/lib/request';
 import { IsJWTExpired, ParseJwt, SaveJwtFieldsToLocaStorate } from '@/lib/jwt';
 import { ref } from 'vue';
@@ -40,11 +40,25 @@ async function login() {
         if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
 
             localStorage.setItem('userId', user.id);
-            // Make an API call to post user daily rewards
-            //const rewards = await SendRequest('/api/rewards/${response.id}/daily', 'POST', {});
-
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
             localStorage.setItem('token', authHeader);
+
+            try {
+                const rewards = await dailyRewards({ id: user.id });
+
+                if(rewards.pointsEarned > 0) {
+                    await presentToast('top',`You earned ${rewards.pointsEarned} points!`);
+                }else{
+                    await presentToast('bottom',`You have already claimed your daily rewards!`);
+                }
+
+                // Ensure to only fetch rewards once per login
+                localStorage.setItem('rewardsFetched', 'true');
+                
+            } catch (error) {
+                console.error('Error fetching daily rewards:', error);
+            }
+            
             router.push('/tabs/tab1');
         }
     } catch (error) {
@@ -70,12 +84,27 @@ interface RewardsResponse {
 }
 
 async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
-    // Make an API call to post user daily rewards
+    try {
+
     const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
-    console.log(res);
+
     const rewards: RewardsResponse = await res.json();
-    console.log(rewards);
+    
     return rewards as RewardsResponse;
+    } catch (error) {
+    console.error('Error in dailyRewards function:', error);
+    throw error; 
+    }
+}
+
+async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await toastController.create({
+    message: message,
+    duration: 1500,
+    position: position,
+    });
+
+    await toast.present();
 }
 
 </script>
