@@ -42,7 +42,7 @@ import { useRoute } from 'vue-router';
 
 const isSubscribed = ref(false);
 const hasAttended = ref(false);
-const subbedEvent = ref({})
+const subbedEvent = ref<any>({})
 const route = useRoute();
 
 onMounted(async () => {
