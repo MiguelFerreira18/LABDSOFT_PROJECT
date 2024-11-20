@@ -8,8 +8,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import isep.ipp.pt.Smart_cities.Dto.RewardsDto.RewardResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import isep.ipp.pt.Smart_cities.Dto.RewardsDto.RewardResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Rewards;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
@@ -200,6 +199,7 @@ class RewardsServiceTest {
 
     @Test
     void whenMediumStreak_shouldGiveMediumPoints() {
+
         LocalDateTime previousLogin = LocalDateTime.now().minusDays(1);
         Rewards existingRewards = new Rewards();
         existingRewards.setPoints(15);
@@ -207,7 +207,7 @@ class RewardsServiceTest {
         existingRewards.setLastLoginAt(previousLogin);
         existingRewards.setUser(testUser);
 
-        testUser.setLastLoginAt(previousLogin);
+        testUser.setLastLoginAt(LocalDateTime.now());
 
         when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.of(existingRewards));
         when(rewardsRepo.save(any(Rewards.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -229,7 +229,7 @@ class RewardsServiceTest {
         existingRewards.setLastLoginAt(previousLogin);
         existingRewards.setUser(testUser);
 
-        testUser.setLastLoginAt(previousLogin);
+        testUser.setLastLoginAt(LocalDateTime.now());
 
         when(rewardsRepo.findLoginPointsByUser(testUser.getId())).thenReturn(Optional.of(existingRewards));
         when(rewardsRepo.save(any(Rewards.class))).thenAnswer(i -> i.getArguments()[0]);
