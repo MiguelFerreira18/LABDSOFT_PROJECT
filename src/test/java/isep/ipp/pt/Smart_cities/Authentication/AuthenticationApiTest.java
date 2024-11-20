@@ -1,6 +1,7 @@
 package isep.ipp.pt.Smart_cities.Authentication;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
+import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import isep.ipp.pt.Smart_cities.Service.UserService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +22,8 @@ class AuthenticationApiTest {
     private AuthenticationApi authenticationApi;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepo userRepo;
 
 
 
@@ -46,6 +49,7 @@ class AuthenticationApiTest {
         request.setRepeatPassword(repeatPassword);
 
         ResponseEntity<UserView> response = authenticationApi.signup(request);
+        System.out.println(userRepo.findAll());
         System.out.println("SIGNUP");
         System.out.println("THIS IS A TEST");
         System.out.println(response.getBody());
@@ -162,6 +166,7 @@ class AuthenticationApiTest {
         request.setEmail(email);
         request.setPassword(password);
         ResponseEntity<UserView> response = authenticationApi.login(request);
+        System.out.println(userRepo.findAll());
         System.out.println("SIGNIN");
         System.out.println("THIS IS A TEST");
         System.out.println(response.getBody());
