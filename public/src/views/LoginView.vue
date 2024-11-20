@@ -24,7 +24,6 @@ import { SendRequest } from '@/lib/request';
 import { IsJWTExpired, ParseJwt, SaveJwtFieldsToLocaStorate } from '@/lib/jwt';
 import { ref } from 'vue';
 import router from '@/router';
-import { trophyOutline } from 'ionicons/icons';
 
 const password = ref<HTMLInputElement | null>(null);
 const email = ref<HTMLInputElement | null>(null);
@@ -138,12 +137,4 @@ async function presentToast(position: 'top' | 'middle' | 'bottom', message: stri
     color: var(--ion-color-primary);
     cursor: pointer;
 }
-
-/*
-.reward-toast {
-  --background: #4caf50; 
-  --color: white; 
-  --icon-color: white; 
-  font-weight: bold; 
-}*/
 </style>
