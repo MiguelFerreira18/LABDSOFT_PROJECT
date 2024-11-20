@@ -24,6 +24,7 @@ import { SendRequest } from '@/lib/request';
 import { IsJWTExpired, ParseJwt, SaveJwtFieldsToLocaStorate } from '@/lib/jwt';
 import { ref } from 'vue';
 import router from '@/router';
+import { trophyOutline } from 'ionicons/icons';
 
 const password = ref<HTMLInputElement | null>(null);
 const email = ref<HTMLInputElement | null>(null);
@@ -47,9 +48,9 @@ async function login() {
                 const rewards = await dailyRewards({ id: user.id });
 
                 if(rewards.pointsEarned > 0) {
-                    await presentToast('top',`You earned ${rewards.pointsEarned} points!`);
+                    await presentToast('top',`You earned ${rewards.pointsEarned} points for logging in!`);
                 }else{
-                    await presentToast('bottom',`You have already claimed your daily rewards!`);
+                    // await presentToast('bottom',`You have already claimed your daily rewards!`);
                 }
 
                 // Ensure to only fetch rewards once per login
@@ -100,10 +101,13 @@ async function dailyRewards(response: { id: string }): Promise<RewardsResponse> 
 async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
     const toast = await toastController.create({
     message: message,
-    duration: 1500,
+    duration: 2500,
     position: position,
+    color: 'success', 
+    icon: 'trophy-outline', 
+    cssClass: 'reward-toast',
     });
-
+    
     await toast.present();
 }
 
@@ -134,4 +138,12 @@ async function presentToast(position: 'top' | 'middle' | 'bottom', message: stri
     color: var(--ion-color-primary);
     cursor: pointer;
 }
+
+/*
+.reward-toast {
+  --background: #4caf50; 
+  --color: white; 
+  --icon-color: white; 
+  font-weight: bold; 
+}*/
 </style>
