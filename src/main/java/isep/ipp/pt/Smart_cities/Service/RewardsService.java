@@ -1,5 +1,13 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import isep.ipp.pt.Smart_cities.Dto.RewardsDto.RewardResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Rewards;
@@ -11,15 +19,6 @@ import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.RewardsRepo;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Service
 public class RewardsService {
@@ -69,16 +68,24 @@ public class RewardsService {
             return Optional.of(rewards.toDTO(0));
         }
 
+        // Validate daily streak
+        if (!rewards.hasLoggedInYesterday(user.getLastLoginAt().toLocalDate())) {
+            rewards.setDailyStreakDays(0);
+        }
+
         int streakDays = rewards.getDailyStreakDays() + 1;
 
         // Determine points based on the streak
         int pointsToAdd;
         if (streakDays >= 7) {
-            pointsToAdd = 15; // Weekly streak
+            // Weekly streak
+            pointsToAdd = 15; 
         } else if (streakDays >= 4) {
-            pointsToAdd = 10; // Medium streak
+            // Medium streak
+            pointsToAdd = 10; 
         } else {
-            pointsToAdd = 5; // Base streak
+            // Base streak
+            pointsToAdd = 5; 
         }
 
         // Update the rewards
@@ -86,11 +93,6 @@ public class RewardsService {
         rewards.setPoints(rewards.getPoints() + pointsToAdd);
         rewards.setLastLoginAt(LocalDateTime.now());
         rewardsRepo.save(rewards);
-
-        // Update the user's last login timestamp
-
-        // user.setLastLoginTime(LocalDateTime.now());
-        // userRepository.save(user);
 
         // Create response DTO
         RewardResponseDTO responseDTO = rewards.toDTO(pointsToAdd);

@@ -1,5 +1,7 @@
 package isep.ipp.pt.Smart_cities.Model;
 
+import java.time.LocalDate;
+
 import isep.ipp.pt.Smart_cities.Dto.RewardsDto.RewardResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
@@ -71,7 +73,6 @@ public class Rewards {
 
     public boolean hasLoggedInToday(LocalDateTime userLastLoginAt) {
 
-        var dia = this.lastLoginAt;
         if(userLastLoginAt.getDayOfMonth() == LocalDateTime.now().getDayOfMonth()){
             if(this.lastLoginAt.getDayOfMonth() == LocalDateTime.now().getDayOfMonth()){
                 return true;
@@ -79,5 +80,10 @@ public class Rewards {
         }
 
         return false;
+    }
+
+    public boolean hasLoggedInYesterday(LocalDate userLastLoginAt) {
+
+        return this.lastLoginAt.toLocalDate().equals(userLastLoginAt.minusDays(1));
     }
 }
