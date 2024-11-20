@@ -75,11 +75,14 @@ jobs:
         with:
           name: SmartcityAPI
           path: ./target/SmartCityAPI.jar
-          
+
   push-to-dockerhub:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
