@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json /app/
 RUN npm install --legacy-peer-deps
 COPY . .
-RUN npm run build:error
+RUN npm run build
 
 # Stage 2: Serve the built app using Nginx
 FROM nginx:alpine
