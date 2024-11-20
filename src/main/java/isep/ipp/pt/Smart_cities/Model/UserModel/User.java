@@ -46,6 +46,7 @@ public class User implements UserDetails {
 
 
     public User() {
+        this.authorities = new HashSet<>();
 
     }
 

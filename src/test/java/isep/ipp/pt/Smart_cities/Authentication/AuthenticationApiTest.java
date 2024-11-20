@@ -36,7 +36,7 @@ class AuthenticationApiTest {
 
     @ParameterizedTest
     @CsvSource({
-            "anyName, email@gmail.com, Password$123, Password$123,USER",
+            "NormalUser, AnyNormalUser1@gmail.com, Password$123, Password$123,USER",
             "goodname, myEmail@hotmail.com, IsAPassword%123, IsAPassword%123,USER",
             "nonya, businessEmail@business.pt, AnyNormalPassword@123, AnyNormalPassword@123,USER"
     })
@@ -49,10 +49,6 @@ class AuthenticationApiTest {
         request.setRepeatPassword(repeatPassword);
 
         ResponseEntity<UserView> response = authenticationApi.signup(request);
-        System.out.println(userRepo.findAll());
-        System.out.println("SIGNUP");
-        System.out.println("THIS IS A TEST");
-        System.out.println(response.getBody());
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         UserView userView = response.getBody();
         assertNotNull(userView);
@@ -166,10 +162,6 @@ class AuthenticationApiTest {
         request.setEmail(email);
         request.setPassword(password);
         ResponseEntity<UserView> response = authenticationApi.login(request);
-        System.out.println(userRepo.findAll());
-        System.out.println("SIGNIN");
-        System.out.println("THIS IS A TEST");
-        System.out.println(response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -213,11 +205,6 @@ class AuthenticationApiTest {
         request.setPassword(password);
         ResponseEntity<UserView> response = authenticationApi.login(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    }
-
-    @AfterAll
-    static void tearDown() {
-        staticUserService.DeleteAllUsers();
     }
 
     
