@@ -7,6 +7,7 @@ import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList
 import AttendedEventsView from "@/views/Events/AttendedEventsView.vue";
 import EventsView from "@/views/Events/EventsView.vue";
 import DashboardEventsView from "@/views/Events/DashboardEventsView.vue";
+import AddEventView from "@/views/Events/AddEventView.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,6 +21,12 @@ const routes: Array<RouteRecordRaw> = [
     name: "signup",
     component: SignUpPage,
     meta: { public: true },
+  },
+  
+  {
+    path: "/events/create",
+    name: "AddEventView",
+    component: AddEventView,
   },
   {
     path: "/events/attended",

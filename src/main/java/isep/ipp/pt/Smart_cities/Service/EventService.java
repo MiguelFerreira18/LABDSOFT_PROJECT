@@ -25,8 +25,15 @@ public class EventService {
     private SubscribeRepo subscribeRepository;
 
     public Event createEvent(Event event) {
+        // Validate that creator is not null
+        if (event.getCreator() == null) {
+            throw new IllegalArgumentException("Event must have a creator.");
+        }
+    
+        // Save and return the event
         return eventRepository.save(event);
     }
+    
 
     public Optional<Event> getEventById(String id) {
         return eventRepository.findById(id);
