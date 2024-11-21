@@ -33,6 +33,7 @@ public class UserInfoController {
     ResponseEntity<UserInfoView> getUserInfo(@RequestParam final String email) {
         UserInfo userInfo = userInfoService.getUserInfoByEmail(email);
         UserInfoView userInfoView = new UserInfoView(userInfo.getBirthDate(), userInfo.getGender(), userInfo.getAddress(), userInfo.getCity(), userInfo.getCountry());
+        System.out.println(userInfoView.toString());
         return ResponseEntity.ok(userInfoView);
     }
 }

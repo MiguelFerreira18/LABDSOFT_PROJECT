@@ -23,8 +23,8 @@ public class UserInfoService {
     }
 
     public UserInfo getUserInfoByEmail(String email) {
-        System.out.println(email);
         User user = userRepo.findByEmail(email).get();
+
         return userInfoRepo.findByUserId(user.getId()).get();
     }
 }

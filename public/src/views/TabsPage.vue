@@ -3,6 +3,11 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
+        <ion-tab-button tab="profile" href="/tabs/tabProfile">
+          <ion-icon aria-hidden="true" :icon="logoIonic" />
+          <ion-label>Profile</ion-label>
+        </ion-tab-button>
+
         <ion-tab-button tab="tab1" href="/tabs/tab1">
           <ion-icon aria-hidden="true" :icon="triangle" />
           <ion-label>Tab 1</ion-label>
@@ -24,5 +29,5 @@
 
 <script setup lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { ellipse, square, triangle, logoIonic } from 'ionicons/icons';
 </script>

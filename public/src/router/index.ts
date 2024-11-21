@@ -37,6 +37,10 @@ const routes: Array<RouteRecordRaw> = [
         path: "tab3",
         component: () => import("@/views/Tab3Page.vue"),
       },
+      {
+        path: "tabProfile",
+        component: () => import("@/views/TabProfilePage.vue"),
+      },
     ],
   },
   { path: "/:pathMatch(.*)*", redirect: "/login" },
