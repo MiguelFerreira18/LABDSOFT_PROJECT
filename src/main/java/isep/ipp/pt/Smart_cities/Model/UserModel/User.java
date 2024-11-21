@@ -46,6 +46,7 @@ public class User implements UserDetails {
     private LocalDateTime lastLoginAt = LocalDateTime.now();
 
     public User() {
+        this.authorities = new HashSet<>();
 
     }
 

@@ -74,17 +74,17 @@ export default {
 
     };
 
-// Chama a função loadEvents quando o componente é montado
-      onMounted(loadEvents);
-  
-      return {
-        events,
-        getCardColor,
-        formatDate,
-      };
-    },
-  };
-  </script>
+    // Chama a função loadEvents quando o componente é montado
+    onMounted(loadEvents);
+
+    return {
+      events,
+      getCardColor,
+      formatDate,
+    };
+  },
+};
+</script>
 
 <style scoped>
 .title {
@@ -144,14 +144,12 @@ ion-card-title {
 }
 
 ion-card-subtitle {
-    font-size: 14px;
-    color: var(--ion-color-medium);
-  }
-  
-  .clickable-card {
-    text-decoration: none;
-    color: inherit;
-  }
-  
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
+.clickable-card {
+  text-decoration: none;
+  color: inherit;
+}
 </style>
-  

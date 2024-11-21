@@ -30,6 +30,7 @@ public class UserService implements UserDetailsService {
 
 
     public Optional<User> saveUser(User user) {
+        System.out.println("Saving user1: " + user);
 
         Optional<User> userOptional;
         try {
