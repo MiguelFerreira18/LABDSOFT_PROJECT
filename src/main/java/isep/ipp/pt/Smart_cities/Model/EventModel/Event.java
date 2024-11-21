@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +42,8 @@ public class Event {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> categories = new HashSet<>();
+    @Pattern(regexp = "^(Art|Sports|Volunteering|Social|Educational|Recreational|Political)$", message = "Invalid category, please choose one from: Art, Sports, Volunteering, Social, Educational, Recreational or Political")
+    private String category;
 
     @NotBlank(message = "Description is required")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
@@ -64,13 +65,13 @@ public class Event {
         this.description = description;
         this.creator = creator;
     }
-    
+    /* 
     public void addCategory(String category) {
         categories.add(category);
     }
     
     public void removeCategory(String category) {
         categories.remove(category);
-    }
+    }*/
 }
 
