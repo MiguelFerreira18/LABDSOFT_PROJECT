@@ -1,5 +1,6 @@
 import { apiConfig, apiKey } from "./config";
 import { Encrypt } from "./encryption";
+import { IsJWTExpired } from "./jwt";
 
 const { baseUrl } = apiConfig;
 
@@ -7,15 +8,16 @@ export async function SendRequest(
   path: string,
   method: string,
   data: Record<string, string> = {},
-  fieldsToEncrypt: string[] = [],
-  token = ""
+  fieldsToEncrypt: string[] = []
 ): Promise<Response> {
+  const token = localStorage.getItem("token") || "";
+
   const headers: Record<string, string> = {
     "Content-type": "application/json",
     Authorization: "",
   };
   headers["X-API-KEY"] = apiKey;
-  if (token !== "") {
+  if (token !== "" && !IsJWTExpired(token)) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
@@ -38,8 +40,11 @@ export async function SendRequest(
     headers: headers,
     mode: "cors",
     credentials: "include",
-    body: JSON.stringify(processedData),
   };
+
+  if (Object.keys(data).length > 0) {
+    options.body = JSON.stringify(processedData);
+  }
 
   const response = await fetch(`${baseUrl}${path}`, options);
 

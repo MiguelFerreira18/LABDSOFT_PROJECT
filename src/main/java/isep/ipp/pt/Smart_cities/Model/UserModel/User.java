@@ -4,20 +4,23 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
-@Entity
 @Setter
+@Builder
+@Entity
 @ToString
 public class User implements UserDetails {
 
@@ -33,13 +36,16 @@ public class User implements UserDetails {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
     private String name;
 
+    @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> authorities = new HashSet<>();
 
     private String password;
 
+    private LocalDateTime lastLoginAt = LocalDateTime.now();
 
     public User() {
+        this.authorities = new HashSet<>();
 
     }
 
@@ -49,15 +55,45 @@ public class User implements UserDetails {
         this.authorities = new HashSet<>();
     }
 
-    public User(String email, String password, Role role) {
+    public User(String email,String username, String password, Role role) {
         this.email = email;
+        this.name = username;
         this.password = password;
         this.authorities.add(role);
     }
+    public User(String email,String username, String password) {
+        this.email = email;
+        this.name = username;
+        this.password = password;
+        this.authorities = new HashSet<>();
+    }
+
+    public User(String id, String email, String name, String password) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = new HashSet<>();
+        this.password = password;
+    }
+
+    public User(String id, String email, String name, Set<Role> authorities, String password) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+    }
+
+    public User(String id, String email, String name, Set<Role> authorities, String password, LocalDateTime lastLoginAt) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+        this.lastLoginAt = lastLoginAt;
+    }
 
     public void setPassword(String password, PasswordEncoder encoder) {
-        // Verify the follows these conditions: at least 8 characters, one uppercase, one lowercase, one number and one special character
-
         if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
             this.password = encoder.encode(password);
         } else {
@@ -67,6 +103,7 @@ public class User implements UserDetails {
     public void addAuthority(Role role) {
         authorities.add(role);
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -101,5 +138,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @PrePersist
+    public void ensureId() {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
     }
 }

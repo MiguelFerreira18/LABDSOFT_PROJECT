@@ -3,6 +3,11 @@ import { RouteRecordRaw } from "vue-router";
 import TabsPage from "../views/TabsPage.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
+import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList.vue";
+import AttendedEventsView from "@/views/AttendedEventsView.vue";
+// @ts-expect-error Stupid damned typescript
+import EventsView from "@/views/EventsView.vue";
+import RewardsDashboard from "@/views/RewardsDashboard.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -18,8 +23,29 @@ const routes: Array<RouteRecordRaw> = [
     meta: { public: true },
   },
   {
+    path: "/events/attended",
+    name: "AttendedEvents",
+    component: AttendedEventsView,
+  },
+  {
+    path: "/event/EventDetail/:id",
+    name: "EventDetails",
+    component: RefactorAfterHavingEventsList,
+  },
+  {
+    path: "/events",
+    name: "Events",
+    component: EventsView,
+  },
+  {
+    path: "/rewards",
+    name: "Rewards",
+    component: RewardsDashboard,
+  },
+  {
     path: "/tabs/",
     component: TabsPage,
+    meta: { requiresAuth: true, roles: ["Admin", "User", "Institution"] },
     children: [
       {
         path: "",
@@ -52,8 +78,12 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
-  const isAuthenticated = token;
+  const isAuthenticated = Boolean(token);
+  const role = localStorage.getItem("role");
   if (to.meta.requiresAuth && !isAuthenticated) {
+    next("/login");
+    //@ts-expect-error includes might not exist on null
+  } else if (to.meta.roles && !to.meta.roles.includes(role)) {
     next("/login");
   } else {
     next();

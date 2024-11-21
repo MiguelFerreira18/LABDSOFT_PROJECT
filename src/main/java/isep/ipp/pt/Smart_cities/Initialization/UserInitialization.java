@@ -28,8 +28,21 @@ public class UserInitialization implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
+            User user = User.builder()
+                    .email("AnyNormalUser@gmail.com")
+                    .name("NormalUser")
+                    .password(passwordEncoder.encode("UserPassword$123"))
+                    .build();
+            user.addAuthority(new Role(Role.USER));
+            userRepository.save(user);
+        }
         if (userRepository.findByEmail("admin@smartcity.com").isEmpty()) {
-            User admin = new User("admin@smartcity.com", passwordEncoder.encode("AdminPassword$123"));
+            User admin = User.builder()
+                    .email("admin@smartcity.com")
+                    .name("NormalAdmin")
+                    .password(passwordEncoder.encode("AdminPassword$123"))
+                    .build();
             admin.addAuthority(new Role(Role.ADMIN));
             userRepository.save(admin);
 
@@ -44,20 +57,21 @@ public class UserInitialization implements CommandLineRunner {
 
         }
         if (userRepository.findByEmail("dev@smartcity.com").isEmpty()) {
-            User admin = new User("dev@smartcity.com", passwordEncoder.encode("DevPassword$123"));
-            admin.addAuthority(new Role(Role.ADMIN));
-            userRepository.save(admin);
-
-            User user = userRepository.findByEmail("dev@smartcity.com").get();
-
-            if (userInfoRepo.findByUserId(user.getId()).isEmpty()) {
-                UserInfo userInfo = new UserInfo(user.getId(), new Date(), "Female", "Rua 2", "Porto", "Portugal");
-                userInfoRepo.save(userInfo);
-            }
-
+            User devAdmin = User.builder()
+                    .email("dev@smartcity.com")
+                    .name("devUserAdmin")
+                    .password(passwordEncoder.encode("DevPassword$123"))
+                    .build();
+            devAdmin.addAuthority(new Role(Role.ADMIN));
+            userRepository.save(devAdmin);
         }
         if (institutionRepo.findByEmail("devInstitution@smartcity.com").isEmpty()) {
-            Institution institution = new Institution("devInstitution@smartcity.com",  passwordEncoder.encode("DevInstiPassword$123"));
+            Institution institution = Institution.builder()
+                    .email("devInstitution@smartcity.com")
+                    .name("devInstitution")
+                    .password(passwordEncoder.encode("DevPassword$123"))
+                    .rating(0)
+                    .build();
             institution.addAuthority(new Role(Role.INSTITUTION));
             institutionRepo.save(institution);
         }
