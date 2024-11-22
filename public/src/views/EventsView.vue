@@ -230,6 +230,7 @@ ion-card-header {
   padding: 10px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  
 }
 
 ion-card-content {
@@ -242,6 +243,8 @@ ion-card-title {
   text-transform: none;
   font-size: 20px;
   font-weight: bold;
+  color:aliceblue;
+  
 }
 
 ion-card-subtitle {
