@@ -48,7 +48,7 @@ public class EventInitialization implements CommandLineRunner {
             event1.setEndDate(java.time.LocalDate.of(2024, 12, 17));
             event1.setDescription("A conference on the latest tech innovations.");
             event1.setCreator(user);
-            event1.setCategories(Set.of("Conference", "Technology"));
+            event1.setCategory("Art");
             eventRepository.save(event1);
         }
 
@@ -61,7 +61,7 @@ public class EventInitialization implements CommandLineRunner {
             event2.setEndDate(java.time.LocalDate.of(2025, 6, 12));
             event2.setDescription("A 3-day music festival featuring international artists.");
             event2.setCreator(user);
-            event2.setCategories(Set.of("Music", "Festival"));
+            event2.setCategory("Sports");
             eventRepository.save(event2);
         }
 
@@ -74,7 +74,7 @@ public class EventInitialization implements CommandLineRunner {
             event3.setEndDate(java.time.LocalDate.of(2025, 11, 30));
             event3.setDescription("An exhibition showcasing modern art.");
             event3.setCreator(user);
-            event3.setCategories(Set.of("Art", "Exhibition"));
+            event3.setCategory( "Social");
             eventRepository.save(event3);
         }
 
@@ -87,7 +87,7 @@ public class EventInitialization implements CommandLineRunner {
             event4.setEndDate(java.time.LocalDate.of(2025, 3, 10));
             event4.setDescription("A football tournament with teams from across the globe.");
             event4.setCreator(user);
-            event4.setCategories(Set.of("Sports", "Competition"));
+            event4.setCategory("Volunteering");
             eventRepository.save(event4);
         }
 
@@ -100,7 +100,7 @@ public class EventInitialization implements CommandLineRunner {
             event5.setEndDate(java.time.LocalDate.of(2027, 8, 7));
             event5.setDescription("A bootcamp for learning Java programming.");
             event5.setCreator(user);
-            event5.setCategories(Set.of("Workshop", "Education"));
+            event5.setCategory("Educational");
             eventRepository.save(event5);
         }
 
@@ -113,7 +113,7 @@ public class EventInitialization implements CommandLineRunner {
             event6.setEndDate(java.time.LocalDate.of(2024, 12, 10));
             event6.setDescription("A networking event for entrepreneurs and investors.");
             event6.setCreator(user);
-            event6.setCategories(Set.of("Networking", "Business"));
+            event6.setCategory( "Recreational");
             eventRepository.save(event6);
         }
 
@@ -126,7 +126,7 @@ public class EventInitialization implements CommandLineRunner {
             event7.setEndDate(java.time.LocalDate.of(2024, 12, 16));
             event7.setDescription("A seminar on mental and physical health improvement.");
             event7.setCreator(user);
-            event7.setCategories(Set.of("Health", "Seminar"));
+            event7.setCategory("Political");
             eventRepository.save(event7);
         }
 
@@ -139,7 +139,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setEndDate(java.time.LocalDate.of(2025, 2, 16));
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
-            event8.setCategories(Set.of("Food", "Festival"));
+            event8.setCategory( "Sports");
             eventRepository.save(event8);
         }
 
@@ -152,7 +152,7 @@ public class EventInitialization implements CommandLineRunner {
             event9.setEndDate(java.time.LocalDate.of(2024, 12, 22));
             event9.setDescription("A charity run to raise funds for underprivileged children.");
             event9.setCreator(user);
-            event9.setCategories(Set.of("Charity", "Fundraising"));
+            event9.setCategory("Art");
             eventRepository.save(event9);
         }
 
@@ -165,7 +165,7 @@ public class EventInitialization implements CommandLineRunner {
             event10.setEndDate(java.time.LocalDate.of(2024, 11, 26));
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
-            event10.setCategories(Set.of("Innovation", "Startup"));
+            event10.setCategory("Educational");
             eventRepository.save(event10);
         }
     }
