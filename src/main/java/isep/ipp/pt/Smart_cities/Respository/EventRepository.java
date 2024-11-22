@@ -20,7 +20,7 @@ public interface EventRepository extends CrudRepository<Event, String> {
     @Query("SELECT e FROM Event e WHERE e.startDate >= CURRENT_DATE")
     public List<Event> findUpcomingEvents();
 
-    @Query("SELECT e FROM Event e WHERE :category MEMBER OF e.categories")
+    @Query("SELECT e FROM Event e WHERE e.category = ?1")
     public List<Event> findByCategory(String category);
 
     // Spring Data JPA provides findAll() by default, so no need for a custom query.
