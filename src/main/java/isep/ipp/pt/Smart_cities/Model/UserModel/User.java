@@ -43,6 +43,9 @@ public class User implements UserDetails {
 
     private String password;
 
+    @Builder.Default
+    private boolean hasPromotedEvent = false;
+
     private LocalDateTime lastLoginAt = LocalDateTime.now();
 
     public User() {
@@ -94,6 +97,17 @@ public class User implements UserDetails {
         this.lastLoginAt = lastLoginAt;
     }
 
+    public User(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+        this.hasPromotedEvent = hasPromotedEvent;
+        this.lastLoginAt = lastLoginAt;
+    }
+    
+
     public void setPassword(String password, PasswordEncoder encoder) {
         if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
             this.password = encoder.encode(password);
@@ -139,6 +153,21 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasPromotedEvent() {
+        return hasPromotedEvent;
+    }
+
+    public void promoteEvent() {
+        if (hasPromotedEvent) {
+            throw new RuntimeException("User already promoted a event");
+        }
+        this.hasPromotedEvent = true;
+    }
+
+    public void resetPromotedEvent() {
+        this.hasPromotedEvent = false;
     }
 
     @PrePersist

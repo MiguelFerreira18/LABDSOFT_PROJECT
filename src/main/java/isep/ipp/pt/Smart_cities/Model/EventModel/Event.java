@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,18 +56,23 @@ public class Event {
     @JoinColumn(name = "user_id", nullable = false)
     private User creator;
 
+    private LocalDateTime promotedUntil;
+
+
+
     public Event() {}
 
-    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator) {
+    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.creator = creator;
+        this.promotedUntil = null;
     }
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, Set<String> categories, String description, String imagePath, User creator) {
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, Set<String> categories, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -76,6 +82,7 @@ public class Event {
         this.description = description;
         this.imagePath = imagePath;
         this.creator = creator;
+        this.promotedUntil = null;
     }
 
     public void addCategory(String category) {
@@ -89,6 +96,10 @@ public class Event {
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
         return endDate.getMonthValue() == now.getMonthValue() && endDate.getYear() == now.getYear();
+    }
+
+    public boolean isPromoted() {
+        return promotedUntil != null && promotedUntil.isAfter(LocalDateTime.now());
     }
 }
 
