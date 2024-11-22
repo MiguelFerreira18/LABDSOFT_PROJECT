@@ -73,68 +73,40 @@
   </ion-content>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { fetchAllEvents } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
+import { categories, categoryColors } from '@/lib/categories'
+
+interface Event {
+  id: number;
+  title: string;
+  category: string;
+  startDate: string;
+  endDate: string;
+  creator: { name: string };
+  location: string;
+}
 
 export default {
   setup() {
-    const events = ref([]);
-    const categories = ref([
-      'Art',
-      'Sports',
-      'Volunteering',
-      'Social',
-      'Educational',
-      'Recreational',
-      'Political',
-    ]);
-    const selectedCategories = ref([]);
-    const dateLimit = ref(null);
-    const showDropdown = ref(false);
+    const events = ref<Event[]>([]); // Lista de eventos
+    const selectedCategories = ref<string[]>([]); // Categorias selecionadas pelo usuário
+    const dateLimit = ref<string | null>(null); // Limite de data escolhido
+    const showDropdown = ref(false); // Controle de visibilidade do dropdown
 
-    const categoryColors = {
-      Art: '#ff6f61',
-      Sports: '#4caf50',
-      Volunteering: '#ff9800',
-      Social: '#9c27b0',
-      Educational: '#2196f3',
-      Recreational: '#795548',
-      Political: '#f44336',
-    };
-
-    // Mock para eventos em caso de erro na API
-    const mockEvents = [
-      {
-        id: 1,
-        title: 'Art Event',
-        category: 'Art',
-        startDate: '2023-12-01',
-        endDate: '2023-12-31',
-        creator: { name: 'Alice' },
-        location: 'Gallery A',
-      },
-      {
-        id: 2,
-        title: 'Sports Event',
-        category: 'Sports',
-        startDate: '2023-11-01',
-        endDate: '2023-11-30',
-        creator: { name: 'Bob' },
-        location: 'Stadium B',
-      },
-    ];
-
+    // Função para carregar eventos da API
     const loadEvents = async () => {
       try {
         events.value = await fetchAllEvents();
       } catch (error) {
         console.error('Erro ao buscar eventos:', error);
-        events.value = mockEvents; // Usa dados mockados se falhar
+        events.value = []; // Caso de erro, deixa a lista vazia
       }
     };
 
+    // Computed para filtrar eventos com base nas categorias e data
     const filteredEvents = computed(() => {
       return events.value.filter((event) => {
         const isCategoryMatch =
@@ -148,11 +120,13 @@ export default {
       });
     });
 
+    // Alterna a exibição do dropdown
     const toggleDropdown = () => {
       showDropdown.value = !showDropdown.value;
     };
 
-    const toggleCategory = (category) => {
+    // Alterna a seleção de uma categoria
+    const toggleCategory = (category: string) => {
       const index = selectedCategories.value.indexOf(category);
       if (index >= 0) {
         selectedCategories.value.splice(index, 1);
@@ -161,11 +135,13 @@ export default {
       }
     };
 
+    // Limpa todos os filtros aplicados
     const clearFilters = () => {
       selectedCategories.value = [];
       dateLimit.value = null;
     };
 
+    // Chama a função de carregar eventos ao montar o componente
     onMounted(loadEvents);
 
     return {
@@ -184,6 +160,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>
