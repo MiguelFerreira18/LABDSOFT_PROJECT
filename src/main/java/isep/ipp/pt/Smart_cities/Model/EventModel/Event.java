@@ -66,27 +66,20 @@ public class Event {
         this.description = description;
         this.creator = creator;
     }
-    /* 
+   
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, Set<String> categories, String description, String imagePath, User creator) {
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator) {
         this.id = id;
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.categories = categories;
+        this.category = category;
         this.description = description;
         this.imagePath = imagePath;
         this.creator = creator;
     }
 
-    public void addCategory(String category) {
-        categories.add(category);
-    }
-    
-    public void removeCategory(String category) {
-        categories.remove(category);
-    }*/
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
