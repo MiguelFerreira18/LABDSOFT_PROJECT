@@ -205,22 +205,4 @@ public class AuthenticationApi {
         }
     }
 
-//    private Optional<SignUpRequest> decryptSignUpRequest(SignUpRequest encryptedData) {
-//        try {
-//            SignUpRequest decryptedRequest = new SignUpRequest();
-//            decryptedRequest.setName(encryptionUtil.decrypt(encryptedData.getName()).orElseThrow(() -> new Exception("Error decrypting name")));
-//            decryptedRequest.setEmail(encryptionUtil.decrypt(encryptedData.getEmail()).orElseThrow(() -> new Exception("Error decrypting email")));
-//            decryptedRequest.setPassword(encryptionUtil.decrypt(encryptedData.getPassword()).orElseThrow(() -> new Exception("Error decrypting password")));
-//            decryptedRequest.setRepeatPassword(encryptionUtil.decrypt(encryptedData.getRepeatPassword()).orElseThrow(() -> new Exception("Error decrypting repeat password")));
-//            decryptedRequest.setType(encryptedData.getType());
-//            return Optional.of(decryptedRequest);
-//
-//        } catch (Exception ex) {
-//            LOGGER.error("Error decrypting sign-up request", ex);
-//            return Optional.empty();
-//        }
-//    }
-
-
-
 }
