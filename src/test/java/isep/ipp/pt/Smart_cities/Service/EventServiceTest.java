@@ -1,8 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
-import isep.ipp.pt.Smart_cities.Model.Subscribe;
-import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +44,6 @@ class EventServiceTest {
                 .build();
 
 
-
     }
 
     @Test
@@ -61,6 +60,7 @@ class EventServiceTest {
         assertEquals(promotedEvent.getPromotedUntil(), LocalDateTime.now().plusDays(7));
         assertTrue(testUser.hasPromotedEvent());
     }
+
     @Test
     void testPromoteEvent_ShouldThrowException_WhenUserAlreadyPromoted() {
         String eventID = "event1";
@@ -74,9 +74,10 @@ class EventServiceTest {
                 () -> eventService.promoteEvent(eventID, userID));
 
         assertEquals("User already promoted a event", exception.getMessage());
-        verify(eventRepository,never()).save(any());
-        verify(userService,never()).saveUser(any());
+        verify(eventRepository, never()).save(any());
+        verify(userService, never()).saveUser(any());
     }
+
     @Test
     void testPromoteEvent_ShouldThrowException_WhenEventNotFound() {
         String eventID = "event1";
@@ -86,8 +87,30 @@ class EventServiceTest {
                 () -> eventService.promoteEvent(eventID, userID));
 
         assertEquals("Event not found", exception.getMessage());
-        verify(eventRepository,never()).save(any());
-        verify(userService,never()).saveUser(any());
+        verify(eventRepository, never()).save(any());
+        verify(userService, never()).saveUser(any());
+    }
+
+    @Test
+    void testGetPromotedEvents() {
+        String eventID = testEvent.getId();
+        String userID = "user1";
+        LocalDateTime local = LocalDateTime.now();
+        testEvent.setPromotedUntil(local);
+
+        when(eventRepository.findById(eventID)).thenReturn(Optional.of(testEvent));
+        when(userService.findById(userID)).thenReturn(testUser);
+        when(eventRepository.save(testEvent)).thenReturn(testEvent);
+        when(userService.saveUser(testUser)).thenReturn(Optional.of(testUser));
+        when(eventRepository.findPromotedEvents(any(LocalDateTime.class)))
+                .thenReturn(Collections.singletonList(testEvent));
+
+        eventService.promoteEvent(testEvent.getId(), "user1");
+
+        List<Event> promotedEvents = eventService.getPromotedEvents();
+
+        assertTrue(promotedEvents.size() == 1);
+        assertEquals(testEvent, promotedEvents.get(0));
     }
 
 
