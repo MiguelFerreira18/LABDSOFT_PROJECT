@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 @ToString
 public class User implements UserDetails {
@@ -27,23 +28,23 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    protected String id;
 
     @Column(unique = true)
     @Email
-    private String email;
+    protected String email;
 
     @Size(min = 3, max = 20)
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
-    private String name;
+    protected String name;
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> authorities = new HashSet<>();
+    protected Set<Role> authorities = new HashSet<>();
 
-    private String password;
+    protected String password;
 
-    private LocalDateTime lastLoginAt = LocalDateTime.now();
+    protected LocalDateTime lastLoginAt = LocalDateTime.now();
 
     public User() {
         this.authorities = new HashSet<>();
