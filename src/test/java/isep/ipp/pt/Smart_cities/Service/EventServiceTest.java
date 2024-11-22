@@ -50,6 +50,9 @@ class EventServiceTest {
     void testPromoteEvent_Success() {
         String eventID = "event1";
         String userID = "user1";
+
+        LocalDateTime beforeOperation = LocalDateTime.now();
+
         when(eventRepository.findById(eventID)).thenReturn(Optional.of(testEvent));
         when(userService.findById(userID)).thenReturn(testUser);
         when(eventRepository.save(testEvent)).thenReturn(testEvent);
@@ -57,7 +60,17 @@ class EventServiceTest {
 
         Event promotedEvent = eventService.promoteEvent(eventID, userID);
 
-        assertEquals(promotedEvent.getPromotedUntil(), LocalDateTime.now().plusDays(7));
+        // Capture the time after the operation
+        LocalDateTime afterOperation = LocalDateTime.now();
+
+        // Verify the promotion time is within the expected window
+        LocalDateTime promotedUntil = promotedEvent.getPromotedUntil();
+        assertTrue(
+                promotedUntil.isAfter(beforeOperation.plusDays(7).minusSeconds(1)) &&
+                        promotedUntil.isBefore(afterOperation.plusDays(7).plusSeconds(1)),
+                "Promotion time should be approximately 7 days from now"
+        );
+
         assertTrue(testUser.hasPromotedEvent());
     }
 
