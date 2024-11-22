@@ -1,6 +1,7 @@
 package isep.ipp.pt.Smart_cities.Authentication;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
+import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import isep.ipp.pt.Smart_cities.Service.UserService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +22,8 @@ class AuthenticationApiTest {
     private AuthenticationApi authenticationApi;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepo userRepo;
 
 
 
@@ -33,7 +36,7 @@ class AuthenticationApiTest {
 
     @ParameterizedTest
     @CsvSource({
-            "anyName, email@gmail.com, Password$123, Password$123,USER",
+            "NormalUser, AnyNormalUser1@gmail.com, Password$123, Password$123,USER",
             "goodname, myEmail@hotmail.com, IsAPassword%123, IsAPassword%123,USER",
             "nonya, businessEmail@business.pt, AnyNormalPassword@123, AnyNormalPassword@123,USER"
     })
@@ -202,11 +205,6 @@ class AuthenticationApiTest {
         request.setPassword(password);
         ResponseEntity<UserView> response = authenticationApi.login(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    }
-
-    @AfterAll
-    static void tearDown() {
-        staticUserService.DeleteAllUsers();
     }
 
     

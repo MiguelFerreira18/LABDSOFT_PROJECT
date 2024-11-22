@@ -42,6 +42,7 @@ public class Institution implements UserDetails {
     private float rating;
 
     public Institution() {
+        this.authorities = new HashSet<>();
     }
     public Institution(String email, String password) {
         this.email = email;

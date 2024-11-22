@@ -5,7 +5,9 @@ import LoginView from "@/views/LoginView.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
 import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList.vue";
 import AttendedEventsView from "@/views/AttendedEventsView.vue";
+// @ts-expect-error Stupid damned typescript
 import EventsView from "@/views/EventsView.vue";
+import RewardsDashboard from "@/views/RewardsDashboard.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -34,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/events",
     name: "Events",
     component: EventsView,
+  },
+  {
+    path: "/rewards",
+    name: "Rewards",
+    component: RewardsDashboard,
   },
   {
     path: "/tabs/",

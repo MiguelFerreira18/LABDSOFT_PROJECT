@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
-
+@Builder
 @Getter
 @Setter
 @ToString
@@ -66,6 +67,19 @@ public class Event {
         this.creator = creator;
     }
     /* 
+
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, Set<String> categories, String description, String imagePath, User creator) {
+        this.id = id;
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.categories = categories;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.creator = creator;
+    }
+
     public void addCategory(String category) {
         categories.add(category);
     }
@@ -73,5 +87,10 @@ public class Event {
     public void removeCategory(String category) {
         categories.remove(category);
     }*/
+
+    public Boolean isInCurrentMonth() {
+        LocalDate now = LocalDate.now();
+        return endDate.getMonthValue() == now.getMonthValue() && endDate.getYear() == now.getYear();
+    }
 }
 

@@ -13,20 +13,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
+    
     @Autowired
     public PasswordEncoder encoder;
 
     @Autowired
     public UserRepo userRepo;
+    
     @Autowired
     public InstitutionRepo institutionRepo;
 
 
     public Optional<User> saveUser(User user) {
+        System.out.println("Saving user1: " + user);
 
         Optional<User> userOptional;
         try {
@@ -43,6 +47,9 @@ public class UserService implements UserDetailsService {
         userRepo.deleteAll();
     }
 
+    public void updateUserLastLogin(String userEmail){
+        userRepo.updateUserLastLogin(userEmail, LocalDateTime.now());
+    }
 
     @Transactional
     @Override
@@ -68,6 +75,13 @@ public class UserService implements UserDetailsService {
 
     public User findUserByEmail(String email) {
         Optional<User> user = userRepo.findByEmail(email);
+        return user.orElse(null);
+    }
+
+    public User findById(String userId){
+
+        Optional<User> user = userRepo.findById(userId);
+
         return user.orElse(null);
     }
 }

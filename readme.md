@@ -207,3 +207,5 @@ http://localhost:9091/actuator/health
 - Test both FrontEnd(if we have tests) and Spring API
 - Send the FrontEndand api to docker hub
 - Create a release of there is a stable version
+
+just testing out stuff

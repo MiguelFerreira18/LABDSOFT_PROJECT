@@ -118,7 +118,7 @@ class SubscribeServiceTest {
         for (Event event : events) {
             Optional<Response> response = subscribeService.subscribe(u.getId(), event.getId());
             assertTrue(response.isPresent());
-            assertTrue(response.get().success());
+            assertEquals(201, response.get().statusCode());
         }
     }
 
@@ -131,7 +131,7 @@ class SubscribeServiceTest {
     void testSubscribeToAnEventWithUnkownUser(String userId, String eventId) {
         Optional<Response> response = subscribeService.subscribe(userId, eventId);
         assertTrue(response.isPresent());
-        assertFalse(response.get().success());
+        assertEquals(404, response.get().statusCode());
     }
 
     @ParameterizedTest
@@ -144,7 +144,7 @@ class SubscribeServiceTest {
         User u = userRepo.findByEmail(email).get();
         Optional<Response> response = subscribeService.subscribe(u.getId(), eventId);
         assertTrue(response.isPresent());
-        assertFalse(response.get().success());
+        assertEquals(404, response.get().statusCode());
     }
 
     //Unsub
@@ -152,7 +152,7 @@ class SubscribeServiceTest {
     void testUnsubscribeToEvent() {
         List<Response> subscribes = StreamSupport.stream(subscribeRepo.findAllSubscribedEventsFromUser("AnyNormalUser@gmail.com").spliterator(), false)
                 .map(subscribe -> subscribeService.unsubscribe(subscribe.getId()).get()).toList();
-        assertTrue(subscribes.stream().allMatch(Response::success));
+        assertTrue(subscribes.stream().allMatch(response -> response.statusCode() == 200));
         StreamSupport.stream(subscribeRepo.findAllSubscribedEventsFromUser("AnyNormalUser@gmail.com").spliterator(), false)
                 .forEach(subscribe -> assertEquals(SubscriptionStatus.UNSUBSCRIBED, subscribe.getSubscriptionStatus()));
     }
