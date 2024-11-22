@@ -113,5 +113,27 @@ class EventServiceTest {
         assertEquals(testEvent, promotedEvents.get(0));
     }
 
+    @Test
+    void testGetNonPromotedEvents() {
+        String eventID = testEvent.getId();
+        String userID = "user1";
+        LocalDateTime local = LocalDateTime.now();
+        testEvent.setPromotedUntil(local);
+
+        when(eventRepository.findById(eventID)).thenReturn(Optional.of(testEvent));
+        when(userService.findById(userID)).thenReturn(testUser);
+        when(eventRepository.save(testEvent)).thenReturn(testEvent);
+        when(userService.saveUser(testUser)).thenReturn(Optional.of(testUser));
+        when(eventRepository.findNonPromotedEvents(any(LocalDateTime.class)))
+                .thenReturn(Collections.singletonList(testEvent));
+
+        eventService.promoteEvent(testEvent.getId(), "user1");
+
+        List<Event> nonPromotedEvents = eventService.getNonPromotedEvents();
+
+        assertTrue(nonPromotedEvents.size() == 1);
+        assertEquals(testEvent, nonPromotedEvents.get(0));
+    }
+
 
 }
