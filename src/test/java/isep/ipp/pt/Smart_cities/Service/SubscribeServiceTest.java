@@ -189,7 +189,7 @@ class SubscribeServiceTest {
     void testGetAttendedEvents() {
 
         User u = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
-        Event event = new Event("AlreadyAttended", "AnyLocation", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription", u);
+        Event event = new Event("AlreadyAttended", "AnyLocation", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription", u, null);
         eventRepository.save(event);
         Event pastEvent = eventRepository.findByTitle("AlreadyAttended").get();
         pastEvent.setStartDate(LocalDate.now().minusDays(5));

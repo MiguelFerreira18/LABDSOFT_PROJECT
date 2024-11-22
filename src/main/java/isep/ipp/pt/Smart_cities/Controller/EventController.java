@@ -61,4 +61,19 @@ public class EventController {
         eventService.deleteAllEventsWithSubscriptions();
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/promote")
+    public ResponseEntity<Event> promoteEvent(@PathVariable String id, @RequestParam String userId) {
+        return ResponseEntity.ok(eventService.promoteEvent(id, userId));
+    }
+
+    @GetMapping("/promoted")
+    public ResponseEntity<List<Event>> getPromotedEvents() {
+        return ResponseEntity.ok(eventService.getPromotedEvents());
+    }
+
+    @GetMapping("/non-promoted")
+    public ResponseEntity<List<Event>> getNonPromotedEvents() {
+        return ResponseEntity.ok(eventService.getNonPromotedEvents());
+    }
 }
