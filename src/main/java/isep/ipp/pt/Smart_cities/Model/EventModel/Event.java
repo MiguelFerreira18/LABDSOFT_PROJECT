@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Model.EventModel;
 
+import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -100,4 +101,15 @@ public class Event {
         return promotedUntil != null && promotedUntil.isAfter(LocalDateTime.now());
     }
 
+    public EventRequestDTO toEventRequestDTO() {
+        return EventRequestDTO.builder()
+                .title(title)
+                .location(location)
+                .startDate(startDate)
+                .endDate(endDate)
+                .descrption(description)
+                .category(category)
+                .creatorID(creator.getId())
+                .build();
+    }
 }

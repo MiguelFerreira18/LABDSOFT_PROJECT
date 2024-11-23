@@ -72,7 +72,7 @@ class SubscribeServiceTest {
 
         List<Event> newEvents = List.of(event1, event2, event3);
         for (Event event : newEvents) {
-            eventService.createEvent(event);
+            eventService.createEvent(event.toEventRequestDTO());
         }
 
         List<Event> events = eventService.getAllEvents();

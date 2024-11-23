@@ -13,17 +13,14 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-@Entity
 public class EventSummary {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+
     private String id;
 
     private String title;
     private LocalDate date;
     private String location;
-    private int totalAttendees;
 
     // Constructor to initialize from an Event object
     public EventSummary(Event event) {
@@ -31,7 +28,6 @@ public class EventSummary {
         this.title = event.getTitle();
         this.date = event.getStartDate();  // Assuming date represents the start date
         this.location = event.getLocation();
-        this.totalAttendees = event.getAttendees().size(); // Directly retrieve the size of the attendees set
     }
 
     // Existing constructor (optional but useful for flexibility)
@@ -40,7 +36,6 @@ public class EventSummary {
         this.title = title;
         this.date = date;
         this.location = location;
-        this.totalAttendees = totalAttendees;
     }
     
     // Default constructor (required by JPA)
