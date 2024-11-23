@@ -25,6 +25,7 @@ onUnmounted(() => {
   console.log("onunmounted");
   newMap.removeMarkers(markerIds?.value as string[]);
 });
+
 /**
  * add markers to map using prop passed in to component
  * @param newMap 
@@ -41,6 +42,7 @@ const addSomeMarkers = async (newMap: GoogleMap) => {
   });
   markerIds.value = await newMap.addMarkers(markers);
 };
+
 /**
  * 
  */

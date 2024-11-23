@@ -82,10 +82,11 @@ function navigateToMap() {
 }
 
 // Handle location selected from map
-function handleLocationSelected({ latitude, longitude }: { latitude: number; longitude: number }) {
+function handleLocationSelected({ latitude, longitude, address }: { latitude: number; longitude: number; address: string }) {
   console.log(`Lat: ${latitude}, Lng: ${longitude}`);
   event.value.latitude = latitude;
   event.value.longitude = longitude;
+  event.value.location = address;
 }
 </script>
 

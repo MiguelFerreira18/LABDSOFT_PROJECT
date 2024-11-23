@@ -20,9 +20,8 @@
                 <div>{{ markerInfo?.title }}</div>
                 </ion-content>
             </ion-popover>
-            <span v-if="address"><strong>Address:</strong> {{ address }}</span>
+            <!-- <span v-if="address"><strong>Address:</strong> {{ address }}</span> -->
             <ion-button @click="selectLocation">Select this Location</ion-button>
-            <!-- <ion-button @click="fetchAddress">Fetch Address</ion-button> -->
         </ion-content>
     </ion-page>
 </template>
@@ -48,23 +47,24 @@ const longitude = ref<number | null>(null);
 const address = ref<string | null>(null);
 
 // sample data for the map
-const markerData = [
-  {
-    coordinate: { lat: 41.528919, lng: -8.622538 },
-    title: "title one",
-    snippet: "title one snippet content will be presented here",
-  },
-  {
-    coordinate: { lat: 41.529687, lng: -8.615438 },
-    title: "title two",
-    snippet: "title two snippet content will be presented here",
-  },
-  {
-    coordinate: { lat: 41.525909, lng: -8.622015 },
-    title: "title three",
-    snippet: "title three snippet content will be presented here",
-  },
-];
+// let markerData = [
+//   {
+//     coordinate: { lat: 41.528919, lng: -8.622538 },
+//     title: "title one",
+//     snippet: "title one snippet content will be presented here",
+//   },
+//   {
+//     coordinate: { lat: 41.529687, lng: -8.615438 },
+//     title: "title two",
+//     snippet: "title two snippet content will be presented here",
+//   },
+//   {
+//     coordinate: { lat: 41.525909, lng: -8.622015 },
+//     title: "title three",
+//     snippet: "title three snippet content will be presented here",
+//   },
+// ];
+
 const openModal = async (marker: any) => {
   const modal = await modalController.create({
     component: MarkerInfoWindow,
@@ -81,12 +81,6 @@ const openModal = async (marker: any) => {
   const { data, role } = await modal.onWillDismiss();
 };
 
-// const mapClicked = (data: { latitude: number; longitude: number }) => {
-//   console.log("Map clicked at:", data.latitude, data.longitude);
-//   latitude.value = data.latitude;
-//   longitude.value = data.longitude;
-// };
-
 const mapClicked = async (data: { latitude: number; longitude: number }) => {
   console.log('Map clicked at:', data.latitude, data.longitude);
   latitude.value = data.latitude;
@@ -97,6 +91,19 @@ const mapClicked = async (data: { latitude: number; longitude: number }) => {
   if (fetchedAddress) {
     address.value = fetchedAddress;
   }
+
+  // Update marker data with the selected location
+  updateMarkerData(data.latitude, data.longitude);
+};
+
+const updateMarkerData = (latitude: number, longitude: number, title: string = "Selected Location") => {
+  markerData = [
+    {
+      coordinate: { lat: latitude, lng: longitude },
+      title: title,
+      snippet: "This is your selected location",
+    },
+  ];
 };
 
 const getMarkerInfo = (marker: { latitude: number; longitude: number }) => {
@@ -106,9 +113,10 @@ const getMarkerInfo = (marker: { latitude: number; longitude: number }) => {
       m.coordinate.lng === marker.longitude
   )[0];
 };
+
 const markerClicked = (event: any) => {
   console.log(event);
-  // only use dialog in web since we doesnt show info window
+  // only use dialog in web
   if (!Capacitor.isNativePlatform()) {
     openModal(getMarkerInfo(event));
   }
@@ -117,11 +125,11 @@ const markerClicked = (event: any) => {
 //Submit the selected location
 const selectLocation = () => {
   console.log('Location selected:', latitude.value, longitude.value);
-  if (latitude.value && longitude.value) {
+  if (latitude.value && longitude.value && address.value) {
     const callback = locationState.onLocationSelected;
 
     if(callback) {
-      callback({ latitude: latitude.value, longitude: longitude.value });
+      callback({ latitude: latitude.value, longitude: longitude.value, address: address.value });
     } else {
       console.error('No callback function found.');
     }
@@ -146,7 +154,7 @@ async function fetchAddress(): Promise<string | null>  {
     const data = await response.json();
     if (data.status === 'OK' && data.results.length > 0) {
       console.log('Address:', data.results[0].formatted_address);
-      return data.results[0].formatted_address;
+      return data.results[0].formatted_address.split(",")[0].trim();
     } else {
       console.error('Geocoding API Error:', data);
       return 'Unable to fetch address';
