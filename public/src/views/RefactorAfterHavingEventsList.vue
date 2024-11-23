@@ -6,16 +6,16 @@
         </ion-card-header>
         <ion-list>
             <ion-item>
-                <ion-label>AnyCOntent Here</ion-label>
-                AnyItemCOntent
+                <ion-label>AnyContent Here</ion-label>
+                AnyItemContent
             </ion-item>
             <ion-item>
-                <ion-label>AnyCOntent2 Here</ion-label>
-                AnyItemCOntent2
+                <ion-label>AnyContent2 Here</ion-label>
+                AnyItemContent2
             </ion-item>
             <ion-item>
-                <ion-label>AnyCOntent3 Here</ion-label>
-                AnyItemCOntent3
+                <ion-label>AnyContent3 Here</ion-label>
+                AnyItemContent3
             </ion-item>
         </ion-list>
         <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
@@ -35,14 +35,13 @@
             Promote Event
         </ion-button>
     </ion-card>
-
 </template>
-
 
 <script setup lang="ts">
 import { SendRequest } from '@/lib/request';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { toastController } from '@ionic/vue';
 
 const isSubscribed = ref(false);
 const hasAttended = ref(false);
@@ -56,7 +55,6 @@ onMounted(async () => {
         hasAttended.value = true;
         isSubscribed.value = true;
         subbedEvent.value = data;
-
     }
     else if (response.ok && data.status === 'SUBSCRIBED') {
         subbedEvent.value = data;
@@ -77,6 +75,7 @@ async function handleSubscription() {
         subbedEvent.value = data;
     }
 }
+
 async function handleClaimReward() {
     if (hasAttended.value) return;
     const response = await SendRequest(`/api/rewards/claim/${localStorage.getItem('uuid')}/${route.params.id}`, 'POST');
@@ -84,6 +83,7 @@ async function handleClaimReward() {
         hasAttended.value = true;
     }
 }
+
 function hasAttendedAndEventAsPassed() {
     if (!subbedEvent.value?.event) return false;
     const event = subbedEvent.value.event;
@@ -92,12 +92,12 @@ function hasAttendedAndEventAsPassed() {
         const [year, month, day] = event.endDate;
         const endDate = new Date(year, month - 1, day);
         const hasPassedEndDate = new Date() > endDate;
-
         return hasPassedEndDate;
     }
 
     return false;
 }
+
 async function handleUnsubscribe() {
     if (!isSubscribed.value && hasAttended.value) return;
     if (subbedEvent.value === undefined) {
@@ -134,12 +134,27 @@ async function handlePromoteEvent() {
     );
 
     if (response.ok) {
-        console.log('Event promoted successfully!');
+
+        showToast('Event promoted successfully!', 'success');
     } else {
-        console.error('Failed to promote the event.');
+
+        showToast('You have already promoted this event.', 'danger');
     }
 }
 
+async function showToast(message: string, color: 'success' | 'danger') {
+    const toast = await toastController.create({
+        message: message,
+        duration: 2500,
+        position: 'top',
+        color: color,
+        icon: 'trophy-outline',
+    });
+
+    await toast.present();
+}
 </script>
 
-<style></style>
+<style>
+
+</style>
