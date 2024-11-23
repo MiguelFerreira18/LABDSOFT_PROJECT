@@ -17,6 +17,9 @@
 
 
 <script setup lang="ts">
+
+import { IonButton, IonContent, IonToast } from '@ionic/vue';
+import { toastController } from '@ionic/vue';
 import { SendRequest } from '@/lib/request';
 import { IsJWTExpired, ParseJwt, SaveJwtFieldsToLocaStorate } from '@/lib/jwt';
 import { ref } from 'vue';
@@ -32,10 +35,30 @@ async function login() {
     }
     try {
         const response = await SendRequest('/auth/public/login', 'POST', payload);
+        const user = await response.json();
         const authHeader = response.headers.get('authorization');
         if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
+
+            localStorage.setItem('userId', user.id);
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
             localStorage.setItem('token', authHeader);
+            
+            try {
+                const rewards = await dailyRewards({ id: user.id });
+
+                if(rewards.pointsEarned > 0) {
+                    await presentToast('top',`You earned ${rewards.pointsEarned} points for logging in!`);
+                }else{
+                    // await presentToast('bottom',`You have already claimed your daily rewards!`);
+                }
+
+                // Ensure to only fetch rewards once per login
+                localStorage.setItem('rewardsFetched', 'true');
+                
+            } catch (error) {
+                console.error('Error fetching daily rewards:', error);
+            }
+            
             router.push('/tabs/tab1');
         }
     } catch (error) {
@@ -52,6 +75,39 @@ function markTouched() {
     if (input) {
         input.classList.add('ion-touched');
     }
+}
+
+interface RewardsResponse {
+    points: number;
+    dailyStreakDays: number;
+    pointsEarned: number;
+}
+
+async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
+    try {
+
+    const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
+
+    const rewards: RewardsResponse = await res.json();
+    
+    return rewards as RewardsResponse;
+    } catch (error) {
+    console.error('Error in dailyRewards function:', error);
+    throw error; 
+    }
+}
+
+async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await toastController.create({
+    message: message,
+    duration: 2500,
+    position: position,
+    color: 'success', 
+    icon: 'trophy-outline', 
+    cssClass: 'reward-toast',
+    });
+    
+    await toast.present();
 }
 
 </script>

@@ -5,124 +5,64 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.Mod10Check;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
-public class Institution implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
-    @Column(unique = true)
-    @Email
-    private String email;
-
-    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
-    private String name;
-
-    @Builder.Default
-    @ElementCollection
-    private Set<Role> authorities = new HashSet<>();
-
-    private String password;
+public class Institution extends User  {
 
     @Min(value = 0, message = "Rating must be a positive number")
     @Max(value = 5, message = "Rating must be a number between 0 and 5")
     private float rating;
 
     public Institution() {
+        super();
     }
-    public Institution(String email, String password) {
-        this.email = email;
-        this.authorities = new HashSet<>();
-        this.password = password;
-        this.rating = 0;
-    }
-    public Institution(String email,String name, String password) {
-        this.email = email;
-        this.authorities = new HashSet<>();
-        this.password = password;
-        this.name = name;
-        this.rating = 0;
+
+    public Institution(float rating) {
+        this.rating = rating;
     }
 
     public Institution(String email, String password, float rating) {
-        this.email = email;
-        this.authorities = new HashSet<>();
-        this.password = password;
-        this.rating = rating;
-    }
-    public Institution(String uuid,String email,String name, String password, float rating) {
-        this.id = uuid;
-        this.email = email;
-        this.authorities = new HashSet<>();
-        this.password = password;
+        super(email, password);
         this.rating = rating;
     }
 
-    public Institution(String id, String email,String name ,Set<Role> authorities, String password, float rating) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-        this.authorities = authorities;
-        this.password = password;
+    public Institution(String email, String username, String password, Role role, float rating) {
+        super(email, username, password, role);
         this.rating = rating;
     }
 
-    public void setPassword(String password, PasswordEncoder encoder) {
-        if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
-            this.password = encoder.encode(password);
-        } else {
-            throw new IllegalArgumentException("Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character");
-        }
+    public Institution(String email, String username, String password, float rating) {
+        super(email, username, password);
+        this.rating = rating;
     }
 
-    public void addAuthority(Role role) {
-        authorities.add(role);
+    public Institution(String id, String email, String name, String password, float rating) {
+        super(id, email, name, password);
+        this.rating = rating;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+    public Institution(String id, String email, String name, Set<Role> authorities, String password, float rating) {
+        super(id, email, name, authorities, password);
+        this.rating = rating;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
+    public Institution(String id, String email, String name, Set<Role> authorities, String password, LocalDateTime lastLoginAt, float rating) {
+        super(id, email, name, authorities, password, lastLoginAt);
+        this.rating = rating;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
 }

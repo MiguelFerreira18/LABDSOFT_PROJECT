@@ -4,20 +4,23 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
-
-
+@Builder
 @Getter
 @Setter
 @ToString
@@ -44,8 +47,8 @@ public class Event {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> categories = new HashSet<>();
+    @Pattern(regexp = "^(Art|Sports|Volunteering|Social|Educational|Recreational|Political)$", message = "Invalid category, please choose one from: Art, Sports, Volunteering, Social, Educational, Recreational or Political")
+    private String category;
 
     @NotBlank(message = "Description is required")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
@@ -57,46 +60,44 @@ public class Event {
     @JoinColumn(name = "user_id", nullable = false)
     private User creator;
 
-     //Many-to-Many relationship with users as attendees
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(
-            name = "event_attendees",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> attendees = new HashSet<>();
+    private LocalDateTime promotedUntil;
 
-    public Event() {}
 
-    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator) {
+    public Event() {
+    }
+
+    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.creator = creator;
-         this.attendees = new HashSet<>(); // Initialize attendees to prevent NullPointerException
+        this.promotedUntil = null;
     }
 
-    public void addCategory(String category) {
-        categories.add(category);
+
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
+        this.id = id;
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.category = category;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.creator = creator;
+        this.promotedUntil = null;
     }
 
-    public void removeCategory(String category) {
-        categories.remove(category);
+
+    public Boolean isInCurrentMonth() {
+        LocalDate now = LocalDate.now();
+        return endDate.getMonthValue() == now.getMonthValue() && endDate.getYear() == now.getYear();
     }
 
-    public Collection<Object> getAttendees() {
-        return List.of(this.attendees.toArray());
+    public boolean isPromoted() {
+        return promotedUntil != null && promotedUntil.isAfter(LocalDateTime.now());
     }
-
-    public void addAttendee(User attendee) {
-        attendees.add(attendee);
-    }
-
-    public void removeAttendee(User attendee) {
-        attendees.remove(attendee);
-    }
-
 
 }

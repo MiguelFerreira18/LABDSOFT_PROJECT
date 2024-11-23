@@ -12,6 +12,7 @@
         </ion-toolbar>
       </ion-header>
 
+      <RewardsOverview />
       <ExploreContainer name="Tab 1 page" />
     </ion-content>
   </ion-page>
@@ -20,4 +21,5 @@
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
+import RewardsOverview from '@/components/RewardsOverview.vue';
 </script>
