@@ -3,17 +3,12 @@
     <h1 class="title">Events</h1>
 
     <!-- Barra Horizontal de Eventos Promovidos -->
-    <div v-if="promotedEvents.length" class="promoted-events-section">
+    <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
       <h2 class="subtitle">Promoted Events</h2>
       <div class="promoted-events-bar">
         <!-- Cartões de Eventos Promovidos -->
-        <router-link
-          v-for="event in promotedEvents"
-          :key="event.id"
-          :to="`/event/EventDetail/${event.id}`"
-          class="clickable-card"
-          :data-testid="'promoted-event-' + event.id"
-        >
+        <router-link v-for="event in filteredPromotedEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
+          class="clickable-card" :data-testid="'promoted-event-' + event.id">
           <ion-card>
             <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
               <ion-card-title>{{ event.title }}</ion-card-title>
@@ -53,12 +48,8 @@
     <!-- Dropdown com filtros de categoria e data -->
     <div v-if="showDropdown" class="dropdown-menu">
       <label for="category-limit">Filter by Category:</label>
-      <ion-button
-        v-for="category in categories"
-        :key="category"
-        @click="toggleCategory(category)"
-        :data-testid="'filter-' + category"
-      >
+      <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
+        :data-testid="'filter-' + category">
         {{ category }}
       </ion-button>
 
@@ -76,13 +67,8 @@
     <!-- Cartões de Eventos -->
     <div class="event-cards-container">
       <div class="event-cards">
-        <router-link
-          v-for="event in filteredNonPromotedEvents"
-          :key="event.id"
-          :to="`/event/EventDetail/${event.id}`"
-          class="clickable-card"
-          :data-testid="'event-' + event.id"
-        >
+        <router-link v-for="event in filteredNonPromotedEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
+          class="clickable-card" :data-testid="'event-' + event.id">
           <ion-card>
             <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
               <ion-card-title>{{ event.title }}</ion-card-title>
@@ -161,6 +147,20 @@ export default {
       });
     });
 
+    // Computed para filtrar eventos promovidos com base nas categorias e data
+    const filteredPromotedEvents = computed(() => {
+      return promotedEvents.value.filter((event) => {
+        const isCategoryMatch =
+          selectedCategories.value.length === 0 ||
+          selectedCategories.value.includes(event.category);
+
+        const isDateMatch =
+          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+
+        return isCategoryMatch && isDateMatch;
+      });
+    });
+
     // Alterna a exibição do dropdown
     const toggleDropdown = () => {
       showDropdown.value = !showDropdown.value;
@@ -195,6 +195,7 @@ export default {
       selectedCategories,
       dateLimit,
       filteredNonPromotedEvents,
+      filteredPromotedEvents, // Incluindo a lista filtrada de eventos promovidos
       toggleCategory,
       toggleDropdown,
       showDropdown,
@@ -223,16 +224,20 @@ export default {
 .promoted-events-bar {
   display: flex;
   overflow-x: auto;
-  gap: 16px; /* Espaço entre os cartões */
+  gap: 16px;
+  /* Espaço entre os cartões */
   margin-top: 10px;
 }
 
 .promoted-events-bar .clickable-card {
-  width: 250px; /* Largura fixa igual aos cards abaixo */
-  height: 100%; /* Altura fixa para os cartões */
+  width: 250px;
+  /* Largura fixa igual aos cards abaixo */
+  height: 100%;
+  /* Altura fixa para os cartões */
   display: flex;
   flex-direction: column;
-  flex-shrink: 0; /* Impede que os cartões se encolham ao exceder a largura da barra */
+  flex-shrink: 0;
+  /* Impede que os cartões se encolham ao exceder a largura da barra */
 }
 
 .event-cards-container {
@@ -250,7 +255,8 @@ export default {
 ion-card {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 100%; /* Garantir que a altura do card seja 100% do seu container */
+  height: 100%;
+  /* Garantir que a altura do card seja 100% do seu container */
 }
 
 ion-card-header {
@@ -283,7 +289,8 @@ ion-card-subtitle {
   color: inherit;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Garantir que o card ocupe toda a altura disponível */
+  height: 100%;
+  /* Garantir que o card ocupe toda a altura disponível */
 }
 
 .dropdown-menu {
