@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Controller;
 
+import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
@@ -26,37 +27,10 @@ public class EventController {
     private UserService userService;
 
    @PostMapping
-public ResponseEntity<Event> createEvent(@RequestBody Map<String, Object> requestData) {
+public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
     try {
-        // Extract and validate fields from the request
-        String title = (String) requestData.get("title");
-        String location = (String) requestData.get("location");
-        LocalDate startDate = LocalDate.parse((String) requestData.get("startDate"));
-        LocalDate endDate = LocalDate.parse((String) requestData.get("endDate"));
-        String description = (String) requestData.get("description");
-        String category = (String) requestData.get("category");
-
-        // Fetch the user from the authenticatedUserDetails
-        User creator = null;
-        
-            creator =userService.findUserByEmail("admin@smartcity.com");
-        
-        
-
-        // Create a new Event object
-        Event event = new Event();
-        event.setTitle(title);
-        event.setLocation(location);
-        event.setStartDate(startDate);
-        event.setEndDate(endDate);
-        event.setDescription(description);
-        event.setCreator(creator); // Set the creator
-        event.addCategory(category); // Add category
-
-        // Save and return the created event
-        return ResponseEntity.ok(eventService.createEvent(event));
+        return ResponseEntity.ok(eventService.createEvent(createEventRequestDto));
     } catch (Exception e) {
-        // Handle errors gracefully
         return ResponseEntity.badRequest().body(null);
     }
 }
