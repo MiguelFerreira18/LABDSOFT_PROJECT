@@ -1,42 +1,36 @@
 <template>
-  <div>
-    <h1>Create New Event</h1>
+  <ion-page>
+    <ion-header>
+        <ion-toolbar>
+            <ion-title>Create New Event</ion-title>
+        </ion-toolbar>
+    </ion-header>
+  <ion-content :fullscreen="true" class="ion-padding">
     <form @submit.prevent="addEvent">
-      <div>
-        <label for="title">Title</label>
-        <input type="text" id="title" v-model="event.title" required />
-      </div>
-      <div>
-        <label for="location">Location</label>
-        <input type="text" id="location" v-model="event.location" required />
-      </div>
-      <div>
-        <label for="startDate">Start Date</label>
-        <input type="date" id="startDate" v-model="event.startDate" required />
-      </div>
-      <div>
-        <label for="endDate">End Date</label>
-        <input type="date" id="endDate" v-model="event.endDate" required />
-      </div>
-      <div>
-        <label for="description">Description</label>
-        <textarea id="description" v-model="event.description" required></textarea>
-      </div>
-      <div>
-        <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
-          :key="'category-select'">
-          <ion-select-option v-for="category in categories" :value="category" :key="category">
-            {{ category }}
-          </ion-select-option>
-        </ion-select>
-      </div>
-      <button type="submit">Create Event</button>
-    </form>
-
-    <div v-if="errorMessage" class="error-message">
+      <ion-input label="Title" fill="outline" label-placement="floating" placeholder="Run Club" id="title" v-model="event.title" required></ion-input>
+      <br />
+      <ion-input label="Location" fill="outline" label-placement="floating" placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
+      <br />
+      <ion-input label="Start Date" fill="outline" label-placement="floating" type="date" id="startDate" v-model="event.startDate" required></ion-input>
+      <br />
+      <ion-input label="End Date" fill="outline" label-placement="floating" type="date" id="endDate" v-model="event.endDate" required></ion-input>
+      <br />
+      <ion-textarea label="Description" fill="outline" label-placement="floating" placeholder="Join us for a run around Central Park!" id="description" v-model="event.description" required></ion-textarea>
+      <br />
+      <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
+        :key="'category-select'">
+        <ion-select-option v-for="category in categories" :value="category" :key="category">
+          {{ category }}
+        </ion-select-option>
+      </ion-select>
+      <br />
+      <ion-button type="submit">Create Event</ion-button>
+  </form>
+  <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
     </div>
-  </div>
+  </ion-content>
+</ion-page>
 </template>
 
 <script setup lang="ts">
@@ -44,6 +38,7 @@ import { ref } from "vue";
 import router from '@/router';
 import { SendRequest } from "@/lib/request";
 import { categories } from "@/lib/categories";
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonSelect, IonButton, IonSelectOption, IonTextarea } from '@ionic/vue';
 const event = ref<any>({});
 const fetchedEvent = ref<any>({});
 const errorMessage = ref("")
