@@ -13,11 +13,7 @@ import lombok.ToString;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
@@ -107,7 +103,7 @@ public class Event {
                 .location(location)
                 .startDate(startDate)
                 .endDate(endDate)
-                .descrption(description)
+                .description(description)
                 .category(category)
                 .creatorID(creator.getId())
                 .build();

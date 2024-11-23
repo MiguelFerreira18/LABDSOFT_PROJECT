@@ -8,7 +8,6 @@ import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
-import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
 
 @Service
@@ -44,7 +42,7 @@ public class EventService {
                 .location(eventRequestDTO.getLocation())
                 .startDate(eventRequestDTO.getStartDate())
                 .endDate(eventRequestDTO.getEndDate())
-                .description(eventRequestDTO.getDescrption())
+                .description(eventRequestDTO.getDescription())
                 .category(eventRequestDTO.getCategory())
                 .build();
 

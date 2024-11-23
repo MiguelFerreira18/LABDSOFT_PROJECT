@@ -23,8 +23,12 @@
         <textarea id="description" v-model="event.description" required></textarea>
       </div>
       <div>
-        <label for="categories">Categories (comma separated)</label>
-        <input type="text" id="categories" v-model="event.categories" />
+        <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" v-model="event.category"
+          :key="'category-select'">
+          <ion-select-option v-for="category in categories" :value="category" :key="category">
+            {{ category }}
+          </ion-select-option>
+        </ion-select>
       </div>
       <button type="submit">Create Event</button>
     </form>
@@ -35,55 +39,50 @@
   </div>
 </template>
 
-<script>
-import { createEvent } from "@/lib/eventRequests"; // Import the createEvent function
+<script setup lang="ts">
+import { ref } from "vue";
+import router from '@/router';
+import { SendRequest } from "@/lib/request";
+import { categories } from "@/lib/categories";
+const event = ref<any>({});
+const fetchedEvent = ref<any>({});
+const errorMessage = ref("")
 
-export default {
-  data() {
-    return {
-      event: {
-        title: "",
-        location: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-        categories: "",
-      },
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async addEvent() {
-      try {
-        // Prepare event data
-        const eventData = {
-          title: this.event.title,
-          location: this.event.location,
-          startDate: this.event.startDate,
-          endDate: this.event.endDate,
-          description: this.event.description,
-          categories: this.event.categories.split(",").map((cat) => cat.trim()), // Convert string to array
-        };
+async function addEvent() {
+  try {
+    const payload = {
+      title: event.value.title,
+      location: event.value.location,
+      startDate: event.value.startDate,
+      endDate: event.value.endDate,
+      description: event.value.description,
+      category: event.value.category,
+      creatorID: localStorage.getItem('uuid') || ''
 
-        // Call the createEvent function
-        const createdEvent = await createEvent(eventData);
-        this.$router.push(`/event/${createdEvent.id}`); // Redirect to the event details page after successful creation
-      } catch (error) {
-        this.errorMessage = "Failed to create event. Please try again.";
-      }
-    },
-  },
-};
+    }
+    const response = await SendRequest('/api/events', 'POST', payload);
+    const data = await response.json();
+    fetchedEvent.value = data;
+    if (response.ok) {
+      router.push(`/event/EventDetail/${fetchedEvent.value.id}`);
+    } else {
+      errorMessage.value = "Failed to create event. Please try again.";
+    }
+  } catch (error) {
+    errorMessage.value = "Failed to create event. Please try again.";
+  }
+}
 </script>
 
 <style scoped>
-/* Optional: Add some basic styling */
 form {
   max-width: 600px;
   margin: 0 auto;
 }
 
-input, textarea, button {
+input,
+textarea,
+button {
   display: block;
   width: 100%;
   margin-bottom: 10px;
@@ -96,4 +95,3 @@ input, textarea, button {
   font-size: 14px;
 }
 </style>
-

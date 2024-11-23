@@ -4,13 +4,11 @@ import TabsPage from "../views/TabsPage.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
 import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList.vue";
-import AttendedEventsView from "@/views/AttendedEventsView.vue";
-import EventsView from "@/views/EventsView.vue";
-import RewardsDashboard from "@/views/RewardsDashboard.vue";
 import AttendedEventsView from "@/views/Events/AttendedEventsView.vue";
 import EventsView from "@/views/Events/EventsView.vue";
+import RewardsDashboard from "@/views/RewardsDashboard.vue";
 import DashboardEventsView from "@/views/Events/DashboardEventsView.vue";
-import AddEventView from "@/views/Events/AddEventView.vue"
+import AddEventView from "@/views/Events/AddEventView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -25,7 +23,6 @@ const routes: Array<RouteRecordRaw> = [
     component: SignUpPage,
     meta: { public: true },
   },
-
   {
     path: "/events/create",
     name: "AddEventView",
