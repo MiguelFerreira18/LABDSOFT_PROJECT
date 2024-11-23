@@ -63,6 +63,15 @@ public class Event {
     public Event() {
     }
 
+    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator) {
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.creator = creator;
+    }
+
     public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
         this.title = title;
         this.location = location;

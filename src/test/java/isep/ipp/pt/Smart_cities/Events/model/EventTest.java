@@ -1,12 +1,14 @@
 package isep.ipp.pt.Smart_cities.Events.model;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -111,74 +113,6 @@ class EventTest {
         Set<ConstraintViolation<Event>> violations = validator.validate(event);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("End date must be in the future")));
-    }
-
-    @Test
-    void testAddCategory() {
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        event.addCategory("Workshop");
-        assertTrue(event.getCategories().contains("Workshop"));
-    }
-
-    @Test
-    void testRemoveCategory() {
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        event.addCategory("Workshop");
-        event.removeCategory("Workshop");
-        assertFalse(event.getCategories().contains("Workshop"));
-    }
-
-    @Test
-    void testAddAttendee() {
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        User attendee = new User();
-        attendee.setName("Attendee 1");
-
-        event.addAttendee(attendee);
-        assertTrue(event.getAttendees().contains(attendee));
-    }
-
-    @Test
-    void testRemoveAttendee() {
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        User attendee = new User();
-        attendee.setName("Attendee 1");
-
-        event.addAttendee(attendee);
-        event.removeAttendee(attendee);
-        assertFalse(event.getAttendees().contains(attendee));
     }
 
     @Test

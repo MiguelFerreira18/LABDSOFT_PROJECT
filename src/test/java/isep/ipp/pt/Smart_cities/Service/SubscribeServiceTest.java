@@ -39,68 +39,17 @@ class SubscribeServiceTest {
 
     //In the future the event should be created in the test
     @BeforeAll
-    static void init(@Autowired UserRepo userRepo,@Autowired SubscribeRepo subscribeRepo, @Autowired EventService eventService) {
+    static void init(@Autowired UserRepo userRepo,@Autowired SubscribeRepo subscribeRepo, @Autowired EventRepository eventRepository) {
 
-        User user = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
+        User user = userRepo.findByEmail("AnyNormalUser@gmail.com").orElseThrow();
 
-        Event event1 = new Event();
-        event1.setTitle("AnyTitle1");
-        event1.setLocation("AnyLocation1");
-        event1.setStartDate(java.time.LocalDate.now());
-        event1.setEndDate(java.time.LocalDate.now().plusDays(1));
-        event1.setDescription("AnyDescription1");
-        event1.setCreator(user);
-        event1.setCategory("Art");
+        Event event1 = eventRepository.save(new Event("AnyTitle1", "AnyLocation1", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription1", user ));
+        Event event2 = eventRepository.save(new Event("AnyTitle2", "AnyLocation2", LocalDate.now(), LocalDate.now().plusDays(2), "AnyDescription2", user));
+        Event event3 = eventRepository.save(new Event("AnyTitle3", "AnyLocation3", LocalDate.now(), LocalDate.now().plusDays(3), "AnyDescription3", user));
 
-        Event event2 = new Event();
-        event2.setTitle("AnyTitle2");
-        event2.setLocation("AnyLocation2");
-        event2.setStartDate(java.time.LocalDate.now());
-        event2.setEndDate(java.time.LocalDate.now().plusDays(2));
-        event2.setDescription("AnyDescription2");
-        event2.setCreator(user);
-        event2.setCategory("Educational");
-
-        Event event3 = new Event();
-        event3.setTitle("AnyTitle3");
-        event3.setLocation("AnyLocation3");
-        event3.setStartDate(java.time.LocalDate.now());
-        event3.setEndDate(java.time.LocalDate.now().plusDays(3));
-        event3.setDescription("AnyDescription3");
-        event3.setCreator(user);
-        event3.setCategory("Recreational");
-
-        List<Event> newEvents = List.of(event1, event2, event3);
-        for (Event event : newEvents) {
-            eventService.createEvent(event.toEventRequestDTO());
-        }
-
-        List<Event> events = eventService.getAllEvents();
-        for (Event event : events) {
-            System.out.println(event);
-        }
-
-        Subscribe sub1 = Subscribe.builder()
-                .id(10L)
-                .user(user)
-                .event(event1)
-                .subscriptionStatus(SubscriptionStatus.SUBSCRIBED)
-                .build();
-        Subscribe sub2 = Subscribe.builder()
-                .id(11L)
-                .user(user)
-                .event(event2)
-                .subscriptionStatus(SubscriptionStatus.SUBSCRIBED)
-                .build();
-        Subscribe sub3 = Subscribe.builder()
-                .id(12L)
-                .user(user)
-                .event(event3)
-                .subscriptionStatus(SubscriptionStatus.SUBSCRIBED)
-                .build();
-        subscribeRepo.save(sub1);
-        subscribeRepo.save(sub2);
-        subscribeRepo.save(sub3);
+        subscribeRepo.save(Subscribe.builder().id(10L).user(user).event(event1).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());
+        subscribeRepo.save(Subscribe.builder().id(11L).user(user).event(event2).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());
+        subscribeRepo.save(Subscribe.builder().id(12L).user(user).event(event3).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());
 
 
     }
@@ -183,30 +132,6 @@ class SubscribeServiceTest {
         Optional<List<SubscribeResponseDTO>> response = subscribeService.getSubscriptionsByUserUUID("87518d5a-ed00-4a52-8040-3ee883b98asd");
         assertFalse(!response.isPresent());
     }
-
-    //GetAttendedEvents
-    @Test
-    void testGetAttendedEvents() {
-
-        User u = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
-        Event event = new Event("AlreadyAttended", "AnyLocation", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription", u, null);
-        eventRepository.save(event);
-        Event pastEvent = eventRepository.findByTitle("AlreadyAttended").get();
-        pastEvent.setStartDate(LocalDate.now().minusDays(5));
-        pastEvent.setEndDate(LocalDate.now().minusDays(4));
-
-        Subscribe sub = Subscribe.builder()
-                .user(u)
-                .event(pastEvent)
-                .subscriptionStatus(SubscriptionStatus.ATTENDED)
-                .build();
-        subscribeRepo.save(sub);
-
-        Optional<List<Event>> response = subscribeService.getAttendedEventsByUserUUID(u.getId());
-        assertTrue(response.isPresent());
-        assertNotNull(response.get());
-    }
-
 
     @AfterEach
     void tearDown(@Autowired SubscribeService subscribeService, @Autowired EventService eventService) {

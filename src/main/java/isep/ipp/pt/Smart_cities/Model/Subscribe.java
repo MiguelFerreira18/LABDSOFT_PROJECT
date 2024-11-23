@@ -23,7 +23,7 @@ public class Subscribe {
     @ManyToOne
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
     private int code;
