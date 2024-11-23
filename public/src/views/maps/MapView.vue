@@ -20,7 +20,9 @@
                 <div>{{ markerInfo?.title }}</div>
                 </ion-content>
             </ion-popover>
+            <span v-if="address"><strong>Address:</strong> {{ address }}</span>
             <ion-button @click="selectLocation">Select this Location</ion-button>
+            <!-- <ion-button @click="fetchAddress">Fetch Address</ion-button> -->
         </ion-content>
     </ion-page>
 </template>
@@ -43,6 +45,7 @@ const markerInfo = ref<any>();
 const markerIsOpen = ref<boolean>(false);
 const latitude = ref<number | null>(null);
 const longitude = ref<number | null>(null);
+const address = ref<string | null>(null);
 
 // sample data for the map
 const markerData = [
@@ -78,10 +81,22 @@ const openModal = async (marker: any) => {
   const { data, role } = await modal.onWillDismiss();
 };
 
-const mapClicked = (data: { latitude: number; longitude: number }) => {
-  console.log("Map clicked at:", data.latitude, data.longitude);
+// const mapClicked = (data: { latitude: number; longitude: number }) => {
+//   console.log("Map clicked at:", data.latitude, data.longitude);
+//   latitude.value = data.latitude;
+//   longitude.value = data.longitude;
+// };
+
+const mapClicked = async (data: { latitude: number; longitude: number }) => {
+  console.log('Map clicked at:', data.latitude, data.longitude);
   latitude.value = data.latitude;
   longitude.value = data.longitude;
+
+  // Fetch the address after updating latitude and longitude
+  const fetchedAddress = await fetchAddress();
+  if (fetchedAddress) {
+    address.value = fetchedAddress;
+  }
 };
 
 const getMarkerInfo = (marker: { latitude: number; longitude: number }) => {
@@ -116,6 +131,31 @@ const selectLocation = () => {
     console.error('No location selected.');
   }
 };
+
+async function fetchAddress(): Promise<string | null>  {
+  
+  if (latitude.value === null || longitude.value === null) {
+    console.error('Latitude and Longitude are required to fetch the address.');
+    return null;
+  }
+
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude.value},${longitude.value}&result_type=administrative_area_level_2&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.status === 'OK' && data.results.length > 0) {
+      console.log('Address:', data.results[0].formatted_address);
+      return data.results[0].formatted_address;
+    } else {
+      console.error('Geocoding API Error:', data);
+      return 'Unable to fetch address';
+    }
+  } catch (error) {
+    console.error('Error fetching Geocoding data:', error);
+    return 'Error fetching address';
+  }
+}
 </script>
 
 <style>
