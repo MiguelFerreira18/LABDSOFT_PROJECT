@@ -54,6 +54,12 @@ public class SubscribeController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/event/{userId}")
+    public ResponseEntity<List<Event>> getSubscribedEventsByUserId(@PathVariable @Valid String userId) {
+        return subscribeService.getSubscribedEventsByUserUUID(userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @GetMapping("/isSubscribed/{uuid}/{eventId}")
     public ResponseEntity<Response> getSubscription(@PathVariable @Valid String uuid, @PathVariable @Valid String eventId) {

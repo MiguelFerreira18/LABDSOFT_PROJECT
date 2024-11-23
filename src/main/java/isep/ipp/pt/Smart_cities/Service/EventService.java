@@ -92,14 +92,6 @@ public class EventService {
         return events.stream().map(EventSummary::new).collect(Collectors.toList());
     }
 
-//    // New method to get the total attendees for a specific event
-//    public int getTotalAttendees(String eventId) {
-//        return eventRepository.findById(eventId)
-//                .map(event -> event.getAttendees().size())
-//                .orElse(0);
-//    }
-
-
     public Event getEventDetails(String eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
@@ -140,11 +132,12 @@ public class EventService {
 
 
 
-    public List<EventSummary> generateCurrentEventSummaries() {
-            List<Event> currentEvents = eventRepository.findAll(); // Fetch all events
+    public List<EventSummary> generateCurrentEventSummaries(String userId) {
+            List<Event> currentEvents = eventRepository.findAll().stream().filter(event -> event.getCreator().getId().equals(userId)).toList(); // Fetch all events
+        System.out.println(currentEvents);
             return currentEvents.stream()
-                    .map(EventSummary::new) // Convert each Event to an EventSummary
-                    .collect(Collectors.toList());
+                    .map(EventSummary::new)
+                    .toList();
     }
 
 

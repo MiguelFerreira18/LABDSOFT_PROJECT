@@ -108,6 +108,13 @@ public class SubscribeService {
                 .map(Subscribe::getEvent)
                 .toList());
     }
+    public Optional<List<Event>> getSubscribedEventsByUserUUID(String uuid) {
+        return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
+                .map(Subscribe::getEvent)
+                .toList());
+    }
 
     public Optional<Response> isSubscribed(String uuid, String eventId) {
         Optional<Subscribe> subscribe = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
