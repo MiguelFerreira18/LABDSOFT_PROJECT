@@ -30,6 +30,10 @@
             color="danger">
             Unsubscribe
         </ion-button>
+        <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear"
+            shape="round" color="primary">
+            Promote Event
+        </ion-button>
     </ion-card>
 
 </template>
@@ -37,13 +41,14 @@
 
 <script setup lang="ts">
 import { SendRequest } from '@/lib/request';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const isSubscribed = ref(false);
 const hasAttended = ref(false);
 const subbedEvent = ref<any>({})
 const route = useRoute();
+const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 
 onMounted(async () => {
     const { data, response } = await getIsSubscribed();
@@ -113,6 +118,28 @@ async function getIsSubscribed() {
     const { data } = await response.json();
     return { data, response };
 }
+
+async function handlePromoteEvent() {
+    const userId = localStorage.getItem('uuid');
+    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+
+    if (!userId || !eventId) {
+        console.error('Missing userId or eventId.');
+        return;
+    }
+
+    const response = await SendRequest(
+        `/api/events/${eventId}/promote?userId=${userId}`,
+        'POST'
+    );
+
+    if (response.ok) {
+        console.log('Event promoted successfully!');
+    } else {
+        console.error('Failed to promote the event.');
+    }
+}
+
 </script>
 
 <style></style>

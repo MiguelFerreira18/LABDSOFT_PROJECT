@@ -4,11 +4,13 @@ import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
 import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,11 @@ public class EventService {
 
     @Autowired
     private SubscribeRepo subscribeRepository;
+
+    @Autowired
+    private UserService userService;
+
+
 
     public Event createEvent(Event event) {
         return eventRepository.save(event);
@@ -61,5 +68,32 @@ public class EventService {
         subscribeRepository.deleteAll();
 
         eventRepository.deleteAll();
+    }
+
+    public Event promoteEvent(String eventId, String userId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+    
+        User user = userService.findById(userId);
+    
+        if (user.hasPromotedEvent()) {
+            throw new RuntimeException("User already promoted a event");
+        }
+
+        event.setPromotedUntil(LocalDateTime.now().plusDays(7));
+
+        user.promoteEvent();
+    
+        eventRepository.save(event);
+        userService.saveUser(user);
+    
+        return event;
+    }
+    public List<Event> getPromotedEvents() {
+        return eventRepository.findPromotedEvents(LocalDateTime.now());
+    }
+
+    public List<Event> getNonPromotedEvents() {
+        return eventRepository.findNonPromotedEvents(LocalDateTime.now());
     }
 }

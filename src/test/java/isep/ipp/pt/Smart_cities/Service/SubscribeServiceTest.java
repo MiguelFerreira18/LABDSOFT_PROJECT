@@ -50,7 +50,7 @@ class SubscribeServiceTest {
         event1.setEndDate(java.time.LocalDate.now().plusDays(1));
         event1.setDescription("AnyDescription1");
         event1.setCreator(user);
-        event1.setCategories(Set.of("AnyCategory1"));
+        event1.setCategory("Art");
 
         Event event2 = new Event();
         event2.setTitle("AnyTitle2");
@@ -59,7 +59,7 @@ class SubscribeServiceTest {
         event2.setEndDate(java.time.LocalDate.now().plusDays(2));
         event2.setDescription("AnyDescription2");
         event2.setCreator(user);
-        event2.setCategories(Set.of("AnyCategory2"));
+        event2.setCategory("Educational");
 
         Event event3 = new Event();
         event3.setTitle("AnyTitle3");
@@ -68,7 +68,7 @@ class SubscribeServiceTest {
         event3.setEndDate(java.time.LocalDate.now().plusDays(3));
         event3.setDescription("AnyDescription3");
         event3.setCreator(user);
-        event3.setCategories(Set.of("AnyCategory3"));
+        event3.setCategory("Recreational");
 
         List<Event> newEvents = List.of(event1, event2, event3);
         for (Event event : newEvents) {
@@ -189,7 +189,7 @@ class SubscribeServiceTest {
     void testGetAttendedEvents() {
 
         User u = userRepo.findByEmail("AnyNormalUser@gmail.com").get();
-        Event event = new Event("AlreadyAttended", "AnyLocation", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription", u);
+        Event event = new Event("AlreadyAttended", "AnyLocation", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription", u, null);
         eventRepository.save(event);
         Event pastEvent = eventRepository.findByTitle("AlreadyAttended").get();
         pastEvent.setStartDate(LocalDate.now().minusDays(5));

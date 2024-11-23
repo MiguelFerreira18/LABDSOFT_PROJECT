@@ -42,7 +42,7 @@ async function login() {
             localStorage.setItem('userId', user.id);
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
             localStorage.setItem('token', authHeader);
-
+            
             try {
                 const rewards = await dailyRewards({ id: user.id });
 
