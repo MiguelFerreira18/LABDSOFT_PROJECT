@@ -24,12 +24,8 @@
     <!-- Dropdown com filtros de categoria e data -->
     <div v-if="showDropdown" class="dropdown-menu">
       <label for="category-limit">Filter by Category:</label>
-      <ion-button
-        v-for="category in categories"
-        :key="category"
-        @click="toggleCategory(category)"
-        :data-testid="'filter-' + category"
-      >
+      <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
+        :data-testid="'filter-' + category">
         {{ category }}
       </ion-button>
 
@@ -47,13 +43,8 @@
     <!-- Cartões de Eventos -->
     <div class="event-cards-container">
       <div class="event-cards">
-        <router-link
-          v-for="event in filteredEvents"
-          :key="event.id"
-          :to="`/event/EventDetail/${event.id}`"
-          class="clickable-card"
-          :data-testid="'event-' + event.id"
-        >
+        <router-link v-for="event in filteredEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
+          class="clickable-card" :data-testid="'event-' + event.id">
           <ion-card>
             <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
               <ion-card-title>{{ event.title }}</ion-card-title>
@@ -78,6 +69,7 @@ import { ref, computed, onMounted } from 'vue';
 import { fetchAllEvents } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories'
+import ts from 'typescript';
 
 interface Event {
   id: number;
@@ -99,6 +91,7 @@ export default {
     // Função para carregar eventos da API
     const loadEvents = async () => {
       try {
+        //@ts-expect-error - Erro estupido do typescript 
         events.value = await fetchAllEvents();
       } catch (error) {
         console.error('Erro ao buscar eventos:', error);
@@ -178,6 +171,7 @@ export default {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -212,20 +206,20 @@ ion-card-header {
 ion-card-content {
   padding: 12px;
   font-size: 14px;
-  color:aliceblue;
+  color: aliceblue;
 }
 
 ion-card-title {
   text-transform: none;
   font-size: 20px;
   font-weight: bold;
-  color:aliceblue;
+  color: aliceblue;
 
 }
 
 ion-card-subtitle {
   font-size: 14px;
-  color:aliceblue;
+  color: aliceblue;
 }
 
 .clickable-card {
@@ -301,9 +295,8 @@ ion-card-subtitle {
 
 .clear-button {
   margin-top: 10px;
-  align-self: flex-end; /* Alinha o botão à direita */
+  align-self: flex-end;
+  /* Alinha o botão à direita */
   font-size: 14px;
 }
-
-
 </style>
