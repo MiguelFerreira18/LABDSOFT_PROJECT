@@ -20,17 +20,30 @@
                 <div>{{ markerInfo?.title }}</div>
                 </ion-content>
             </ion-popover>
+            <ion-button @click="selectLocation">Select this Location</ion-button>
         </ion-content>
     </ion-page>
 </template>
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, modalController } from '@ionic/vue';
-import { ref } from 'vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, modalController, IonPopover, IonButton } from '@ionic/vue';
+import { ref, defineEmits } from 'vue';
+import { useRouter } from 'vue-router';
 import { Capacitor } from "@capacitor/core";
 import MarkerInfoWindow from "@/components/maps/mapDetailsWindows.vue"
 import MyMap from "@/views/maps/MapDetails.vue";
+import { locationState } from '@/stateManagement/locationState';
+
+const router = useRouter();
+
+const emit = defineEmits<{
+  (event: 'locationSelected', payload: { latitude: number; longitude: number }): void;
+}>();
+
 const markerInfo = ref<any>();
 const markerIsOpen = ref<boolean>(false);
+const latitude = ref<number | null>(null);
+const longitude = ref<number | null>(null);
+
 // sample data for the map
 const markerData = [
   {
@@ -64,9 +77,13 @@ const openModal = async (marker: any) => {
   modal.present();
   const { data, role } = await modal.onWillDismiss();
 };
+
 const mapClicked = (data: { latitude: number; longitude: number }) => {
   console.log("Map clicked at:", data.latitude, data.longitude);
+  latitude.value = data.latitude;
+  longitude.value = data.longitude;
 };
+
 const getMarkerInfo = (marker: { latitude: number; longitude: number }) => {
   return markerData.filter(
     (m) =>
@@ -81,7 +98,26 @@ const markerClicked = (event: any) => {
     openModal(getMarkerInfo(event));
   }
 };
+
+//Submit the selected location
+const selectLocation = () => {
+  console.log('Location selected:', latitude.value, longitude.value);
+  if (latitude.value && longitude.value) {
+    const callback = locationState.onLocationSelected;
+
+    if(callback) {
+      callback({ latitude: latitude.value, longitude: longitude.value });
+    } else {
+      console.error('No callback function found.');
+    }
+    // Return to the previous page (AddEventView)
+    router.back(); 
+  } else {
+    console.error('No location selected.');
+  }
+};
 </script>
+
 <style>
 #map-container {
     width: 100%;

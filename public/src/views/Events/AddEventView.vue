@@ -11,6 +11,8 @@
       <br />
       <ion-input label="Location" fill="outline" label-placement="floating" placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
       <br />
+      <ion-button @click="navigateToMap">Select Location On Map</ion-button>
+      <br />
       <ion-input label="Start Date" fill="outline" label-placement="floating" type="date" id="startDate" v-model="event.startDate" required></ion-input>
       <br />
       <ion-input label="End Date" fill="outline" label-placement="floating" type="date" id="endDate" v-model="event.endDate" required></ion-input>
@@ -35,10 +37,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import router from '@/router';
+import { useRouter } from 'vue-router';
 import { SendRequest } from "@/lib/request";
 import { categories } from "@/lib/categories";
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonSelect, IonButton, IonSelectOption, IonTextarea } from '@ionic/vue';
+import { locationState } from "@/stateManagement/locationState";
+
+const router = useRouter();
 const event = ref<any>({});
 const fetchedEvent = ref<any>({});
 const errorMessage = ref("")
@@ -69,6 +74,18 @@ async function addEvent() {
   } catch (error) {
     errorMessage.value = "Failed to create event. Please try again.";
   }
+}
+
+function navigateToMap() {
+  locationState.onLocationSelected = handleLocationSelected;
+  router.push({ name: 'map'});
+}
+
+// Handle location selected from map
+function handleLocationSelected({ latitude, longitude }: { latitude: number; longitude: number }) {
+  console.log(`Lat: ${latitude}, Lng: ${longitude}`);
+  event.value.latitude = latitude;
+  event.value.longitude = longitude;
 }
 </script>
 
