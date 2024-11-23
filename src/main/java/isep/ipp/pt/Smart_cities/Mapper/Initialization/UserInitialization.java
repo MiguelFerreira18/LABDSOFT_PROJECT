@@ -1,11 +1,10 @@
-package isep.ipp.pt.Smart_cities.Initialization;
+package isep.ipp.pt.Smart_cities.Mapper.Initialization;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Respository.InstitutionRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
-import isep.ipp.pt.Smart_cities.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;

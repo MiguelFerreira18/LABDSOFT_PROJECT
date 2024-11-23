@@ -133,16 +133,14 @@ public class AuthenticationApi {
                 .expiresAt(now.plusSeconds(EXPIRATION_TIME))
                 .claim("role", scope);
 
-        if (principal instanceof User) {
-            User user = (User) principal;
+        if (principal instanceof User user) {
             return baseClaimsBuilder
                     .subject(format("User,%s,%s", user.getId(), user.getUsername()))
                     .claim("type", "User")
                     .claim("uuid", user.getId())
                     .claim("email", user.getEmail())
                     .build();
-        } else if (principal instanceof Institution) {
-            Institution institution = (Institution) principal;
+        } else if (principal instanceof Institution institution) {
             return baseClaimsBuilder
                     .subject(format("Institution,%s,%s", institution.getId(), institution.getUsername()))
                     .claim("type", "Institution")

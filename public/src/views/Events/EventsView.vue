@@ -48,8 +48,12 @@
     <!-- Dropdown com filtros de categoria e data -->
     <div v-if="showDropdown" class="dropdown-menu">
       <label for="category-limit">Filter by Category:</label>
-      <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
-        :data-testid="'filter-' + category">
+      <ion-button
+        v-for="category in categories"
+        :key="category"
+        @click="toggleCategory(category)"
+        :data-testid="'filter-' + category"
+      >
         {{ category }}
       </ion-button>
 
@@ -271,6 +275,7 @@ ion-card-header {
   padding: 10px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+
 }
 
 ion-card-content {

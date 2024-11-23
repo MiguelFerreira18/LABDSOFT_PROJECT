@@ -1,21 +1,29 @@
 <template>
-    <ion-card>
+    <ion-card v-if="event">
         <ion-card-header>
-            <ion-card-subtitle>AnyEvent</ion-card-subtitle>
-            <ion-card-title>SomeAnyEvent</ion-card-title>
+            <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
+            <ion-card-title>{{ event.title }}</ion-card-title>
+            <ion-card-subtitle>Subscribers: {{ numberOfSubscribers }}</ion-card-subtitle>
         </ion-card-header>
         <ion-list>
             <ion-item>
-                <ion-label>AnyCOntent Here</ion-label>
-                AnyItemCOntent
+                <ion-label>Description</ion-label>
+                {{ event.description }}
+            </ion-item>
+            <ion-item v-if="event.promotedUntil">
+                <ion-label color="tertiary">Promoted</ion-label>
             </ion-item>
             <ion-item>
-                <ion-label>AnyCOntent2 Here</ion-label>
-                AnyItemCOntent2
+                <ion-label>Date</ion-label>
+                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
             </ion-item>
             <ion-item>
-                <ion-label>AnyCOntent3 Here</ion-label>
-                AnyItemCOntent3
+                <ion-label>Locaiton</ion-label>
+                {{ event.location }}
+            </ion-item>
+            <ion-item v-if="creator">
+                <ion-label>Creator</ion-label>
+                {{ creator.name }}
             </ion-item>
         </ion-list>
         <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
@@ -30,20 +38,30 @@
             color="danger">
             Unsubscribe
         </ion-button>
-        <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear"
-            shape="round" color="primary">
+        <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear" shape="round"
+            color="primary">
             Promote Event
         </ion-button>
+    </ion-card>
+    <ion-card v-else>
+        <ion-card-header>
+            <ion-card-subtitle>Loading...</ion-card-subtitle>
+            <ion-card-title>Loading...</ion-card-title>
+        </ion-card-header>
     </ion-card>
 
 </template>
 
 
 <script setup lang="ts">
+import { formatDate } from '@/lib/dateFormatter';
 import { SendRequest } from '@/lib/request';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
+const event = ref<any>({});
+const creator = ref<any>({});
+const numberOfSubscribers = ref(0);
 const isSubscribed = ref(false);
 const hasAttended = ref(false);
 const subbedEvent = ref<any>({})
@@ -51,14 +69,16 @@ const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 
 onMounted(async () => {
+    await getCurrentEvent();
+    await getNumberOfSubscribers();
     const { data, response } = await getIsSubscribed();
-    if (response.ok && data.status === 'ATTENDED') {
+    if (response.ok && data && data.status === 'ATTENDED') {
         hasAttended.value = true;
         isSubscribed.value = true;
         subbedEvent.value = data;
 
     }
-    else if (response.ok && data.status === 'SUBSCRIBED') {
+    else if (response.ok && data && data.status === 'SUBSCRIBED') {
         subbedEvent.value = data;
         isSubscribed.value = true;
     }
@@ -139,6 +159,23 @@ async function handlePromoteEvent() {
         console.error('Failed to promote the event.');
     }
 }
+
+async function getCurrentEvent() {
+    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+    const response = await SendRequest(`/api/events/${eventId}`, 'GET');
+    const data = await response.json();
+    event.value = data;
+    creator.value = data.creator;
+    console.log(data);
+
+}
+async function getNumberOfSubscribers() {
+    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+    const response = await SendRequest(`/subscription/event/count/${eventId}`, 'GET');
+    const { data } = await response.json();
+    numberOfSubscribers.value = data;
+}
+
 
 </script>
 

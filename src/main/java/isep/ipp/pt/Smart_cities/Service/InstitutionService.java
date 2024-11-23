@@ -3,7 +3,6 @@ package isep.ipp.pt.Smart_cities.Service;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
 import isep.ipp.pt.Smart_cities.Respository.InstitutionRepo;
-import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

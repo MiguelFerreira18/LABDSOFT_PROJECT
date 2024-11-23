@@ -41,9 +41,22 @@ public class SubscribeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/event/count/{eventId}")
+    public ResponseEntity<Response> getSubscriptionCount(@PathVariable @Valid String eventId) {
+        Response response = subscribeService.countAllSubscriptionsToAnEvent(eventId)
+                .orElse(Response.notFound("Event not found"));
+        return ResponseEntity.status(response.statusCode()).body(response);
+    }
+
     @GetMapping("/attended/event/{userId}")
     public ResponseEntity<List<Event>> getAttendedSubscriptionsByUserId(@PathVariable @Valid String userId) {
         return subscribeService.getAttendedEventsByUserUUID(userId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/event/{userId}")
+    public ResponseEntity<List<Event>> getSubscribedEventsByUserId(@PathVariable @Valid String userId) {
+        return subscribeService.getSubscribedEventsByUserUUID(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

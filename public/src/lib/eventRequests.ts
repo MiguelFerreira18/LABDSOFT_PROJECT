@@ -1,67 +1,68 @@
-import { apiConfig, apiKey } from "./config";  
+import axios from "axios";
+import { apiConfig, apiKey } from "./config";
 
 const { baseUrl } = apiConfig;
 
 export async function fetchAllEvents(token: string = ""): Promise<any[]> {
-    try {
-      const response = await fetch(`${baseUrl}/api/events`, {
-        method: "GET",  
-        headers: {
-          "Content-Type": "application/json", 
-          "X-API-KEY": apiKey,  
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Error fetching events");
-      }
-  
-      return await response.json(); 
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      return []; 
+  try {
+    const response = await fetch(`${baseUrl}/api/events`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error fetching events");
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
 }
-    export async function fetchNonPromotedEvents(token: string = ""): Promise<any[]> {
-      try {
-        const response = await fetch(`${baseUrl}/api/events/non-promoted`, {
-          method: "GET",  
-          headers: {
-            "Content-Type": "application/json", 
-            "X-API-KEY": apiKey,  
-          },
-        });
-    
-        if (!response.ok) {
-          throw new Error("Error fetching events");
-        }
-    
-        return await response.json(); 
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        return []; 
-      }
+export async function fetchNonPromotedEvents(
+  token: string = ""
+): Promise<any[]> {
+  try {
+    const response = await fetch(`${baseUrl}/api/events/non-promoted`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error fetching events");
     }
-    
-    export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
-      try {
-        const response = await fetch(`${baseUrl}/api/events/promoted`, {
-          method: "GET",  
-          headers: {
-            "Content-Type": "application/json", 
-            "X-API-KEY": apiKey,  
-          },
-        });
-    
-        if (!response.ok) {
-          throw new Error("Error fetching events");
-        }
-    
-        return await response.json(); 
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        return []; 
-      }
-    
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
 }
-  
+
+export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
+  try {
+    const response = await fetch(`${baseUrl}/api/events/promoted`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error fetching events");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+}

@@ -40,6 +40,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -76,10 +77,10 @@ public class SecurityConfig {
 				)
 				.cors(cors -> cors.configurationSource(request -> {
 					CorsConfiguration config = new CorsConfiguration();
-					config.setAllowedOriginPatterns(Arrays.asList("*"));
+					config.setAllowedOriginPatterns(List.of("*"));
 					config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "OPTIONS","PATCH"));
-					config.setAllowedHeaders(Arrays.asList("*"));
-					config.setExposedHeaders(Arrays.asList(HttpHeaders.AUTHORIZATION));
+					config.setAllowedHeaders(List.of("*"));
+					config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
 					config.setAllowCredentials(true);
 					return config;
 				}))
