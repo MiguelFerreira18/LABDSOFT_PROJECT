@@ -138,7 +138,7 @@ async function handlePromoteEvent() {
         showToast('Event promoted successfully!', 'success');
     } else {
 
-        showToast('You have already promoted this event.', 'danger');
+        showToast('You have already promoted an event.', 'danger');
     }
 }
 
