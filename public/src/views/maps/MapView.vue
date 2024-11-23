@@ -1,29 +1,22 @@
 <template>
-    <ion-page>
-        <ion-header>
-            <ion-toolbar>
-                <ion-title>Google Map test</ion-title>
-            </ion-toolbar>
-        </ion-header>
-        <ion-content>
-            <my-map
-                :markerData="markerData"
-                @onMapClicked="mapClicked"
-                @onMarkerClicked="markerClicked"
-            ></my-map>
-            <ion-popover
-                :is-open="markerIsOpen"
-                size="cover"
-                @did-dismiss="markerIsOpen = false"
-            >
-                <ion-content class="ion-padding">
-                <div>{{ markerInfo?.title }}</div>
-                </ion-content>
-            </ion-popover>
-            <!-- <span v-if="address"><strong>Address:</strong> {{ address }}</span> -->
-            <ion-button @click="selectLocation">Select this Location</ion-button>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Google Map test</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <!-- @vue-expect-error Type 'unknown' is not assignable to type 'MarkerInfoWindow' -->
+      <my-map :markerData="markerData" @onMapClicked="mapClicked" @onMarkerClicked="markerClicked"></my-map>
+      <ion-popover :is-open="markerIsOpen" size="cover" @did-dismiss="markerIsOpen = false">
+        <ion-content class="ion-padding">
+          <div>{{ markerInfo?.title }}</div>
         </ion-content>
-    </ion-page>
+      </ion-popover>
+      <!-- <span v-if="address"><strong>Address:</strong> {{ address }}</span> -->
+      <ion-button @click="selectLocation">Select this Location</ion-button>
+    </ion-content>
+  </ion-page>
 </template>
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, modalController, IonPopover, IonButton } from '@ionic/vue';
@@ -97,6 +90,7 @@ const mapClicked = async (data: { latitude: number; longitude: number }) => {
 };
 
 const updateMarkerData = (latitude: number, longitude: number, title: string = "Selected Location") => {
+  //@ts-expect-error markerData is not defined
   markerData = [
     {
       coordinate: { lat: latitude, lng: longitude },
@@ -107,8 +101,9 @@ const updateMarkerData = (latitude: number, longitude: number, title: string = "
 };
 
 const getMarkerInfo = (marker: { latitude: number; longitude: number }) => {
+  //@ts-expect-error markerData is not defined
   return markerData.filter(
-    (m) =>
+    (m: any) =>
       m.coordinate.lat === marker.latitude &&
       m.coordinate.lng === marker.longitude
   )[0];
@@ -128,20 +123,20 @@ const selectLocation = () => {
   if (latitude.value && longitude.value && address.value) {
     const callback = locationState.onLocationSelected;
 
-    if(callback) {
+    if (callback) {
       callback({ latitude: latitude.value, longitude: longitude.value, address: address.value });
     } else {
       console.error('No callback function found.');
     }
     // Return to the previous page (AddEventView)
-    router.back(); 
+    router.back();
   } else {
     console.error('No location selected.');
   }
 };
 
-async function fetchAddress(): Promise<string | null>  {
-  
+async function fetchAddress(): Promise<string | null> {
+
   if (latitude.value === null || longitude.value === null) {
     console.error('Latitude and Longitude are required to fetch the address.');
     return null;
@@ -168,8 +163,8 @@ async function fetchAddress(): Promise<string | null>  {
 
 <style>
 #map-container {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 </style>

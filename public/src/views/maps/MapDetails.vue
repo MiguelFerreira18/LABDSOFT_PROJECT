@@ -8,7 +8,7 @@ const props = defineProps<{
 // EVENTS - Events allow us to emit data from the component
 const emits = defineEmits<{
   (event: "onMarkerClicked", info: any): void;
-  (event: "onMapClicked", data: {latitude: number; longitude: number;}): void;
+  (event: "onMapClicked", data: { latitude: number; longitude: number; }): void;
 }>();
 const mapRef = ref<HTMLElement>();
 const markerIds = ref<string[] | undefined>();
@@ -70,20 +70,17 @@ async function createMap() {
     emits("onMarkerClicked", event);
   });
   // Handle map click, send event back to parent
-  newMap.setOnMapClickListener((data: {latitude: number, longitude: number }) => {
+  newMap.setOnMapClickListener((data: { latitude: number, longitude: number }) => {
     emits("onMapClicked", {
-        latitude: data.latitude,
-        longitude: data.longitude,
+      latitude: data.latitude,
+      longitude: data.longitude,
     });
   });
 }
 </script>
 <template>
   <div>
-    <capacitor-google-map
-      ref="mapRef"
-      style="display: inline-block; width: 100vw; height: 86vh"
-    >
+    <capacitor-google-map ref="mapRef" style="display: inline-block; width: 100vw; height: 86vh">
     </capacitor-google-map>
   </div>
 </template>
