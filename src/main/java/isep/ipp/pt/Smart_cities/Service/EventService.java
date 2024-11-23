@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.EventModel.EventSummary;
@@ -32,13 +33,21 @@ public class EventService {
 
 
 
-    public Event createEvent(Event event) {
-        // Validate that creator is not null
-        if (event.getCreator() == null) {
-            throw new IllegalArgumentException("Event must have a creator.");
+    public Event createEvent(EventRequestDTO eventRequestDTO) {
+        User creator = userService.findById(eventRequestDTO.getCreatorID());
+        if (creator == null) {
+            throw new IllegalArgumentException("Creator not found");
         }
+        Event event = Event.builder()
+                .creator(creator)
+                .title(eventRequestDTO.getTitle())
+                .location(eventRequestDTO.getLocation())
+                .startDate(eventRequestDTO.getStartDate())
+                .endDate(eventRequestDTO.getEndDate())
+                .description(eventRequestDTO.getDescrption())
+                .category(eventRequestDTO.getCategory())
+                .build();
 
-        // Save and return the event
         return eventRepository.save(event);
     }
 
