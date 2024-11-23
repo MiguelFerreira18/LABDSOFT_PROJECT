@@ -23,7 +23,7 @@
         <textarea id="description" v-model="event.description" required></textarea>
       </div>
       <div>
-        <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" v-model="event.category"
+        <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
           :key="'category-select'">
           <ion-select-option v-for="category in categories" :value="category" :key="category">
             {{ category }}
@@ -48,6 +48,10 @@ const event = ref<any>({});
 const fetchedEvent = ref<any>({});
 const errorMessage = ref("")
 
+function handleCategoryChange(domEvent: any) {
+  event.value.category = domEvent.target.value;
+}
+
 async function addEvent() {
   try {
     const payload = {
@@ -58,7 +62,6 @@ async function addEvent() {
       description: event.value.description,
       category: event.value.category,
       creatorID: localStorage.getItem('uuid') || ''
-
     }
     const response = await SendRequest('/api/events', 'POST', payload);
     const data = await response.json();

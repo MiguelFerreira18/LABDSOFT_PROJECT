@@ -3,8 +3,8 @@ import { RouteRecordRaw } from "vue-router";
 import TabsPage from "../views/TabsPage.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
-import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList.vue";
-import AttendedEventsView from "@/views/Events/AttendedEventsView.vue";
+import EventDetailsView from "@/views/Events/EventDetailsView.vue";
+import EventHistoryView from "@/views/Events/EventHistoryView.vue";
 import EventsView from "@/views/Events/EventsView.vue";
 import RewardsDashboard from "@/views/RewardsDashboard.vue";
 import DashboardEventsView from "@/views/Events/DashboardEventsView.vue";
@@ -31,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/events/attended",
     name: "AttendedEvents",
-    component: AttendedEventsView,
+    component: EventHistoryView,
   },
   {
     path: "/events/dashboard",
@@ -41,7 +41,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/event/EventDetail/:id",
     name: "EventDetails",
-    component: RefactorAfterHavingEventsList,
+    component: EventDetailsView,
   },
   {
     path: "/events",

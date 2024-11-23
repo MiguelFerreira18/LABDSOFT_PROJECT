@@ -28,47 +28,37 @@
   </ion-content>
 </template>
 
-<script>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { fetchDashboardSummaries } from '@/lib/dashboardRequests'; // A new helper to fetch dashboard summaries
 import { formatDate } from '@/lib/dateFormatter';
 import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonSpinner } from '@ionic/vue';
+import { SendRequest } from '@/lib/request';
 
-export default {
-  components: {
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
-    IonSpinner,
-  },
-  setup() {
-    const eventSummaries = ref([]);
-    const loading = ref(true);
+const eventSummaries = ref<any>([]);
+const loading = ref(true);
 
-    // Fetch event summaries from the backend
-    const loadDashboard = async () => {
-      try {
-        const data = await fetchDashboardSummaries();
-        eventSummaries.value = data;
-      } catch (error) {
-        console.error('Failed to load dashboard:', error);
-      } finally {
-        loading.value = false;
-      }
-    };
+onMounted(async () => {
+  await loadDashboard();
+})
 
-    // Load the dashboard data on page mount
-    onMounted(loadDashboard);
+async function loadDashboard() {
+  console.log('Loading dashboard...');
 
-    return {
-      eventSummaries,
-      loading,
-      formatDate,
-    };
-  },
-};
+  const uuid = localStorage.getItem('uuid') || '';
+  try {
+    const response = await SendRequest(`/api/events/dashboard/${uuid}`, 'GET');
+    const data = await response.json();
+    console.log('Dashboard data:', data);
+
+    eventSummaries.value = data;
+  } catch (error) {
+    console.error('Failed to load dashboard:', error);
+  } finally {
+    loading.value = false;
+  }
+
+}
+
 </script>
 
 <style scoped>
