@@ -69,7 +69,6 @@ import { ref, computed, onMounted } from 'vue';
 import { fetchAllEvents } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories'
-import ts from 'typescript';
 
 interface Event {
   id: number;
