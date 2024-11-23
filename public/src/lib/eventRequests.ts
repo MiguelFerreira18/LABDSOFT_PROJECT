@@ -6,71 +6,66 @@ const API_BASE_URL = `${baseUrl}/api/events`;
 
 // Event model interface
 
-export interface Event {
-  id?: string;
-  title: string;
-  location: string;
-  startDate: string; // ISO date string
-  endDate: string; // ISO date string
-  description: string;
-  categories: string[];
-  imagePath?: string;
-  creator?: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  attendees?: Array<{
-    id: string;
-    name: string;
-    email: string;
-  }>;
+export async function fetchAllEvents(token: string = ""): Promise<any[]> {
+    try {
+      const response = await fetch(`${baseUrl}/api/events`, {
+        method: "GET",  
+        headers: {
+          "Content-Type": "application/json", 
+          "X-API-KEY": apiKey,  
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Error fetching events");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      return [];
+    }
 }
+    export async function fetchNonPromotedEvents(token: string = ""): Promise<any[]> {
+      try {
+        const response = await fetch(`${baseUrl}/api/events/non-promoted`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": apiKey,
+          },
+        });
 
-// Fetch all events
-export const fetchAllEvents = async (): Promise<Event[]> => {
-  try {
-    const response = await axios.get<Event[]>(API_BASE_URL); // Strongly typed response
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    throw error;
-  }
-};
+        if (!response.ok) {
+          throw new Error("Error fetching events");
+        }
 
-// Base API URL
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        return [];
+      }
+    }
 
-/**
- * Creates a new event by sending a POST request to the API.
- *
- * @param eventData - The event data to be created.
- * @returns The created event from the API response.
- */
-export const createEvent = async (eventData: {
-  title: string;
-  location: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  categories: string; // Array of category strings
-}) => {
-  try {
-    const response = await axios.post(API_BASE_URL, eventData, {
-      headers: {
-        "Content-Type": "application/json", // Ensures the request is sent as JSON
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating event:", error);
-    throw error;
-  }
-};
+    export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
+      try {
+        const response = await fetch(`${baseUrl}/api/events/promoted`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": apiKey,
+          },
+        });
 
-/**
- * Updates an existing event by ID.
- */
-export const updateEvent = async (id: string, event: Event): Promise<Event> => {
-  const response = await axios.put<Event>(`${API_BASE_URL}/${id}`, event);
-  return response.data;
-};
+        if (!response.ok) {
+          throw new Error("Error fetching events");
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        return [];
+      }
+
+}
+  

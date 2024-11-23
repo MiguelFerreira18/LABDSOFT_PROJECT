@@ -2,6 +2,30 @@
   <ion-content class="ion-padding">
     <h1 class="title">Events</h1>
 
+    <!-- Barra Horizontal de Eventos Promovidos -->
+    <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
+      <h2 class="subtitle">Promoted Events</h2>
+      <div class="promoted-events-bar">
+        <!-- Cartões de Eventos Promovidos -->
+        <router-link v-for="event in filteredPromotedEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
+          class="clickable-card" :data-testid="'promoted-event-' + event.id">
+          <ion-card>
+            <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
+              <ion-card-title>{{ event.title }}</ion-card-title>
+              <ion-card-subtitle>
+                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+              <p><strong>Location:</strong> {{ event.location }}</p>
+              <p><strong>Category:</strong> {{ event.category }}</p>
+            </ion-card-content>
+          </ion-card>
+        </router-link>
+      </div>
+    </div>
+
     <!-- Botão para abrir/fechar o filtro -->
     <div class="button-container">
       <button class="filter-button" @click="toggleDropdown" data-testid="toggle-dropdown">
@@ -24,8 +48,12 @@
     <!-- Dropdown com filtros de categoria e data -->
     <div v-if="showDropdown" class="dropdown-menu">
       <label for="category-limit">Filter by Category:</label>
-      <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
-        :data-testid="'filter-' + category">
+      <ion-button
+        v-for="category in categories"
+        :key="category"
+        @click="toggleCategory(category)"
+        :data-testid="'filter-' + category"
+      >
         {{ category }}
       </ion-button>
 
@@ -43,7 +71,7 @@
     <!-- Cartões de Eventos -->
     <div class="event-cards-container">
       <div class="event-cards">
-        <router-link v-for="event in filteredEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
+        <router-link v-for="event in filteredNonPromotedEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
           class="clickable-card" :data-testid="'event-' + event.id">
           <ion-card>
             <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
@@ -66,9 +94,9 @@
 
 <script lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { fetchAllEvents } from '@/lib/eventRequests';
+import { fetchNonPromotedEvents, fetchPromotedEvents } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
-import { categories, categoryColors } from '@/lib/categories'
+import { categories, categoryColors } from '@/lib/categories';
 
 interface Event {
   id: number;
@@ -78,29 +106,41 @@ interface Event {
   endDate: string;
   creator: { name: string };
   location: string;
+  isPromoted: boolean;
 }
 
 export default {
   setup() {
-    const events = ref<Event[]>([]); // Lista de eventos
+    const promotedEvents = ref<Event[]>([]); // Lista de eventos promovidos
+    const nonPromotedEvents = ref<Event[]>([]); // Lista de eventos não promovidos
     const selectedCategories = ref<string[]>([]); // Categorias selecionadas pelo usuário
     const dateLimit = ref<string | null>(null); // Limite de data escolhido
     const showDropdown = ref(false); // Controle de visibilidade do dropdown
 
-    // Função para carregar eventos da API
-    const loadEvents = async () => {
+    // Função para carregar eventos promovidos da API
+    const loadPromoted = async () => {
       try {
-        //@ts-expect-error - Erro estupido do typescript 
-        events.value = await fetchAllEvents();
+        promotedEvents.value = await fetchPromotedEvents();
       } catch (error) {
-        console.error('Erro ao buscar eventos:', error);
-        events.value = []; // Caso de erro, deixa a lista vazia
+        console.error('Erro ao buscar eventos promovidos:', error);
+        promotedEvents.value = []; // Caso de erro, deixa a lista vazia
       }
     };
 
-    // Computed para filtrar eventos com base nas categorias e data
-    const filteredEvents = computed(() => {
-      return events.value.filter((event) => {
+    // Função para carregar eventos não promovidos da API
+    const loadNonPromoted = async () => {
+      try {
+        nonPromotedEvents.value = await fetchNonPromotedEvents();
+      } catch (error) {
+        console.error('Erro ao buscar eventos não promovidos:', error);
+        nonPromotedEvents.value = []; // Caso de erro, deixa a lista vazia
+      }
+    };
+
+    // Computed para filtrar eventos não promovidos com base nas categorias e data
+    // Computed para filtrar e ordenar eventos não promovidos com base nas categorias e data
+    const filteredNonPromotedEvents = computed(() => {
+      const filteredEvents = nonPromotedEvents.value.filter((event) => {
         const isCategoryMatch =
           selectedCategories.value.length === 0 ||
           selectedCategories.value.includes(event.category);
@@ -110,6 +150,26 @@ export default {
 
         return isCategoryMatch && isDateMatch;
       });
+
+      // Ordena os eventos pela data de início do mais próximo ao mais distante
+      return filteredEvents.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+    });
+
+    // Computed para filtrar e ordenar eventos promovidos com base nas categorias e data
+    const filteredPromotedEvents = computed(() => {
+      const filteredEvents = promotedEvents.value.filter((event) => {
+        const isCategoryMatch =
+          selectedCategories.value.length === 0 ||
+          selectedCategories.value.includes(event.category);
+
+        const isDateMatch =
+          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+
+        return isCategoryMatch && isDateMatch;
+      });
+
+      // Ordena os eventos pela data de início do mais próximo ao mais distante
+      return filteredEvents.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     });
 
     // Alterna a exibição do dropdown
@@ -133,15 +193,20 @@ export default {
       dateLimit.value = null;
     };
 
-    // Chama a função de carregar eventos ao montar o componente
-    onMounted(loadEvents);
+    // Carrega os eventos promovidos e não promovidos ao montar o componente
+    onMounted(() => {
+      loadPromoted();
+      loadNonPromoted();
+    });
 
     return {
-      events,
+      promotedEvents,
+      nonPromotedEvents,
       categories,
       selectedCategories,
       dateLimit,
-      filteredEvents,
+      filteredNonPromotedEvents,
+      filteredPromotedEvents, // Incluindo a lista filtrada de eventos promovidos
       toggleCategory,
       toggleDropdown,
       showDropdown,
@@ -153,28 +218,37 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 .title {
   text-align: center;
   font-size: 2rem;
   font-weight: bold;
   color: aliceblue;
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* Aumenta o espaçamento inferior entre o título e o conteúdo */
   animation: fadeIn 1s ease-out;
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
+.promoted-events-section {
+  margin-bottom: 40px; /* Aumenta o espaçamento inferior entre a seção de eventos promovidos e o conteúdo abaixo */
+}
 
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.promoted-events-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  /* Espaço entre os cartões */
+  margin-top: 10px;
+}
+
+.promoted-events-bar .clickable-card {
+  width: 250px;
+  /* Largura fixa igual aos cards abaixo */
+  height: 100%;
+  /* Altura fixa para os cartões */
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  /* Impede que os cartões se encolham ao exceder a largura da barra */
 }
 
 .event-cards-container {
@@ -192,6 +266,8 @@ export default {
 ion-card {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  /* Garantir que a altura do card seja 100% do seu container */
 }
 
 ion-card-header {
@@ -213,7 +289,6 @@ ion-card-title {
   font-size: 20px;
   font-weight: bold;
   color: aliceblue;
-
 }
 
 ion-card-subtitle {
@@ -224,20 +299,25 @@ ion-card-subtitle {
 .clickable-card {
   text-decoration: none;
   color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* Garantir que o card ocupe toda a altura disponível */
 }
 
 .dropdown-menu {
-  position: absolute;
-  margin-top: 20px;
+  position: fixed;
+  top: 130px; /* Ajusta para ficar logo abaixo do botão */
   right: 16px;
   background: var(--ion-color-light);
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 200; /* Garante que o dropdown sobreponha outros elementos */
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 250px; /* Ajuste a largura para que não fique tão grande */
 }
 
 .date-filter {
@@ -264,17 +344,18 @@ ion-card-subtitle {
   font-size: 16px;
 }
 
+/* Estilos para o botão de filtro */
 .filter-button {
   position: fixed;
-  top: 70px;
-  right: 16px;
+  top: 80px;
+  right: 20px;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   width: 48px;
   height: 48px;
-  z-index: 100;
+  z-index: 100; /* Garante que o botão sempre fique visível */
 }
 
 .filter-button svg {
@@ -292,10 +373,37 @@ ion-card-subtitle {
   opacity: 0.8;
 }
 
+/* Estilos para a seção de eventos promovidos */
+.promoted-events-section,
+.event-cards-container {
+  z-index: 1; /* Garante que os eventos fiquem abaixo do dropdown */
+}
+
+/* Novo estilo para o título da seção de eventos promovidos */
+.promoted-events-section h2 {
+  margin-top: 60px; /* Aumenta o espaçamento entre o ícone do filtro e o título */
+  margin-bottom: 16px; /* Espaçamento inferior do título */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: aliceblue;
+}
+
 .clear-button {
   margin-top: 10px;
   align-self: flex-end;
-  /* Alinha o botão à direita */
   font-size: 14px;
 }
+
+/* Estilos para a seção de eventos promovidos */
+.promoted-events-section,
+.event-cards-container {
+  z-index: 1; /* Garante que os eventos fiquem abaixo do dropdown */
+}
+
+.clear-button {
+  margin-top: 10px;
+  align-self: flex-end;
+  font-size: 14px;
+}
+
 </style>
