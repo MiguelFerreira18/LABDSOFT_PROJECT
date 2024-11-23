@@ -4,7 +4,9 @@ package isep.ipp.pt.Smart_cities.Controller;
 import isep.ipp.pt.Smart_cities.Authentication.AuthenticationApi;
 import isep.ipp.pt.Smart_cities.Model.UserInfoModel.UserInfo;
 import isep.ipp.pt.Smart_cities.Model.UserInfoModel.UserInfoView;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Service.UserInfoService;
+import isep.ipp.pt.Smart_cities.Service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import java.util.Date;
 public class UserInfoController {
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private UserService userService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationApi.class);
 
@@ -32,8 +36,8 @@ public class UserInfoController {
     @GetMapping("info")
     ResponseEntity<UserInfoView> getUserInfo(@RequestParam final String email) {
         UserInfo userInfo = userInfoService.getUserInfoByEmail(email);
-        UserInfoView userInfoView = new UserInfoView(userInfo.getBirthDate(), userInfo.getGender(), userInfo.getAddress(), userInfo.getCity(), userInfo.getCountry());
-        System.out.println(userInfoView.toString());
+        User user = userService.findUserByEmail(email);
+        UserInfoView userInfoView = new UserInfoView(user.getName(), userInfo.getBirthDate(), userInfo.getGender(), userInfo.getAddress(), userInfo.getCity(), userInfo.getCountry());
         return ResponseEntity.ok(userInfoView);
     }
 }

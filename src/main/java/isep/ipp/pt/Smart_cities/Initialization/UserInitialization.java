@@ -49,9 +49,7 @@ public class UserInitialization implements CommandLineRunner {
             User user = userRepository.findByEmail("admin@smartcity.com").get();
 
             if (userInfoRepo.findByUserId(user.getId()).isEmpty()) {
-                System.out.println("entrei");
                 UserInfo userInfo = new UserInfo(user.getId(), new Date(), "Male", "Rua 1", "Lisboa", "Portugal");
-                System.out.println(userInfo.toString());
                 userInfoRepo.save(userInfo);
             }
 
