@@ -134,8 +134,9 @@ export default {
     };
 
     // Computed para filtrar eventos não promovidos com base nas categorias e data
+    // Computed para filtrar e ordenar eventos não promovidos com base nas categorias e data
     const filteredNonPromotedEvents = computed(() => {
-      return nonPromotedEvents.value.filter((event) => {
+      const filteredEvents = nonPromotedEvents.value.filter((event) => {
         const isCategoryMatch =
           selectedCategories.value.length === 0 ||
           selectedCategories.value.includes(event.category);
@@ -145,11 +146,14 @@ export default {
 
         return isCategoryMatch && isDateMatch;
       });
+
+      // Ordena os eventos pela data de início do mais próximo ao mais distante
+      return filteredEvents.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     });
 
-    // Computed para filtrar eventos promovidos com base nas categorias e data
+    // Computed para filtrar e ordenar eventos promovidos com base nas categorias e data
     const filteredPromotedEvents = computed(() => {
-      return promotedEvents.value.filter((event) => {
+      const filteredEvents = promotedEvents.value.filter((event) => {
         const isCategoryMatch =
           selectedCategories.value.length === 0 ||
           selectedCategories.value.includes(event.category);
@@ -159,6 +163,9 @@ export default {
 
         return isCategoryMatch && isDateMatch;
       });
+
+      // Ordena os eventos pela data de início do mais próximo ao mais distante
+      return filteredEvents.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     });
 
     // Alterna a exibição do dropdown
@@ -213,12 +220,12 @@ export default {
   font-size: 2rem;
   font-weight: bold;
   color: aliceblue;
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* Aumenta o espaçamento inferior entre o título e o conteúdo */
   animation: fadeIn 1s ease-out;
 }
 
 .promoted-events-section {
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* Aumenta o espaçamento inferior entre a seção de eventos promovidos e o conteúdo abaixo */
 }
 
 .promoted-events-bar {
@@ -294,17 +301,18 @@ ion-card-subtitle {
 }
 
 .dropdown-menu {
-  position: absolute;
-  margin-top: 20px;
+  position: fixed;
+  top: 130px; /* Ajusta para ficar logo abaixo do botão */
   right: 16px;
   background: var(--ion-color-light);
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 200; /* Garante que o dropdown sobreponha outros elementos */
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 250px; /* Ajuste a largura para que não fique tão grande */
 }
 
 .date-filter {
@@ -331,9 +339,10 @@ ion-card-subtitle {
   font-size: 16px;
 }
 
+/* Estilos para o botão de filtro */
 .filter-button {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   background: none;
   border: none;
@@ -341,7 +350,7 @@ ion-card-subtitle {
   cursor: pointer;
   width: 48px;
   height: 48px;
-  z-index: 100;
+  z-index: 100; /* Garante que o botão sempre fique visível */
 }
 
 .filter-button svg {
@@ -359,9 +368,37 @@ ion-card-subtitle {
   opacity: 0.8;
 }
 
+/* Estilos para a seção de eventos promovidos */
+.promoted-events-section,
+.event-cards-container {
+  z-index: 1; /* Garante que os eventos fiquem abaixo do dropdown */
+}
+
+/* Novo estilo para o título da seção de eventos promovidos */
+.promoted-events-section h2 {
+  margin-top: 60px; /* Aumenta o espaçamento entre o ícone do filtro e o título */
+  margin-bottom: 16px; /* Espaçamento inferior do título */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: aliceblue;
+}
+
 .clear-button {
   margin-top: 10px;
   align-self: flex-end;
   font-size: 14px;
 }
+
+/* Estilos para a seção de eventos promovidos */
+.promoted-events-section,
+.event-cards-container {
+  z-index: 1; /* Garante que os eventos fiquem abaixo do dropdown */
+}
+
+.clear-button {
+  margin-top: 10px;
+  align-self: flex-end;
+  font-size: 14px;
+}
+
 </style>
