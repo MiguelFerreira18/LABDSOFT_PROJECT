@@ -30,7 +30,7 @@ public class EventController {
 public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
     try {
         Event event = eventService.createEvent(createEventRequestDto);
-        event.setAttendees(0); // Initialize attendees count
+         // Initialize attendees count
         return ResponseEntity.ok(event);
     } catch (Exception e) {
         return ResponseEntity.badRequest().body(null);
@@ -49,7 +49,7 @@ public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEven
     public List<Event> getAllEvents() {
         return eventService.getAllEvents();
     }
-    
+
     @GetMapping("/createdBy/{userId}")
     public ResponseEntity<List<Event>> getEventsByCreator(@PathVariable String userId) {
         try {

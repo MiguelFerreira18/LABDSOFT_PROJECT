@@ -1,5 +1,4 @@
 package isep.ipp.pt.Smart_cities.Model.EventModel;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,7 +15,7 @@ public class EventSummary {
     private LocalDate date;
     private String location;
     private String category;
-    private int totalAttendees;
+    private int totalAttendees=0;
 
     // Constructor to initialize from an Event object
     public EventSummary(Event event) {
@@ -25,7 +24,7 @@ public class EventSummary {
         this.date = event.getStartDate();  // Assuming date represents the start date
         this.location = event.getLocation();
         this.category = event.getCategory();  // Assuming Event has a getCategory() method
-        this.totalAttendees =  event.getAttendees(); // Assuming Event has a list of attendees
+        this.totalAttendees =  0; // Assuming Event has a list of attendees
     }
 
     // Constructor with all fields for custom initialization

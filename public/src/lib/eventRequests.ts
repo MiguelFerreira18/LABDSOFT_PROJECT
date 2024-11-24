@@ -101,12 +101,18 @@ export interface EventSummary {
   totalAttendees: number;
 };
 
-export async function fetchDashboardSummaries(userId: string): Promise<EventSummary[]> {
-  const response = await fetch(`/api/events/dashboard/${userId}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch event summaries');
+export const fetchDashboardSummaries = async (userId: string): Promise<EventSummary[]> => {
+  try {
+    // Adjust the API URL if necessary to match your backend
+    const response = await fetch(`${baseUrl}/api/events/dashboard`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch event summaries');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching event summaries:', error);
+    throw error; // Rethrow for further handling in the component
   }
-  return await response.json();
 };
 
 

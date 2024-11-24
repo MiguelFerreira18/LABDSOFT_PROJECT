@@ -80,84 +80,15 @@ public class SubscribeService {
             }
         });
     }
-/* 
 
-public Optional<Response> subscribe(String uuid, String eventId) {
-    Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
 
-    if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
-        return Optional.of(Response.forbidden("User already subscribed to event"));
-    } else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)) {
-        return reSubscribeAnEvent(isAlreadySubscribed.get());
-    }
-
-    Optional<User> user = userService.findById(uuid);
-    if (user.isEmpty()) {
-        return Optional.of(Response.notFound("User not found"));
-    }
-
-    Optional<Event> event = eventRepo.findById(eventId);
-    if (event.isEmpty()) {
-        return Optional.of(Response.notFound("Event not found"));
-    }
-
-    Subscribe subscribeRequest = new Subscribe(user.get(), event.get());
-    try {
-        subscribeRequest.setCode((int) (Math.random() * 10000));
-        subscribeRequest.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
-
-        // Increment the event attendees count
-        Event subscribedEvent = event.get();
-        subscribedEvent.incrementAttendees();
-        eventRepo.save(subscribedEvent);
-
-        return Optional.of(Response.created("Subscribe Request created",
-                subscribeRepo.save(subscribeRequest).toDTO()));
-    } catch (Exception e) {
-        return Optional.of(Response.internalError("Error creating Subscribe Request"));
-    }
-}
-
-public Optional<Response> reSubscribeAnEvent(Subscribe subscription) {
-    try {
-        subscription.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
-
-        // Increment the event attendees count
-        Event event = subscription.getEvent();
-        event.setAttendees(event.getAttendees() + 1);
-        eventRepo.save(event);
-
-        return Optional.of(Response.ok("Event resubscribed", subscribeRepo.save(subscription).toDTO()));
-    } catch (Exception e) {
-        return Optional.of(Response.internalError("Error resubscribing event"));
-    }
-}
-public Optional<Response> unsubscribe(long id) {
-    return subscribeRepo.findById(id).map(subscribe -> {
-        try {
-            subscribe.setSubscriptionStatus(SubscriptionStatus.UNSUBSCRIBED);
-
-            // Decrement the event attendees count
-            Event event = subscribe.getEvent();
-            if (event.getAttendees() > 0) {
-                event.decrementAttendees();
-                eventRepo.save(event);
-            }
-
-            return Response.ok("Event unsubscribed", subscribeRepo.save(subscribe).toDTO());
-        } catch (Exception e) {
-            return Response.internalError("Error unsubscribing event");
-        }
-    });
-}
-*/
 
     public Optional<Response> countAllSubscriptionsToAnEvent(String eventId){
         return getCountOfSubscriptions(eventId) == 0 ? Optional.of(Response.notFound("No subscriptions found")) :
                 Optional.of(Response.ok("Count of subscriptions", getCountOfSubscriptions(eventId)));
     }
 
-    private int getCountOfSubscriptions(String eventId) {
+    public int getCountOfSubscriptions(String eventId) {
         return (int) StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getEvent().getId().equals(eventId)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
