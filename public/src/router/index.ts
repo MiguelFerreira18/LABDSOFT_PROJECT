@@ -3,10 +3,13 @@ import { RouteRecordRaw } from "vue-router";
 import TabsPage from "../views/TabsPage.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
-import RefactorAfterHavingEventsList from "@/views/RefactorAfterHavingEventsList.vue";
-import AttendedEventsView from "@/views/AttendedEventsView.vue";
-import EventsView from "@/views/EventsView.vue";
+import EventDetailsView from "@/views/Events/EventDetailsView.vue";
+import EventHistoryView from "@/views/Events/EventHistoryView.vue";
+import EventsView from "@/views/Events/EventsView.vue";
 import RewardsDashboard from "@/views/RewardsDashboard.vue";
+import DashboardEventsView from "@/views/Events/DashboardEventsView.vue";
+import AddEventView from "@/views/Events/AddEventView.vue";
+import MapView from "@/views/maps/MapView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,14 +25,24 @@ const routes: Array<RouteRecordRaw> = [
     meta: { public: true },
   },
   {
+    path: "/events/create",
+    name: "AddEventView",
+    component: AddEventView,
+  },
+  {
     path: "/events/attended",
     name: "AttendedEvents",
-    component: AttendedEventsView,
+    component: EventHistoryView,
+  },
+  {
+    path: "/events/dashboard",
+    name: "DashboardEventsView",
+    component: DashboardEventsView,
   },
   {
     path: "/event/EventDetail/:id",
     name: "EventDetails",
-    component: RefactorAfterHavingEventsList,
+    component: EventDetailsView,
   },
   {
     path: "/events",
@@ -40,6 +53,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/rewards",
     name: "Rewards",
     component: RewardsDashboard,
+  },
+  {
+    path: "/map",
+    name: "map",
+    component: MapView,
   },
   {
     path: "/tabs/",

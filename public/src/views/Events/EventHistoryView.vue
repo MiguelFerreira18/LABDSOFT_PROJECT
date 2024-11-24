@@ -1,16 +1,18 @@
 <template>
     <ion-content class="ion-padding">
+        <ion-button v-if="!isSeeingAttendedEvents" expand="block" fill="clear" shape="round" @click="toggleView">
+            See Subscribed Events
+        </ion-button>
+        <ion-button v-else expand="block" fill="clear" shape="round" @click="toggleView">
+            See Attended Events
+        </ion-button>
         <ion-list v-if="events.length > 0">
-
-
             <!-- Events list -->
             <div class="event-grid">
                 <ion-card v-for="event in events" :key="event.id" @click="handlePagePush(event.id)" class="event-card">
                     <!-- Category chips -->
                     <div class="ion-padding-horizontal ion-padding-top">
-                        <ion-chip v-for="category in event.categories" :key="category" color="primary" outline>
-                            <ion-label>{{ category }}</ion-label>
-                        </ion-chip>
+                        <ion-label>{{ event.category }}</ion-label>
                     </div>
 
                     <ion-card-header>
@@ -79,28 +81,48 @@ interface Event {
     description: string;
     location: string;
     creator: any;
-    categories: string[];
+    category: string;
 }
 const events = ref<Event[]>([]);
+const creator = ref<any>({});
+const isSeeingAttendedEvents = ref(true);
+
+
+async function fetchEvents(endpoint: any) {
+    const userId = localStorage.getItem('uuid') || '';
+    const response = await SendRequest(`${endpoint}${userId}`, 'GET');
+    const data = await response.json();
+
+    if (response.ok && data) {
+        events.value = data;
+        creator.value = data.creator;
+        events.value = sortEventsByDate(events.value);
+    }
+
+}
+function sortEventsByDate(eventsList: Event[]) {
+    return eventsList.sort((a, b) =>
+        new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+    );
+}
 
 onMounted(async () => {
-    console.log('Component is mounted');
-    const userId = localStorage.getItem('uuid') || '';
-    const response = await SendRequest(`/subscription/attended/event/${userId}`, 'GET');
-    const data = await response.json();
-    if (response.ok && data) {
-        console.log(data);
-        events.value = data;
-        console.log(data[0].categories);
-
-        events.value = events.value.sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
-    }
+    const endpoint = isSeeingAttendedEvents.value
+        ? '/subscription/attended/event/'
+        : '/subscription/event/';
+    await fetchEvents(endpoint);
 });
 
 
 async function handlePagePush(eventId: number) {
-    console.log('Pushing to event detail page');
     router.push({ path: `/event/EventDetail/${eventId}` });
+}
+async function toggleView() {
+    isSeeingAttendedEvents.value = !isSeeingAttendedEvents.value;
+    const endpoint = isSeeingAttendedEvents.value
+        ? '/subscription/attended/event/'
+        : '/subscription/event/';
+    await fetchEvents(endpoint);
 }
 function formatDateRange(startDate: string, endDate: string) {
     const start = new Date(startDate);

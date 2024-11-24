@@ -79,6 +79,18 @@ public class SubscribeService {
         });
     }
 
+    public Optional<Response> countAllSubscriptionsToAnEvent(String eventId){
+        return getCountOfSubscriptions(eventId) == 0 ? Optional.of(Response.notFound("No subscriptions found")) :
+                Optional.of(Response.ok("Count of subscriptions", getCountOfSubscriptions(eventId)));
+    }
+
+    private int getCountOfSubscriptions(String eventId) {
+        return (int) StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getEvent().getId().equals(eventId)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
+                .count();
+    }
+
     public Optional<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(String uuid) {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
@@ -93,6 +105,13 @@ public class SubscribeService {
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.ATTENDED)
                         && subscribe.getEvent().getEndDate().isBefore(LocalDate.now()))
+                .map(Subscribe::getEvent)
+                .toList());
+    }
+    public Optional<List<Event>> getSubscribedEventsByUserUUID(String uuid) {
+        return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
                 .map(Subscribe::getEvent)
                 .toList());
     }

@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends CrudRepository<Event, String> {
 
-    @Query("SELECT e FROM Event e WHERE e.creator.email = ?1")
-    public List<Event> findByCreatorEmail(String email);
+    //@Query("SELECT e FROM Event e WHERE e.creator.email = ?1")
+    //public List<Event> findByCreatorEmail(String email);
 
     @Query("SELECT e FROM Event e WHERE e.title = ?1")
     public Optional<Event> findByTitle(String title);
@@ -32,4 +32,6 @@ public interface EventRepository extends CrudRepository<Event, String> {
 
     @Query("SELECT e FROM Event e WHERE e.promotedUntil IS NULL OR e.promotedUntil <= :now")
     List<Event> findNonPromotedEvents(LocalDateTime now);
+
+    List<Event> findByCreatorEmail(String email);
 }
