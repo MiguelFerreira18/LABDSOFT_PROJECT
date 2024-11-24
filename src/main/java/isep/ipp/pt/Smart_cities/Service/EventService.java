@@ -35,9 +35,12 @@ public class EventService {
 
 
     public Event createEvent(EventRequestDTO createEventRequestDto) {
+
         User creator = userService.findById(createEventRequestDto.getCreatorID());
+        
         if (creator == null) {
             throw new IllegalArgumentException("Invalid creator ID");
+        }
 
         Event event = Event.builder()
                 .creator(creator)
@@ -126,6 +129,7 @@ public class EventService {
 
         return event;
     }
+    
     public List<Event> getPromotedEvents() {
         return eventRepository.findPromotedEvents(LocalDateTime.now());
     }
@@ -133,8 +137,6 @@ public class EventService {
     public List<Event> getNonPromotedEvents() {
         return eventRepository.findNonPromotedEvents(LocalDateTime.now());
     }
-
-
 
     /*public List<EventSummary> generateCurrentEventSummaries() {
         List<Event> currentEvents = eventRepository.findAll()
@@ -150,6 +152,7 @@ public class EventService {
                 })
                 .toList();
     }*/
+
     public List<EventSummary> generateCurrentEventSummaries() {
         // Fetch all events (add more filters if needed)
         List<Event> currentEvents = eventRepository.findAll();
@@ -165,16 +168,15 @@ public class EventService {
                 .collect(Collectors.toList());
     }
     
-public List<EventSummary> getEventSummariesWithDetails() {
-    List<Event> events = eventRepository.findAll();
+    public List<EventSummary> getEventSummariesWithDetails() {
+        List<Event> events = eventRepository.findAll();
 
-    return events.stream()
-            .map(EventSummary::new) // Map all events to summaries
-            .collect(Collectors.toList());
-}
+        return events.stream()
+                .map(EventSummary::new) // Map all events to summaries
+                .collect(Collectors.toList());
+    }
 
-public List<Event> getEventsByCreator(String userId) {
-    return eventRepository.findByCreatorId(userId);
-}
-
+    public List<Event> getEventsByCreator(String userId) {
+        return eventRepository.findByCreatorId(userId);
+    }
 }
