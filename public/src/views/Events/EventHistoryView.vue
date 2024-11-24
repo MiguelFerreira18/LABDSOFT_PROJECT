@@ -1,4 +1,5 @@
 <template>
+    <ion-page>
     <ion-content class="ion-padding">
         <ion-button v-if="!isSeeingAttendedEvents" expand="block" fill="clear" shape="round" @click="toggleView">
             See Subscribed Events
@@ -62,6 +63,7 @@
             <p>Your upcoming events will appear here</p>
         </div>
     </ion-content>
+</ion-page>
 </template>
 
 

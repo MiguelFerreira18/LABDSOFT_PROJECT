@@ -25,42 +25,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { public: true },
   },
   {
-    path: "/events/create",
-    name: "AddEventView",
-    component: AddEventView,
-  },
-  {
-    path: "/events/attended",
-    name: "AttendedEvents",
-    component: EventHistoryView,
-  },
-  {
-    path: "/events/dashboard",
-    name: "DashboardEventsView",
-    component: DashboardEventsView,
-  },
-  {
-    path: "/event/EventDetail/:id",
-    name: "EventDetails",
-    component: EventDetailsView,
-  },
-  {
-    path: "/events",
-    name: "Events",
-    component: EventsView,
-  },
-  {
-    path: "/rewards",
-    name: "Rewards",
-    component: RewardsDashboard,
-  },
-  {
-    path: "/map",
-    name: "map",
-    component: MapView,
-  },
-  {
-    path: "/tabs/",
+    path: "/",
     component: TabsPage,
     meta: { requiresAuth: true, roles: ["Admin", "User", "Institution"] },
     children: [
@@ -69,20 +34,55 @@ const routes: Array<RouteRecordRaw> = [
         redirect: "/tabs/tabHome",
       },
       {
-        path: "tabHome",
+        path: "tabs/tabHome",
         component: () => import("@/views/TabHomePage.vue"),
       },
       {
-        path: "tab2",
-        component: () => import("@/views/Tab2Page.vue"),
+        path: "tabs/tabEvents",
+        component: () => import("@/views/TabEventsPage.vue"),
       },
       {
-        path: "tab3",
+        path: "tabs/tab3",
         component: () => import("@/views/Tab3Page.vue"),
       },
       {
-        path: "tabProfile",
+        path: "tabs/tabProfile",
         component: () => import("@/views/TabProfilePage.vue"),
+      },
+      {
+        path: "events/create",
+        name: "AddEventView",
+        component: AddEventView,
+      },
+      {
+        path: "events/attended",
+        name: "AttendedEvents",
+        component: EventHistoryView,
+      },
+      {
+        path: "events/dashboard",
+        name: "DashboardEventsView",
+        component: DashboardEventsView,
+      },
+      {
+        path: "event/EventDetail/:id",
+        name: "EventDetails",
+        component: EventDetailsView,
+      },
+      {
+        path: "events",
+        name: "Events",
+        component: EventsView,
+      },
+      {
+        path: "rewards",
+        name: "Rewards",
+        component: RewardsDashboard,
+      },
+      {
+        path: "map",
+        name: "map",
+        component: MapView,
       },
     ],
   },
@@ -93,6 +93,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
+
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
   const isAuthenticated = Boolean(token);

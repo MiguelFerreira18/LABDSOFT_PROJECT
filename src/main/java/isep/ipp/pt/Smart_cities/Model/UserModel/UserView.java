@@ -34,5 +34,4 @@ public class UserView {
         this.city = city;
         this.country = country;
     }
-
 }
