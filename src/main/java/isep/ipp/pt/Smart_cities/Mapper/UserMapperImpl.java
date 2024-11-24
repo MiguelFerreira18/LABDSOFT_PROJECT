@@ -43,10 +43,7 @@ public class UserMapperImpl implements UserMapper {
         city = user.getCity();
         country = user.getCountry();
 
-
-        UserView userView = new UserView(id, name, authorities, birthDate, gender, address, city, country);
-
-        return userView;
+        return new UserView(id, name, authorities);
     }
 
     @Override
@@ -63,9 +60,7 @@ public class UserMapperImpl implements UserMapper {
         name = institution.getName();
         authorities = grantedAuthorityCollectionToRoleSet(institution.getAuthorities());
 
-        UserView userView = new UserView(id, name, authorities);
-
-        return userView;
+        return new UserView(id, name, authorities);
     }
 
     @Override
@@ -107,9 +102,7 @@ public class UserMapperImpl implements UserMapper {
 
         authority = grantedAuthority.getAuthority();
 
-        Role role = new Role(authority);
-
-        return role;
+        return new Role(authority);
     }
 
     protected Set<Role> grantedAuthorityCollectionToRoleSet(Collection<? extends GrantedAuthority> collection) {
@@ -117,7 +110,7 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        Set<Role> set = new LinkedHashSet<Role>(Math.max((int) (collection.size() / .75f) + 1, 16));
+        Set<Role> set = new LinkedHashSet<>(Math.max((int) (collection.size() / .75f) + 1, 16));
         for (GrantedAuthority grantedAuthority : collection) {
             set.add(grantedAuthorityToRole(grantedAuthority));
         }

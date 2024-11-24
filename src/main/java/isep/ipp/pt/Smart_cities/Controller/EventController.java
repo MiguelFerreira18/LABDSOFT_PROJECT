@@ -1,12 +1,21 @@
 package isep.ipp.pt.Smart_cities.Controller;
 
+import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
+import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Service.EventService;
+import isep.ipp.pt.Smart_cities.Service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/events")
@@ -14,11 +23,19 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+    @Autowired
+    private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
-        return ResponseEntity.ok(eventService.createEvent(event));
+   @PostMapping
+public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
+    try {
+        return ResponseEntity.ok(eventService.createEvent(createEventRequestDto));
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(null);
     }
+}
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable String id) {
@@ -60,5 +77,20 @@ public class EventController {
     public ResponseEntity<Void> deleteAllEventsWithSubscriptions() {
         eventService.deleteAllEventsWithSubscriptions();
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/promote")
+    public ResponseEntity<Event> promoteEvent(@PathVariable String id, @RequestParam String userId) {
+        return ResponseEntity.ok(eventService.promoteEvent(id, userId));
+    }
+
+    @GetMapping("/promoted")
+    public ResponseEntity<List<Event>> getPromotedEvents() {
+        return ResponseEntity.ok(eventService.getPromotedEvents());
+    }
+
+    @GetMapping("/non-promoted")
+    public ResponseEntity<List<Event>> getNonPromotedEvents() {
+        return ResponseEntity.ok(eventService.getNonPromotedEvents());
     }
 }

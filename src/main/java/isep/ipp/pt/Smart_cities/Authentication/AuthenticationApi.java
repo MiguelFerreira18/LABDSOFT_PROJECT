@@ -133,16 +133,14 @@ public class AuthenticationApi {
                 .expiresAt(now.plusSeconds(EXPIRATION_TIME))
                 .claim("role", scope);
 
-        if (principal instanceof User) {
-            User user = (User) principal;
+        if (principal instanceof User user) {
             return baseClaimsBuilder
                     .subject(format("User,%s,%s", user.getId(), user.getUsername()))
                     .claim("type", "User")
                     .claim("uuid", user.getId())
                     .claim("email", user.getEmail())
                     .build();
-        } else if (principal instanceof Institution) {
-            Institution institution = (Institution) principal;
+        } else if (principal instanceof Institution institution) {
             return baseClaimsBuilder
                     .subject(format("Institution,%s,%s", institution.getId(), institution.getUsername()))
                     .claim("type", "Institution")
@@ -204,23 +202,5 @@ public class AuthenticationApi {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-//    private Optional<SignUpRequest> decryptSignUpRequest(SignUpRequest encryptedData) {
-//        try {
-//            SignUpRequest decryptedRequest = new SignUpRequest();
-//            decryptedRequest.setName(encryptionUtil.decrypt(encryptedData.getName()).orElseThrow(() -> new Exception("Error decrypting name")));
-//            decryptedRequest.setEmail(encryptionUtil.decrypt(encryptedData.getEmail()).orElseThrow(() -> new Exception("Error decrypting email")));
-//            decryptedRequest.setPassword(encryptionUtil.decrypt(encryptedData.getPassword()).orElseThrow(() -> new Exception("Error decrypting password")));
-//            decryptedRequest.setRepeatPassword(encryptionUtil.decrypt(encryptedData.getRepeatPassword()).orElseThrow(() -> new Exception("Error decrypting repeat password")));
-//            decryptedRequest.setType(encryptedData.getType());
-//            return Optional.of(decryptedRequest);
-//
-//        } catch (Exception ex) {
-//            LOGGER.error("Error decrypting sign-up request", ex);
-//            return Optional.empty();
-//        }
-//    }
-
-
 
 }

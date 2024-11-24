@@ -1,18 +1,20 @@
 package isep.ipp.pt.Smart_cities.Model.EventModel;
 
+import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 @Builder
@@ -42,8 +44,8 @@ public class Event {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> categories = new HashSet<>();
+    @Pattern(regexp = "^(Art|Sports|Volunteering|Social|Educational|Recreational|Political)$", message = "Invalid category, please choose one from: Art, Sports, Volunteering, Social, Educational, Recreational or Political")
+    private String category;
 
     @NotBlank(message = "Description is required")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
@@ -51,11 +53,18 @@ public class Event {
 
     private String imagePath;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User creator;
 
-    public Event() {}
+    private LocalDateTime promotedUntil;
+
+    private float latitude;
+
+    private float longitude;
+
+    public Event() {
+    }
 
     public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator) {
         this.title = title;
@@ -66,29 +75,66 @@ public class Event {
         this.creator = creator;
     }
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, Set<String> categories, String description, String imagePath, User creator) {
+    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.creator = creator;
+        this.promotedUntil = null;
+    }
+
+
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
         this.id = id;
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.categories = categories;
+        this.category = category;
         this.description = description;
         this.imagePath = imagePath;
         this.creator = creator;
+        this.promotedUntil = null;
     }
 
-    public void addCategory(String category) {
-        categories.add(category);
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+        this.id = id;
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.category = category;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.creator = creator;
+        this.promotedUntil = null;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
-    
-    public void removeCategory(String category) {
-        categories.remove(category);
-    }
+
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
         return endDate.getMonthValue() == now.getMonthValue() && endDate.getYear() == now.getYear();
     }
-}
 
+    public boolean isPromoted() {
+        return promotedUntil != null && promotedUntil.isAfter(LocalDateTime.now());
+    }
+
+    public EventRequestDTO toEventRequestDTO() {
+        return EventRequestDTO.builder()
+                .title(title)
+                .location(location)
+                .startDate(startDate)
+                .endDate(endDate)
+                .description(description)
+                .category(category)
+                .creatorID(creator.getId())
+                .latitude(latitude)
+                .longitude(longitude)
+                .build();
+    }
+}

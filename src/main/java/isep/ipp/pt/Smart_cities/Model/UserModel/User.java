@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,41 +21,44 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 @ToString
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    protected String id;
 
     @Column(unique = true)
     @Email
-    private String email;
+    protected String email;
 
     @Size(min = 3, max = 20)
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must contain only letters and numbers")
-    private String name;
+    protected String name;
 
     @Builder.Default
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> authorities = new HashSet<>();
+    protected Set<Role> authorities = new HashSet<>();
 
-    private String password;
+    protected String password;
 
-    private LocalDateTime lastLoginAt = LocalDateTime.now();
+    @Builder.Default
+    protected boolean hasPromotedEvent = false;
+
+    protected LocalDateTime lastLoginAt = LocalDateTime.now();
 
     @Column
-    private Date birthDate;
+    protected Date birthDate;
     @Column
-    private String gender;
+    protected String gender;
     @Column
-    private String address;
+    protected String address;
     @Column
-    private String city;
+    protected String city;
     @Column
-    private String country;
+    protected String country;
 
     public User() {
         this.authorities = new HashSet<>();
@@ -119,6 +123,17 @@ public class User implements UserDetails {
         this.country = country;
     }
 
+    public User(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+        this.hasPromotedEvent = hasPromotedEvent;
+        this.lastLoginAt = lastLoginAt;
+    }
+
+
     public void setPassword(String password, PasswordEncoder encoder) {
         if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {
             this.password = encoder.encode(password);
@@ -164,6 +179,21 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasPromotedEvent() {
+        return hasPromotedEvent;
+    }
+
+    public void promoteEvent() {
+        if (hasPromotedEvent) {
+            throw new RuntimeException("User already promoted a event");
+        }
+        this.hasPromotedEvent = true;
+    }
+
+    public void resetPromotedEvent() {
+        this.hasPromotedEvent = false;
     }
 
     @PrePersist
