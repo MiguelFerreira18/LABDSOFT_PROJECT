@@ -44,14 +44,14 @@ public class EventService {
 
         Event event = Event.builder()
                 .creator(creator)
-                .title(eventRequestDTO.getTitle())
-                .location(eventRequestDTO.getLocation())
-                .startDate(eventRequestDTO.getStartDate())
-                .endDate(eventRequestDTO.getEndDate())
-                .description(eventRequestDTO.getDescription())
-                .category(eventRequestDTO.getCategory())
-                .latitude(eventRequestDTO.getLatitude())
-                .longitude(eventRequestDTO.getLongitude())
+                .title(createEventRequestDto.getTitle())
+                .location(createEventRequestDto.getLocation())
+                .startDate(createEventRequestDto.getStartDate())
+                .endDate(createEventRequestDto.getEndDate())
+                .description(createEventRequestDto.getDescription())
+                .category(createEventRequestDto.getCategory())
+                .latitude(createEventRequestDto.getLatitude())
+                .longitude(createEventRequestDto.getLongitude())
                 .build();
 
 
