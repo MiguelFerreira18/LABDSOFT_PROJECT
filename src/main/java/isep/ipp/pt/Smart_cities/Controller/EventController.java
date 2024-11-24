@@ -37,6 +37,7 @@ public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEven
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // General error
     }
+};
 
 
 
@@ -45,12 +46,13 @@ public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEven
         return eventService.getEventById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
+    };
 
     @GetMapping
     public List<Event> getAllEvents() {
         return eventService.getAllEvents();
-    }
+    };
+
 
     @GetMapping("/createdBy/{userId}")
     public ResponseEntity<List<Event>> getEventsByCreator(@PathVariable String userId) {
@@ -60,50 +62,58 @@ public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEven
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-    }
+    };
+
     
     @PutMapping("/{id}")
     public ResponseEntity<Event> updateEvent(@PathVariable String id, @RequestBody Event event) {
         event.setId(id);
         return ResponseEntity.ok(eventService.updateEvent(event));
-    }
+    };
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable String id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
-    }
+    };
+
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAllEvents() {
         eventService.deleteAllEvents();
         return ResponseEntity.noContent().build();
-    }
+    };
+
 
     @DeleteMapping("/{id}/delsub")
     public ResponseEntity<Void> deleteEventWithSubscriptions(@PathVariable String id) {
         eventService.deleteEventWithSubscriptions(id);
         return ResponseEntity.noContent().build();
-    }
+    };
+
 
     @DeleteMapping("/deleteAll")
     public ResponseEntity<Void> deleteAllEventsWithSubscriptions() {
         eventService.deleteAllEventsWithSubscriptions();
         return ResponseEntity.noContent().build();
-    }
+    };
+
 
     @PostMapping("/{id}/promote")
     public ResponseEntity<Event> promoteEvent(@PathVariable String id, @RequestParam String userId) {
         return ResponseEntity.ok(eventService.promoteEvent(id, userId));
-    }
+    };
+
 
     @GetMapping("/promoted")
     public ResponseEntity<List<Event>> getPromotedEvents() {
         return ResponseEntity.ok(eventService.getPromotedEvents());
-    }
+    };
 
     @GetMapping("/non-promoted")
     public ResponseEntity<List<Event>> getNonPromotedEvents() {
         return ResponseEntity.ok(eventService.getNonPromotedEvents());
-    }
+    };
 }
+
