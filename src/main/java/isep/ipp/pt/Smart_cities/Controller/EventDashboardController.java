@@ -21,7 +21,11 @@ public class EventDashboardController {
 
     @GetMapping("/dashboard/{userId}")
     public List<EventSummary> getDashboardSummaries(@PathVariable String userId) {
-        // Generate summaries of current events
         return eventService.generateCurrentEventSummaries(userId);
     }
+    @GetMapping("/summaries")
+public List<EventSummary> getAllEventSummaries() {
+    return eventService.getEventSummariesWithDetails();
+}
+
 }

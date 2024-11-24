@@ -2,63 +2,133 @@
   <ion-content class="ion-padding">
     <h1 class="title">Dashboard</h1>
 
-    <div v-if="loading" class="loading-spinner">
-      <ion-spinner name="crescent"></ion-spinner>
+    <!-- Promoted Events Section -->
+    <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
+      <h2 class="subtitle">Promoted Events</h2>
+      <div class="promoted-events-bar">
+        <router-link
+          v-for="event in filteredPromotedEvents"
+          :key="event.id"
+          :to="`/event/EventDetail/${event.id}`"
+          class="clickable-card"
+        >
+          <ion-card :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
+            <ion-card-header>
+              <ion-card-title>{{ event.title }}</ion-card-title>
+              <ion-card-subtitle>
+                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+              <p><strong>Location:</strong> {{ event.location }}</p>
+              <p><strong>Category:</strong> {{ event.category }}</p>
+              <p v-if="event.attendees > 0"><strong>Attendees:</strong> {{ event.attendees }}</p>
+              <p v-else>No attendees yet</p>
+            </ion-card-content>
+          </ion-card>
+        </router-link>
+      </div>
     </div>
 
-    <div v-else-if="eventSummaries.length === 0" class="no-events-message">
-      <p>No events available to display.</p>
-    </div>
-
-    <div v-else class="dashboard-cards-container">
-      <div class="dashboard-cards">
-        <ion-card v-for="summary in eventSummaries" :key="summary.id" class="dashboard-card">
-          <ion-card-header>
-            <ion-card-title>{{ summary.title }}</ion-card-title>
-            <ion-card-subtitle>{{ formatDate(summary.date) }}</ion-card-subtitle>
-          </ion-card-header>
-
-          <ion-card-content>
-            <p><strong>Location:</strong> {{ summary.location }}</p>
-            <p><strong>Total Attendees:</strong> {{ summary.totalAttendees }}</p>
-          </ion-card-content>
-        </ion-card>
+    <!-- Non-Promoted Events Section -->
+    <div class="event-cards-container">
+      <div class="event-cards">
+        <router-link
+          v-for="event in filteredNonPromotedEvents"
+          :key="event.id"
+          :to="`/event/EventDetail/${event.id}`"
+          class="clickable-card"
+        >
+          <ion-card :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
+            <ion-card-header>
+              <ion-card-title>{{ event.title }}</ion-card-title>
+              <ion-card-subtitle>
+                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+              <p><strong>Location:</strong> {{ event.location }}</p>
+              <p><strong>Category:</strong> {{ event.category }}</p>
+              <p v-if="event.attendees > 0"><strong>Attendees:</strong> {{ event.attendees }}</p>
+              <p v-else>No attendees yet</p>
+            </ion-card-content>
+          </ion-card>
+        </router-link>
       </div>
     </div>
   </ion-content>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
+<script lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { fetchNonPromotedEvents, fetchPromotedEvents } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonSpinner } from '@ionic/vue';
-import { SendRequest } from '@/lib/request';
+import { categories, categoryColors } from '@/lib/categories';
 
-const eventSummaries = ref<any>([]);
-const loading = ref(true);
+export default {
+  setup() {
+    const promotedEvents = ref([]);
+    const nonPromotedEvents = ref([]);
+    const selectedCategories = ref([]);
+    const dateLimit = ref(null);
 
-onMounted(async () => {
-  await loadDashboard();
-})
+    const userId = ref(localStorage.getItem('uuid') || ''); // Get user ID from localStorage
 
-async function loadDashboard() {
-  console.log('Loading dashboard...');
+    const loadPromoted = async () => {
+      try {
+        promotedEvents.value = await fetchPromotedEvents(userId.value); // Pass userId if API requires it
+      } catch (error) {
+        console.error('Error fetching promoted events:', error);
+      }
+    };
 
-  const uuid = localStorage.getItem('uuid') || '';
-  try {
-    const response = await SendRequest(`/api/events/dashboard/${uuid}`, 'GET');
-    const data = await response.json();
-    console.log('Dashboard data:', data);
+    const loadNonPromoted = async () => {
+      try {
+        nonPromotedEvents.value = await fetchNonPromotedEvents(userId.value); // Pass userId if API requires it
+      } catch (error) {
+        console.error('Error fetching non-promoted events:', error);
+      }
+    };
 
-    eventSummaries.value = data;
-  } catch (error) {
-    console.error('Failed to load dashboard:', error);
-  } finally {
-    loading.value = false;
-  }
+    const filteredNonPromotedEvents = computed(() =>
+      nonPromotedEvents.value.filter(event => {
+        const isCategoryMatch =
+          selectedCategories.value.length === 0 ||
+          selectedCategories.value.includes(event.category);
+        const isDateMatch =
+          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+        return isCategoryMatch && isDateMatch;
+      })
+    );
 
-}
+    const filteredPromotedEvents = computed(() =>
+      promotedEvents.value.filter(event => {
+        const isCategoryMatch =
+          selectedCategories.value.length === 0 ||
+          selectedCategories.value.includes(event.category);
+        const isDateMatch =
+          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+        return isCategoryMatch && isDateMatch;
+      })
+    );
 
+    onMounted(() => {
+      loadPromoted();
+      loadNonPromoted();
+    });
+
+    return {
+      promotedEvents,
+      nonPromotedEvents,
+      filteredNonPromotedEvents,
+      filteredPromotedEvents,
+      categoryColors,
+      formatDate,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -67,34 +137,46 @@ async function loadDashboard() {
   font-size: 2rem;
   font-weight: bold;
   color: aliceblue;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
-.loading-spinner {
+.promoted-events-section {
+  margin-bottom: 40px;
+}
+
+.promoted-events-bar {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.no-events-message {
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--ion-color-medium);
-}
-
-.dashboard-cards-container {
-  padding: 16px;
-}
-
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  overflow-x: auto;
   gap: 16px;
 }
 
-.dashboard-card {
+.clickable-card {
+  width: 250px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.event-cards-container {
+  padding: 16px;
+}
+
+.event-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+ion-card {
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: aliceblue;
+}
+
+ion-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+ion-card-subtitle {
+  font-size: 0.9rem;
 }
 </style>

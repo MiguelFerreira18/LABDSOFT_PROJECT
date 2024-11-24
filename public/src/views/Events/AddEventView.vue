@@ -2,37 +2,51 @@
   <div>
     <h1>Create New Event</h1>
     <form @submit.prevent="addEvent">
+      <!-- Event Title -->
       <div>
         <label for="title">Title</label>
         <input type="text" id="title" v-model="event.title" required />
       </div>
+
+      <!-- Event Location -->
       <div>
         <label for="location">Location</label>
         <input type="text" id="location" v-model="event.location" required />
       </div>
+
+      <!-- Start Date -->
       <div>
         <label for="startDate">Start Date</label>
         <input type="date" id="startDate" v-model="event.startDate" required />
       </div>
+
+      <!-- End Date -->
       <div>
         <label for="endDate">End Date</label>
         <input type="date" id="endDate" v-model="event.endDate" required />
       </div>
+
+      <!-- Description -->
       <div>
         <label for="description">Description</label>
         <textarea id="description" v-model="event.description" required></textarea>
       </div>
+
+      <!-- Categories -->
       <div>
-        <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
-          :key="'category-select'">
-          <ion-select-option v-for="category in categories" :value="category" :key="category">
+        <label for="category">Category</label>
+        <select id="category" v-model="event.category" required>
+          <option v-for="category in categories" :key="category" :value="category">
             {{ category }}
-          </ion-select-option>
-        </ion-select>
+          </option>
+        </select>
       </div>
+
+      <!-- Submit Button -->
       <button type="submit">Create Event</button>
     </form>
 
+    <!-- Error Message -->
     <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
     </div>
@@ -41,38 +55,46 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import router from '@/router';
-import { SendRequest } from "@/lib/request";
-import { categories } from "@/lib/categories";
-const event = ref<any>({});
-const fetchedEvent = ref<any>({});
-const errorMessage = ref("")
+import { createEvent } from "@/lib/eventRequests";
+import { useRouter } from "vue-router";
 
-function handleCategoryChange(domEvent: any) {
-  event.value.category = domEvent.target.value;
+// Reactive Variables
+const event = ref({
+  title: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  description: "",
+  category: "",
+});
+const categories = ["Social", "Sports", "Education", "Entertainment", "Other"]; // Predefined categories
+const errorMessage = ref("");
+const router = useRouter();
+
+// Get user ID
+const userId = localStorage.getItem("uuid");
+if (!userId) {
+  errorMessage.value = "User not logged in. Please log in to create an event.";
+  // Optionally, redirect to login
+  router.push("/login");
 }
 
+// Add Event Function
 async function addEvent() {
   try {
     const payload = {
-      title: event.value.title,
-      location: event.value.location,
-      startDate: event.value.startDate,
-      endDate: event.value.endDate,
-      description: event.value.description,
-      category: event.value.category,
-      creatorID: localStorage.getItem('uuid') || ''
-    }
-    const response = await SendRequest('/api/events', 'POST', payload);
-    const data = await response.json();
-    fetchedEvent.value = data;
-    if (response.ok) {
-      router.push(`/event/EventDetail/${fetchedEvent.value.id}`);
-    } else {
-      errorMessage.value = "Failed to create event. Please try again.";
-    }
+      ...event.value,
+      creatorID: userId,
+    };
+
+    // Call the createEvent function
+    const createdEvent = await createEvent(payload);
+
+    console.log("Event created successfully:", createdEvent);
+    router.push(`/event/${createdEvent.id}`); // Navigate to the event detail page
   } catch (error) {
-    errorMessage.value = "Failed to create event. Please try again.";
+    console.error("Error creating event:", error);
+    errorMessage.value = "Failed to create event. Please check the input and try again.";
   }
 }
 </script>
@@ -85,12 +107,24 @@ form {
 
 input,
 textarea,
+select,
 button {
   display: block;
   width: 100%;
   margin-bottom: 10px;
   padding: 8px;
   font-size: 16px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
 }
 
 .error-message {
