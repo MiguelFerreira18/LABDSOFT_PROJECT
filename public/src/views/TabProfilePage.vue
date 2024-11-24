@@ -1,74 +1,78 @@
 <template>
   <ion-page>
     <ion-content class="content-center">
-        <ion-grid class="profileInfo">
-          <ion-row class="profile1">
-            <ion-col size="12" class="profile1">
-                  <ion-row>
-                    <img class="img_profile" src="https://media.tenor.com/wy2zHeWyf2gAAAAe/side-eye-dog-suspicious-look.png"></img>
-                    <ion-col class="text-center">
-                      <ion-row>
-                        <ion-card-title><b>{{ userInfo.name }}</b></ion-card-title>
-                      </ion-row>
-                      <ion-row>
-                        <ion-card-subtitle>{{ userInfo.email }}</ion-card-subtitle>
-                      </ion-row>
-                    </ion-col>
-                  </ion-row>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12" class="full-height">
-              <div class="title-with-icon">
-                <ion-icon class="icon1" aria-hidden="true" :icon="checkmarkDoneCircleOutline"></ion-icon>
-                <h1><b>Bio</b></h1>
-              </div>
-              <ion-text>
-                User is a tech enthusiast and entrepreneur with a strong focus on smart city solutions, 
-                gamification, and community-driven platforms. Passionate about creating innovative digital tools, 
-                he combines technical expertise with a vision to enhance social connections and urban living.
-              </ion-text>
-            </ion-col>
-            <ion-col size="12" class="full-height">
-              <div class="title-with-icon">
-                <ion-icon class="icon2" aria-hidden="true" :icon="trailSignOutline"></ion-icon>
-                <h1><b>Location</b></h1>
-              </div>
-              <ion-list>
-                <ion-item>
-                  <ion-label>Address</ion-label>
-                  <ion-text>{{ userInfo.address }}</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-label>City</ion-label>
-                  <ion-text>{{ userInfo.city }}</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Country</ion-label>
-                  <ion-text>{{ userInfo.country }}</ion-text>
-                </ion-item>
-              </ion-list>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12" class="full-height">
-              <div class="title-with-icon">
-                <ion-icon class="icon3" aria-hidden="true" :icon="personCircleOutline"></ion-icon>
-                <h1><b>Personal Information</b></h1>
-              </div>
-              <ion-list>
-                <ion-item>
-                  <ion-label>Birth Date</ion-label>
-                  <ion-text>{{ userInfo.birthDate }}</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Gender</ion-label>
-                  <ion-text>{{ userInfo.gender }}</ion-text>
-                </ion-item>
-              </ion-list>
-            </ion-col>
-          </ion-row>
-          <!-- <ion-row>
+      <ion-grid class="profileInfo">
+        <ion-row class="profile1">
+          <ion-col size="12" class="profile1">
+            <ion-row>
+              <img class="img_profile"
+                src="https://media.tenor.com/wy2zHeWyf2gAAAAe/side-eye-dog-suspicious-look.png"></img>
+              <ion-col class="text-center">
+                <ion-row>
+                  <ion-card-title><b>{{ userInfo.name }}</b></ion-card-title>
+                </ion-row>
+                <ion-row>
+                  <ion-card-subtitle>{{ userInfo.email }}</ion-card-subtitle>
+                </ion-row>
+                <ion-row>
+                  <ion-card-subtitle>Points: {{ userPoints }}</ion-card-subtitle>
+                </ion-row>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12" class="full-height">
+            <div class="title-with-icon">
+              <ion-icon class="icon1" aria-hidden="true" :icon="checkmarkDoneCircleOutline"></ion-icon>
+              <h1><b>Bio</b></h1>
+            </div>
+            <ion-text>
+              User is a tech enthusiast and entrepreneur with a strong focus on smart city solutions,
+              gamification, and community-driven platforms. Passionate about creating innovative digital tools,
+              he combines technical expertise with a vision to enhance social connections and urban living.
+            </ion-text>
+          </ion-col>
+          <ion-col size="12" class="full-height">
+            <div class="title-with-icon">
+              <ion-icon class="icon2" aria-hidden="true" :icon="trailSignOutline"></ion-icon>
+              <h1><b>Location</b></h1>
+            </div>
+            <ion-list>
+              <ion-item>
+                <ion-label>Address</ion-label>
+                <ion-text>{{ userInfo.address }}</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>City</ion-label>
+                <ion-text>{{ userInfo.city }}</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Country</ion-label>
+                <ion-text>{{ userInfo.country }}</ion-text>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12" class="full-height">
+            <div class="title-with-icon">
+              <ion-icon class="icon3" aria-hidden="true" :icon="personCircleOutline"></ion-icon>
+              <h1><b>Personal Information</b></h1>
+            </div>
+            <ion-list>
+              <ion-item>
+                <ion-label>Birth Date</ion-label>
+                <ion-text>{{ userInfo.birthDate }}</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Gender</ion-label>
+                <ion-text>{{ userInfo.gender }}</ion-text>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+        <!-- <ion-row>
             <ion-col size="12" class="full-height">
               <ion-card class="full-height" color="card">
                 <ion-card-header>
@@ -79,8 +83,8 @@
               </ion-card>
             </ion-col>
           </ion-row> -->
-          <ion-button color="light" class="sign-out">Sign Out</ion-button>
-        </ion-grid>
+        <ion-button color="light" class="sign-out">Sign Out</ion-button>
+      </ion-grid>
     </ion-content>
   </ion-page>
 </template>
@@ -111,6 +115,7 @@ const userInfo = ref({
   city: "",
   country: "",
 });
+const userPoints = ref(0);
 
 // Fetch user information
 const fetchUserInfo = async () => {
@@ -129,15 +134,30 @@ const fetchUserInfo = async () => {
     console.error("Error fetching user info:", error);
   }
 };
+const fetchUserPoints = async () => {
+
+  const userId = localStorage.getItem("uuid");
+  try {
+    const response = await SendRequest(`/api/rewards/points/${userId}`, "GET");
+    if (response.ok) {
+      const { data } = await response.json();
+      userPoints.value = data;
+    } else {
+      console.error("Error fetching user points:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error fetching user points:", error);
+  }
+}
 
 // Fetch data on component mount
 onMounted(() => {
   fetchUserInfo();
+  fetchUserPoints();
 });
 </script>
 
 <style scoped>
-
 .content-center {
   display: flex;
   justify-content: center;
@@ -168,7 +188,7 @@ onMounted(() => {
   border-radius: 50%;
   background-color: #a9c3af;
   color: #4f6554;
-  font-size: 24px; 
+  font-size: 24px;
 
 }
 
@@ -176,7 +196,7 @@ onMounted(() => {
   border-radius: 50%;
   background-color: #ffd1a9;
   color: #805938;
-  font-size: 24px; 
+  font-size: 24px;
 
 }
 
@@ -184,13 +204,13 @@ onMounted(() => {
   border-radius: 50%;
   background-color: #D4EBF8;
   color: #6a767c;
-  font-size: 24px; 
+  font-size: 24px;
 }
 
 .title-with-icon {
   display: flex;
   align-items: center;
-  gap: 8px; 
+  gap: 8px;
   margin-bottom: 10px;
 }
 
@@ -201,5 +221,4 @@ h1 {
 ion-col {
   margin-bottom: 5%;
 }
-
 </style>
