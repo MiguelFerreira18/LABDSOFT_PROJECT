@@ -7,19 +7,13 @@
     </ion-header>
   <ion-content :fullscreen="true" class="ion-padding">
     <form @submit.prevent="addEvent">
-      <ion-input label="Title" fill="outline" label-placement="floating" placeholder="Run Club" id="title" v-model="event.title" required></ion-input>
-      <br />
-      <ion-input label="Location" fill="outline" label-placement="floating" placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
-      <br />
-      <ion-button @click="navigateToMap">Select Location On Map</ion-button>
-      <br />
-      <ion-input label="Start Date" fill="outline" label-placement="floating" type="date" id="startDate" v-model="event.startDate" required></ion-input>
-      <br />
-      <ion-input label="End Date" fill="outline" label-placement="floating" type="date" id="endDate" v-model="event.endDate" required></ion-input>
-      <br />
-      <ion-textarea label="Description" fill="outline" label-placement="floating" placeholder="Join us for a run around Central Park!" id="description" v-model="event.description" required></ion-textarea>
-      <br />
-      <ion-select :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
+      <ion-input class="ion-margin-vertical" label="Title" fill="outline" label-placement="floating" placeholder="Run Club" id="title" v-model="event.title" required></ion-input>
+      <ion-input class="ion-margin-vertical" label="Location" fill="outline" label-placement="floating" placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
+      <ion-button @click="navigateToMap" size="small" fill="outline">S<ion-icon slot="start" :icon="navigateOutline"></ion-icon>elect Location On Map</ion-button>
+      <ion-input class="ion-margin-vertical" label="Start Date" fill="outline" label-placement="floating" type="date" id="startDate" v-model="event.startDate" required></ion-input>
+      <ion-input class="ion-margin-vertical" label="End Date" fill="outline" label-placement="floating" type="date" id="endDate" v-model="event.endDate" required></ion-input>
+      <ion-textarea class="ion-margin-vertical" label="Description" fill="outline" label-placement="floating" placeholder="Join us for a run around Central Park!" id="description" v-model="event.description" required></ion-textarea>
+      <ion-select class="ion-margin-vertical" :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
         :key="'category-select'">
         <ion-select-option v-for="category in categories" :value="category" :key="category">
           {{ category }}
@@ -40,7 +34,8 @@ import { ref } from "vue";
 import { useRouter } from 'vue-router';
 import { SendRequest } from "@/lib/request";
 import { categories } from "@/lib/categories";
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonSelect, IonButton, IonSelectOption, IonTextarea } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonSelect, IonButton, IonSelectOption, IonTextarea, IonIcon } from '@ionic/vue';
+import { navigateOutline } from 'ionicons/icons';
 import { locationState } from "@/stateManagement/locationState";
 
 const router = useRouter();
@@ -61,8 +56,11 @@ async function addEvent() {
       endDate: event.value.endDate,
       description: event.value.description,
       category: event.value.category,
-      creatorID: localStorage.getItem('uuid') || ''
+      creatorID: localStorage.getItem('uuid') || '',
+      latitude: event.value.latitude,
+      longitude: event.value.longitude,
     }
+    console.log(payload);
     const response = await SendRequest('/api/events', 'POST', payload);
     const data = await response.json();
     fetchedEvent.value = data;

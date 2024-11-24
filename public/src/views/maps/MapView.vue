@@ -6,7 +6,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <!-- @vue-expect-error Type 'unknown' is not assignable to type 'MarkerInfoWindow' -->
       <my-map :markerData="markerData" @onMapClicked="mapClicked" @onMarkerClicked="markerClicked"></my-map>
       <ion-popover :is-open="markerIsOpen" size="cover" @did-dismiss="markerIsOpen = false">
         <ion-content class="ion-padding">
@@ -38,25 +37,7 @@ const markerIsOpen = ref<boolean>(false);
 const latitude = ref<number | null>(null);
 const longitude = ref<number | null>(null);
 const address = ref<string | null>(null);
-
-// sample data for the map
-// let markerData = [
-//   {
-//     coordinate: { lat: 41.528919, lng: -8.622538 },
-//     title: "title one",
-//     snippet: "title one snippet content will be presented here",
-//   },
-//   {
-//     coordinate: { lat: 41.529687, lng: -8.615438 },
-//     title: "title two",
-//     snippet: "title two snippet content will be presented here",
-//   },
-//   {
-//     coordinate: { lat: 41.525909, lng: -8.622015 },
-//     title: "title three",
-//     snippet: "title three snippet content will be presented here",
-//   },
-// ];
+const markerData = ref<{ coordinate: any; title: string; snippet: string }[]>([]);
 
 const openModal = async (marker: any) => {
   const modal = await modalController.create({
@@ -90,8 +71,9 @@ const mapClicked = async (data: { latitude: number; longitude: number }) => {
 };
 
 const updateMarkerData = (latitude: number, longitude: number, title: string = "Selected Location") => {
-  //@ts-expect-error markerData is not defined
-  markerData = [
+
+  // Clear the existing markers and add the new one
+  markerData.value = [
     {
       coordinate: { lat: latitude, lng: longitude },
       title: title,
@@ -101,12 +83,11 @@ const updateMarkerData = (latitude: number, longitude: number, title: string = "
 };
 
 const getMarkerInfo = (marker: { latitude: number; longitude: number }) => {
-  //@ts-expect-error markerData is not defined
-  return markerData.filter(
-    (m: any) =>
+  return markerData.value.find(
+    (m) =>
       m.coordinate.lat === marker.latitude &&
       m.coordinate.lng === marker.longitude
-  )[0];
+  );
 };
 
 const markerClicked = (event: any) => {
@@ -129,7 +110,8 @@ const selectLocation = () => {
       console.error('No callback function found.');
     }
     // Return to the previous page (AddEventView)
-    router.back();
+    // router.back();
+    router.push({ name: 'AddEventView' });
   } else {
     console.error('No location selected.');
   }

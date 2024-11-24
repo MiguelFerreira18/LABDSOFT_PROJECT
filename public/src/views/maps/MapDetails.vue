@@ -1,18 +1,52 @@
 <script setup lang="ts">
-import { onMounted, nextTick, ref, onUnmounted } from "vue";
+import { onMounted, nextTick, ref, onUnmounted, watch } from "vue";
 import { GoogleMap } from "@capacitor/google-maps";
+
 // PROPS - Props allow us to pass data into the component
 const props = defineProps<{
   markerData: { coordinate: any; title: string; snippet: string }[];
 }>();
+
 // EVENTS - Events allow us to emit data from the component
 const emits = defineEmits<{
   (event: "onMarkerClicked", info: any): void;
   (event: "onMapClicked", data: { latitude: number; longitude: number; }): void;
 }>();
+
 const mapRef = ref<HTMLElement>();
 const markerIds = ref<string[] | undefined>();
 let newMap: GoogleMap;
+
+// Watch for changes in `markerData` and update the markers on the map
+watch(
+  () => props.markerData,
+  async () => {
+    console.log("markerData changed", props.markerData);
+    if (newMap) {
+      await updateMarkers();
+    }
+  },
+  { immediate: true, deep: true } 
+);
+
+// Function to add/update markers
+const updateMarkers = async () => {
+  if (!newMap) return;
+
+  // Remove existing markers
+  if (markerIds.value) {
+    await newMap.removeMarkers(markerIds.value);
+  }
+
+  // Add new markers
+  const markers = props.markerData.map(({ coordinate, title, snippet }) => ({
+    coordinate,
+    title,
+    snippet,
+  }));
+  markerIds.value = await newMap.addMarkers(markers);
+};
+
 // we need to wait for the element that the map will be associated
 // with to be in the DOM
 onMounted(async () => {
@@ -20,6 +54,7 @@ onMounted(async () => {
   await nextTick(); // this wait for the render to complete
   await createMap();
 });
+
 // remove markers on unmount
 onUnmounted(() => {
   console.log("onunmounted");
@@ -56,10 +91,10 @@ async function createMap() {
     apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     config: {
       center: {
-        lat: 41.527355,
-        lng: -8.622289,
+        lat: 41.17862567644741,
+        lng: -8.607281259611911,
       },
-      zoom: 12,
+      zoom: 14,
     },
   });
   // add markers to map
