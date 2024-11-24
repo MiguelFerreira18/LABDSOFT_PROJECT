@@ -6,26 +6,15 @@
     <div class="filters-section">
       <ion-item>
         <ion-label>Filter by Category</ion-label>
-        <ion-select
-          multiple
-          placeholder="Select Categories"
-          v-model="selectedCategories"
-        >
-          <ion-select-option
-            v-for="category in categories"
-            :key="category"
-            :value="category"
-          >
+        <ion-select multiple placeholder="Select Categories" v-model="selectedCategories">
+          <ion-select-option v-for="category in categories" :key="category" :value="category">
             {{ category }}
           </ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
         <ion-label>Filter by Date</ion-label>
-        <ion-datetime
-          display-format="MMM DD, YYYY"
-          v-model="dateLimit"
-        ></ion-datetime>
+        <ion-datetime display-format="MMM DD, YYYY" v-model="dateLimit"></ion-datetime>
       </ion-item>
     </div>
 
@@ -33,12 +22,8 @@
     <div v-if="filteredEvents.length" class="all-events-section">
       <h2 class="subtitle">All Events</h2>
       <div class="event-cards">
-        <router-link
-          v-for="event in filteredEvents"
-          :key="event.eventId"
-          :to="`/event/EventDetail/${event.eventId}`"
-          class="clickable-card"
-        >
+        <router-link v-for="event in filteredEvents" :key="event.eventId" :to="`/event/EventDetail/${event.eventId}`"
+          class="clickable-card">
           <ion-card :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
             <ion-card-header>
               <ion-card-title>{{ event.title }}</ion-card-title>
@@ -72,8 +57,8 @@ import { categories, categoryColors } from '@/lib/categories'; // Replace with y
 
 export default {
   setup() {
-    const allEvents = ref([]);
-    const selectedCategories = ref([]);
+    const allEvents = ref<any>([]);
+    const selectedCategories = ref<any>([]);
     const dateLimit = ref(null);
 
     const userId = ref(localStorage.getItem('uuid') || ''); // Fetch user ID from localStorage
@@ -88,6 +73,7 @@ export default {
 
     // Filtered events based on selected categories and date
     const filteredEvents = computed(() =>
+      //@ts-expect-error - TS doesn't recognize the filter method on allEvents.value
       allEvents.value.filter(event => {
         const isCategoryMatch =
           selectedCategories.value.length === 0 ||

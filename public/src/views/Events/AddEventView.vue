@@ -1,34 +1,41 @@
 <template>
   <ion-page>
     <ion-header>
-        <ion-toolbar>
-            <ion-title>Create New Event</ion-title>
-        </ion-toolbar>
+      <ion-toolbar>
+        <ion-title>Create New Event</ion-title>
+      </ion-toolbar>
     </ion-header>
-  <ion-content :fullscreen="true" class="ion-padding">
-    <form @submit.prevent="addEvent">
+    <ion-content :fullscreen="true" class="ion-padding">
+      <form @submit.prevent="addEvent">
 
-      <ion-input class="ion-margin-vertical" label="Title" fill="outline" label-placement="floating" placeholder="Run Club" id="title" v-model="event.title" required></ion-input>
-      <ion-input class="ion-margin-vertical" label="Location" fill="outline" label-placement="floating" placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
-      <ion-button @click="navigateToMap" size="small" fill="outline">S<ion-icon slot="start" :icon="navigateOutline"></ion-icon>elect Location On Map</ion-button>
-      <ion-input class="ion-margin-vertical" label="Start Date" fill="outline" label-placement="floating" type="date" id="startDate" v-model="event.startDate" required></ion-input>
-      <ion-input class="ion-margin-vertical" label="End Date" fill="outline" label-placement="floating" type="date" id="endDate" v-model="event.endDate" required></ion-input>
-      <ion-textarea class="ion-margin-vertical" label="Description" fill="outline" label-placement="floating" placeholder="Join us for a run around Central Park!" id="description" v-model="event.description" required></ion-textarea>
-      <ion-select class="ion-margin-vertical" :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
-        :key="'category-select'">
-        <ion-select-option v-for="category in categories" :value="category" :key="category">
-          {{ category }}
-        </ion-select-option>
-      </ion-select>
-      <br />
-      <ion-button type="submit">Create Event</ion-button>
-  </form>
-  <div v-if="errorMessage" class="error-message">
+        <ion-input class="ion-margin-vertical" label="Title" fill="outline" label-placement="floating"
+          placeholder="Run Club" id="title" v-model="event.title" required></ion-input>
+        <ion-input class="ion-margin-vertical" label="Location" fill="outline" label-placement="floating"
+          placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
+        <ion-button @click="navigateToMap" size="small" fill="outline">S<ion-icon slot="start"
+            :icon="navigateOutline"></ion-icon>elect Location On Map</ion-button>
+        <ion-input class="ion-margin-vertical" label="Start Date" fill="outline" label-placement="floating" type="date"
+          id="startDate" v-model="event.startDate" required></ion-input>
+        <ion-input class="ion-margin-vertical" label="End Date" fill="outline" label-placement="floating" type="date"
+          id="endDate" v-model="event.endDate" required></ion-input>
+        <ion-textarea class="ion-margin-vertical" label="Description" fill="outline" label-placement="floating"
+          placeholder="Join us for a run around Central Park!" id="description" v-model="event.description"
+          required></ion-textarea>
+        <ion-select class="ion-margin-vertical" :aria-label="'fruit'" :placeholder="'Select Category'"
+          @ionChange="handleCategoryChange" :key="'category-select'">
+          <ion-select-option v-for="category in categories" :value="category" :key="category">
+            {{ category }}
+          </ion-select-option>
+        </ion-select>
+        <br />
+        <ion-button type="submit">Create Event</ion-button>
+      </form>
+      <div v-if="errorMessage" class="error-message">
 
-      <p>{{ errorMessage }}</p>
-    </div>
-  </ion-content>
-</ion-page>
+        <p>{{ errorMessage }}</p>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
@@ -83,7 +90,7 @@ async function addEvent() {
 
 function navigateToMap() {
   locationState.onLocationSelected = handleLocationSelected;
-  router.push({ name: 'map'});
+  router.push({ name: 'map' });
 }
 
 // Handle location selected from map

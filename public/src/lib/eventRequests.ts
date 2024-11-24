@@ -67,7 +67,6 @@ export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
   }
 }
 
-
 export const createEvent = async (eventData: {
   title: string;
   location: string;
@@ -80,8 +79,8 @@ export const createEvent = async (eventData: {
   try {
     const response = await axios.post(`${baseUrl}/api/events`, eventData, {
       headers: {
-        "Content-Type": "application/json" // Ensure JSON payload
-         // Include API key if required
+        "Content-Type": "application/json", // Ensure JSON payload
+        // Include API key if required
       },
     });
     return response.data; // Return the created event data
@@ -90,7 +89,6 @@ export const createEvent = async (eventData: {
     throw error; // Re-throw error for handling in the Vue component
   }
 };
-
 
 export interface EventSummary {
   id: string;
@@ -115,9 +113,7 @@ export const fetchDashboardSummaries = async (userId: string): Promise<EventSumm
   }
 };
 
-
 export const fetchCreatedEvents = async (userId: string) => {
   const response = await axios.get(`${baseUrl}/api/events/createdBy/${userId}`);
   return response.data;
 };
-

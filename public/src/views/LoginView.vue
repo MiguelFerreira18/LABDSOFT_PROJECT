@@ -59,7 +59,7 @@ async function login() {
                 console.error('Error fetching daily rewards:', error);
             }
             
-            router.push('/tabs/tab1');
+            router.push('/tabs/tabHome');
         }
     } catch (error) {
         console.log(error);

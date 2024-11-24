@@ -13,6 +13,7 @@ import AddEventView from "@/views/Events/AddEventView.vue";
 import MyEvents from "@/views/Events/MyEvents.vue";
 
 import MapView from "@/views/maps/MapView.vue";
+import MyEventsView from "@/views/Events/MyEventsView.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -32,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/events/create",
     name: "AddEventView",
     component: AddEventView,
+  },
+  {
+    path: "/events/myevents",
+    name: "MyEvents",
+    component: MyEventsView,
   },
   {
     path: "/events/attended",
@@ -75,11 +81,11 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "",
-        redirect: "/tabs/tab1",
+        redirect: "/tabs/tabHome",
       },
       {
-        path: "tab1",
-        component: () => import("@/views/Tab1Page.vue"),
+        path: "tabHome",
+        component: () => import("@/views/TabHomePage.vue"),
       },
       {
         path: "tab2",
@@ -88,6 +94,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "tab3",
         component: () => import("@/views/Tab3Page.vue"),
+      },
+      {
+        path: "tabProfile",
+        component: () => import("@/views/TabProfilePage.vue"),
       },
     ],
   },

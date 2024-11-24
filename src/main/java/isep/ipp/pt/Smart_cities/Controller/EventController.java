@@ -26,17 +26,15 @@ public class EventController {
     @Autowired
     private UserService userService;
 
- @PostMapping
-public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
-    try {
-        Event event = eventService.createEvent(createEventRequestDto);
-         // Initialize attendees count
-        return ResponseEntity.ok(event);
-    } catch (Exception e) {
-        return ResponseEntity.badRequest().body(null);
+    @PostMapping
+    public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
+        try {
+            Event event = eventService.createEvent(createEventRequestDto);
+            return ResponseEntity.ok(event);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
-}
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable String id) {

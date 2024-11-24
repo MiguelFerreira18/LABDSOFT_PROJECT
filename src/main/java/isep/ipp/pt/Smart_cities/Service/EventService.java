@@ -29,6 +29,8 @@ public class EventService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private SubscribeService subscribeService;
 
     @Autowired
     private SubscribeService subscribeService;
@@ -153,6 +155,7 @@ public class EventService {
                 .toList();
     }*/
 
+
     public List<EventSummary> generateCurrentEventSummaries() {
         // Fetch all events (add more filters if needed)
         List<Event> currentEvents = eventRepository.findAll();
@@ -170,6 +173,33 @@ public class EventService {
     
     public List<EventSummary> getEventSummariesWithDetails() {
         List<Event> events = eventRepository.findAll();
+        return events.stream()
+                .map(EventSummary::new) // Map all events to summaries
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getEventsByCreator(String userId) {
+        return eventRepository.findByCreatorId(userId);
+    }
+}
+
+    public List<EventSummary> generateCurrentEventSummaries() {
+        // Fetch all events (add more filters if needed)
+        List<Event> currentEvents = eventRepository.findAll();
+
+        // For each event, get subscription count and generate an EventSummary
+        return currentEvents.stream()
+                .map(event -> {
+                    int subscriptionCount = this.subscribeService.getCountOfSubscriptions(event.getId());
+                    EventSummary summary = new EventSummary(event);
+                    summary.setTotalAttendees(subscriptionCount); // Update attendees dynamically
+                    return summary;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<EventSummary> getEventSummariesWithDetails() {
+        List<Event> events = eventRepository.findAll();
 
         return events.stream()
                 .map(EventSummary::new) // Map all events to summaries
@@ -179,4 +209,8 @@ public class EventService {
     public List<Event> getEventsByCreator(String userId) {
         return eventRepository.findByCreatorId(userId);
     }
+
+
+
+
 }

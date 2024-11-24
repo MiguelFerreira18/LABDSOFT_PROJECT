@@ -35,17 +35,17 @@ public class SubscribeService {
         Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
         if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
             return Optional.of(Response.forbidden("User already subscribed to event"));
-        }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
+        } else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)) {
             return reSubscribeAnEvent(isAlreadySubscribed.get());
         }
 
-        Optional<User> user= userService.findById(uuid);
-        if(user.isEmpty()){
+        Optional<User> user = userService.findById(uuid);
+        if (user.isEmpty()) {
             return Optional.of(Response.notFound("User not found"));
         }
 
         Optional<Event> event = eventRepo.findById(eventId);
-        if(event.isEmpty()){
+        if (event.isEmpty()) {
             return Optional.of(Response.notFound("Event not found"));
         }
 
@@ -70,6 +70,7 @@ public class SubscribeService {
             return Optional.of(Response.internalError("Error resubscribing event"));
         }
     }
+
     public Optional<Response> unsubscribe(long id) {
         return subscribeRepo.findById(id).map(subscribe -> {
             try {
@@ -112,6 +113,7 @@ public class SubscribeService {
                 .map(Subscribe::getEvent)
                 .toList());
     }
+
     public Optional<List<Event>> getSubscribedEventsByUserUUID(String uuid) {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
@@ -128,7 +130,7 @@ public class SubscribeService {
         return Optional.of(Response.created("User subscribed to event", subscribe.get().toDTO()));
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         subscribeRepo.deleteAll();
     }
 
