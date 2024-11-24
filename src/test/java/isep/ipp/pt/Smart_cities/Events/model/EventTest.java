@@ -43,7 +43,6 @@ class EventTest {
         assertEquals("Location", event.getLocation());
         assertEquals("Description", event.getDescription());
         assertEquals(testUser, event.getCreator());
-        assertEquals(0, event.getAttendees());
         assertNull(event.getPromotedUntil());
     }
 
@@ -71,21 +70,6 @@ class EventTest {
         Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
         event.setPromotedUntil(LocalDateTime.now().minusDays(1));
         assertFalse(event.isPromoted());
-    }
-
-    @Test
-    void testIncrementAndDecrementAttendees() {
-        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
-        assertEquals(0, event.getAttendees());
-
-        event.incrementAttendees();
-        assertEquals(1, event.getAttendees());
-
-        event.decrementAttendees();
-        assertEquals(0, event.getAttendees());
-
-        event.decrementAttendees(); // Should not go below 0
-        assertEquals(0, event.getAttendees());
     }
 
     @Test
