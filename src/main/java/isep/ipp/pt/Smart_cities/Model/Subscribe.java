@@ -11,6 +11,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @ToString
 @Entity
 public class Subscribe {
@@ -58,6 +59,15 @@ public class Subscribe {
         this.code = code;
         this.subscriptionStatus = subscriptionStatus;
         this.rate = rate;
+    }
+
+    public Subscribe(Long id, User user, Event event, int code, int rate, SubscriptionStatus subscriptionStatus) {
+        this.id = id;
+        this.user = user;
+        this.event = event;
+        this.code = code;
+        this.rate = rate;
+        this.subscriptionStatus = subscriptionStatus;
     }
 
     public SubscribeResponseDTO toDTO(){
