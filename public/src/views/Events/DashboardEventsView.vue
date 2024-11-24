@@ -2,63 +2,103 @@
   <ion-content class="ion-padding">
     <h1 class="title">Dashboard</h1>
 
-    <div v-if="loading" class="loading-spinner">
-      <ion-spinner name="crescent"></ion-spinner>
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <ion-item>
+        <ion-label>Filter by Category</ion-label>
+        <ion-select multiple placeholder="Select Categories" v-model="selectedCategories">
+          <ion-select-option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Filter by Date</ion-label>
+        <ion-datetime display-format="MMM DD, YYYY" v-model="dateLimit"></ion-datetime>
+      </ion-item>
     </div>
 
-    <div v-else-if="eventSummaries.length === 0" class="no-events-message">
-      <p>No events available to display.</p>
-    </div>
-
-    <div v-else class="dashboard-cards-container">
-      <div class="dashboard-cards">
-        <ion-card v-for="summary in eventSummaries" :key="summary.id" class="dashboard-card">
-          <ion-card-header>
-            <ion-card-title>{{ summary.title }}</ion-card-title>
-            <ion-card-subtitle>{{ formatDate(summary.date) }}</ion-card-subtitle>
-          </ion-card-header>
-
-          <ion-card-content>
-            <p><strong>Location:</strong> {{ summary.location }}</p>
-            <p><strong>Total Attendees:</strong> {{ summary.totalAttendees }}</p>
-          </ion-card-content>
-        </ion-card>
+    <!-- All Events Section -->
+    <div v-if="filteredEvents.length" class="all-events-section">
+      <h2 class="subtitle">All Events</h2>
+      <div class="event-cards">
+        <router-link v-for="event in filteredEvents" :key="event.eventId" :to="`/event/EventDetail/${event.eventId}`"
+          class="clickable-card">
+          <ion-card :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
+            <ion-card-header>
+              <ion-card-title>{{ event.title }}</ion-card-title>
+              <ion-card-subtitle>
+                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <p><strong>Creator:</strong> {{ event.creator }}</p>
+              <p><strong>Location:</strong> {{ event.location }}</p>
+              <p><strong>Category:</strong> {{ event.category }}</p>
+              <p v-if="event.totalAttendees > 0"><strong>Attendees:</strong> {{ event.totalAttendees }}</p>
+              <p v-else>No attendees yet</p>
+            </ion-card-content>
+          </ion-card>
+        </router-link>
       </div>
+    </div>
+
+    <div v-else class="no-events">
+      <h3>No events found</h3>
     </div>
   </ion-content>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { formatDate } from '@/lib/dateFormatter';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonSpinner } from '@ionic/vue';
-import { SendRequest } from '@/lib/request';
+<script lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { fetchDashboardSummaries } from '@/lib/eventRequests'; // Import the correct API function
+import { formatDate } from '@/lib/dateFormatter'; // Replace with your date formatter utility
+import { categories, categoryColors } from '@/lib/categories'; // Replace with your category definitions
 
-const eventSummaries = ref<any>([]);
-const loading = ref(true);
+export default {
+  setup() {
+    const allEvents = ref<any>([]);
+    const selectedCategories = ref<any>([]);
+    const dateLimit = ref(null);
 
-onMounted(async () => {
-  await loadDashboard();
-})
+    const userId = ref(localStorage.getItem('uuid') || ''); // Fetch user ID from localStorage
 
-async function loadDashboard() {
-  console.log('Loading dashboard...');
+    const loadEvents = async () => {
+      try {
+        allEvents.value = await fetchDashboardSummaries(userId.value); // Fetch all events
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
 
-  const uuid = localStorage.getItem('uuid') || '';
-  try {
-    const response = await SendRequest(`/api/events/dashboard/${uuid}`, 'GET');
-    const data = await response.json();
-    console.log('Dashboard data:', data);
+    // Filtered events based on selected categories and date
+    const filteredEvents = computed(() =>
+      //@ts-expect-error - TS doesn't recognize the filter method on allEvents.value
+      allEvents.value.filter(event => {
+        const isCategoryMatch =
+          selectedCategories.value.length === 0 ||
+          selectedCategories.value.includes(event.category);
+        const isDateMatch =
+          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+        return isCategoryMatch && isDateMatch;
+      })
+    );
 
-    eventSummaries.value = data;
-  } catch (error) {
-    console.error('Failed to load dashboard:', error);
-  } finally {
-    loading.value = false;
-  }
+    onMounted(() => {
+      loadEvents(); // Load events on component mount
+    });
 
-}
-
+    return {
+      allEvents,
+      filteredEvents,
+      selectedCategories,
+      dateLimit,
+      categories,
+      categoryColors,
+      formatDate,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -67,34 +107,48 @@ async function loadDashboard() {
   font-size: 2rem;
   font-weight: bold;
   color: aliceblue;
+  margin-bottom: 40px;
+}
+
+.filters-section {
   margin-bottom: 20px;
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.no-events-message {
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--ion-color-medium);
-}
-
-.dashboard-cards-container {
   padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
 }
 
-.dashboard-cards {
+.all-events-section {
+  margin-top: 20px;
+}
+
+.event-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
 }
 
-.dashboard-card {
+.clickable-card {
+  width: 100%;
+  text-decoration: none;
+}
+
+ion-card {
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: aliceblue;
+}
+
+ion-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+ion-card-subtitle {
+  font-size: 0.9rem;
+}
+
+.no-events {
+  text-align: center;
+  margin-top: 50px;
+  color: #666;
 }
 </style>

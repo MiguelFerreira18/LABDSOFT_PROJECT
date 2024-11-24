@@ -17,10 +17,11 @@ import java.time.LocalDateTime;
 
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
-@Builder
+
 @Getter
 @Setter
 @ToString
+@Builder
 @Entity
 public class Event {
 
@@ -58,6 +59,8 @@ public class Event {
     private User creator;
 
     private LocalDateTime promotedUntil;
+
+    
 
     private float latitude;
 

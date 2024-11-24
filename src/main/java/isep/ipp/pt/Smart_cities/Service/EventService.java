@@ -7,6 +7,7 @@ import isep.ipp.pt.Smart_cities.Model.EventModel.EventSummary;
 import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+import isep.ipp.pt.Smart_cities.Responses.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,29 +29,34 @@ public class EventService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private SubscribeService subscribeService;
+
+    
+    
 
 
+    public Event createEvent(EventRequestDTO createEventRequestDto) {
 
-    public Event createEvent(EventRequestDTO eventRequestDTO) {
-        User creator = userService.findById(eventRequestDTO.getCreatorID());
+        User creator = userService.findById(createEventRequestDto.getCreatorID());
+        
         if (creator == null) {
-            throw new IllegalArgumentException("Creator not found");
+            throw new IllegalArgumentException("Invalid creator ID");
         }
-        Event event = Event.builder()
-                .creator(creator)
-                .title(eventRequestDTO.getTitle())
-                .location(eventRequestDTO.getLocation())
-                .startDate(eventRequestDTO.getStartDate())
-                .endDate(eventRequestDTO.getEndDate())
-                .description(eventRequestDTO.getDescription())
-                .category(eventRequestDTO.getCategory())
-                .latitude(eventRequestDTO.getLatitude())
-                .longitude(eventRequestDTO.getLongitude())
-                .build();
+
+        Event event = new Event();
+        event.setTitle(createEventRequestDto.getTitle());
+        event.setLocation(createEventRequestDto.getLocation());
+        event.setStartDate(createEventRequestDto.getStartDate());
+        event.setEndDate(createEventRequestDto.getEndDate());
+        event.setDescription(createEventRequestDto.getDescription());
+        event.setCategory(createEventRequestDto.getCategory());
+        event.setCreator(creator);
+        event.setLatitude(createEventRequestDto.getLatitude());
+        event.setLongitude(createEventRequestDto.getLongitude());
 
         return eventRepository.save(event);
     }
-
 
     public Optional<Event> getEventById(String id) {
         return eventRepository.findById(id);
@@ -123,6 +129,7 @@ public class EventService {
 
         return event;
     }
+    
     public List<Event> getPromotedEvents() {
         return eventRepository.findPromotedEvents(LocalDateTime.now());
     }
@@ -131,16 +138,49 @@ public class EventService {
         return eventRepository.findNonPromotedEvents(LocalDateTime.now());
     }
 
+    /*public List<EventSummary> generateCurrentEventSummaries() {
+        List<Event> currentEvents = eventRepository.findAll()
+                .stream()                
+                .toList();
+    
+        return currentEvents.stream()
+                .map(event -> {
+                    int subscriptionCount = subscribeService.getCountOfSubscriptions(event.getId());
+                    EventSummary summary = new EventSummary(event);
+                    summary.setTotalAttendees(subscriptionCount); // Update attendees dynamically
+                    return summary;
+                })
+                .toList();
+    }*/
 
 
-
-    public List<EventSummary> generateCurrentEventSummaries(String userId) {
-            List<Event> currentEvents = eventRepository.findAll().stream().filter(event -> event.getCreator().getId().equals(userId)).toList(); // Fetch all events
-        System.out.println(currentEvents);
-            return currentEvents.stream()
-                    .map(EventSummary::new)
-                    .toList();
+    public List<EventSummary> generateCurrentEventSummaries() {
+        // Fetch all events (add more filters if needed)
+        List<Event> currentEvents = eventRepository.findAll();
+        
+        // For each event, get subscription count and generate an EventSummary
+        return currentEvents.stream()
+                .map(event -> {
+                    int subscriptionCount = this.subscribeService.getCountOfSubscriptions(event.getId());
+                    EventSummary summary = new EventSummary(event);
+                    summary.setTotalAttendees(subscriptionCount); // Update attendees dynamically
+                    return summary;
+                })
+                .collect(Collectors.toList());
     }
+    
+    public List<EventSummary> getEventSummariesWithDetails() {
+        List<Event> events = eventRepository.findAll();
+        return events.stream()
+                .map(EventSummary::new) // Map all events to summaries
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getEventsByCreator(String userId) {
+        return eventRepository.findByCreatorId(userId);
+    }
+
+      
 
 
 
