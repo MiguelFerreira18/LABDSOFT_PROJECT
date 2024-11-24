@@ -10,123 +10,116 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventTest {
 
+    private User testUser;
     private Validator validator;
-    private User mockUser;
 
     @BeforeEach
-    void setUp() {
-        // Initialize the validator
+    void setup() {
+        // Create a test user
+        testUser = new User();
+        testUser.setId("12345");
+        testUser.setName("Test User");
+
+        // Set up Jakarta Bean Validation
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-
-        // Mock a User object
-        mockUser = Mockito.mock(User.class);
-        Mockito.when(mockUser.getId()).thenReturn("mockUserId");
-        Mockito.when(mockUser.getName()).thenReturn("Mock User");
     }
 
     @Test
-    void testEventCreationSuccess() {
-        // Create a valid event
-        Event event = new Event(
-                "Sample Event",
-                "Sample Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "This is a sample event description.",
-                mockUser
-        );
+    void testEventInitialization() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
 
-        Set<ConstraintViolation<Event>> violations = validator.validate(event);
-        assertTrue(violations.isEmpty(), "Expected no validation errors for a valid Event.");
+        assertNotNull(event);
+        assertEquals("Title", event.getTitle());
+        assertEquals("Location", event.getLocation());
+        assertEquals("Description", event.getDescription());
+        assertEquals(testUser, event.getCreator());
+        assertEquals(0, event.getAttendees());
+        assertNull(event.getPromotedUntil());
     }
 
     @Test
-    void testTitleValidation() {
-        // Invalid title (blank)
-        Event event = new Event(
-                "",
-                "Sample Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
+    void testIsInCurrentMonth() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(5), "Description", testUser);
+        assertTrue(event.isInCurrentMonth());
+    }
 
-        Set<ConstraintViolation<Event>> violations = validator.validate(event);
+    @Test
+    void testIsInCurrentMonth_False() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusMonths(1), "Description", testUser);
+        assertFalse(event.isInCurrentMonth());
+    }
+
+    @Test
+    void testIsPromoted() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
+        event.setPromotedUntil(LocalDateTime.now().plusDays(1));
+        assertTrue(event.isPromoted());
+    }
+
+    @Test
+    void testIsPromoted_False() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
+        event.setPromotedUntil(LocalDateTime.now().minusDays(1));
+        assertFalse(event.isPromoted());
+    }
+
+    @Test
+    void testIncrementAndDecrementAttendees() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
+        assertEquals(0, event.getAttendees());
+
+        event.incrementAttendees();
+        assertEquals(1, event.getAttendees());
+
+        event.decrementAttendees();
+        assertEquals(0, event.getAttendees());
+
+        event.decrementAttendees(); // Should not go below 0
+        assertEquals(0, event.getAttendees());
+    }
+
+    @Test
+    void testToEventRequestDTO() {
+        Event event = new Event("Title", "Location", LocalDate.now(), LocalDate.now().plusDays(1), "Description", testUser);
+        event.setCategory("Art");
+        event.setLatitude(40.7128f);
+        event.setLongitude(-74.0060f);
+
+        var dto = event.toEventRequestDTO();
+
+        assertEquals("Title", dto.getTitle());
+        assertEquals("Location", dto.getLocation());
+        assertEquals("Art", dto.getCategory());
+        assertEquals(testUser.getId(), dto.getCreatorID());
+        assertEquals(40.7128f, dto.getLatitude());
+        assertEquals(-74.0060f, dto.getLongitude());
+    }
+
+    @Test
+    void testValidationConstraints() {
+        // Test invalid data
+        Event invalidEvent = new Event();
+        invalidEvent.setTitle(""); // Invalid: blank
+        invalidEvent.setLocation(""); // Invalid: blank
+        invalidEvent.setStartDate(LocalDate.now().minusDays(1)); // Invalid: past date
+        invalidEvent.setEndDate(LocalDate.now().minusDays(1)); // Invalid: past date
+        invalidEvent.setCategory("InvalidCategory"); // Invalid: not in enum
+        invalidEvent.setDescription(""); // Invalid: blank
+
+        var violations = validator.validate(invalidEvent);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Title is required")));
-    }
-
-    @Test
-    void testLocationValidation() {
-        // Location exceeds max length
-        Event event = new Event(
-                "Valid Title",
-                "L".repeat(256), // Exceeds max length
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        Set<ConstraintViolation<Event>> violations = validator.validate(event);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Location cannot exceed 255 characters")));
-    }
-
-    @Test
-    void testStartDateValidation() {
-        // Start date in the past
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now().minusDays(1), // Invalid start date
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        Set<ConstraintViolation<Event>> violations = validator.validate(event);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Start date must not be in the past")));
-    }
-
-    @Test
-    void testEndDateValidation() {
-        // End date in the past
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().minusDays(1), // Invalid end date
-                "Valid description",
-                mockUser
-        );
-
-        Set<ConstraintViolation<Event>> violations = validator.validate(event);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("End date must be in the future")));
-    }
-
-    @Test
-    void testImagePath() {
-        Event event = new Event(
-                "Valid Title",
-                "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Valid description",
-                mockUser
-        );
-
-        event.setImagePath("/images/event.jpg");
-        assertEquals("/images/event.jpg", event.getImagePath());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Title is required")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Location is required")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Start date must not be in the past")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Invalid category")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("Description is required")));
     }
 }

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { apiConfig, apiKey } from "./config";
 
 const { baseUrl } = apiConfig;
