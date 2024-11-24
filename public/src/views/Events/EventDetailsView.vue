@@ -1,59 +1,63 @@
 <template>
-    <ion-card v-if="event">
-        <ion-card-header>
-            <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
-            <ion-card-title>{{ event.title }}</ion-card-title>
-            <ion-card-subtitle>Subscribers: {{ numberOfSubscribers }}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-list>
-            <ion-item>
-                <ion-label>Description</ion-label>
-                {{ event.description }}
-            </ion-item>
-            <ion-item v-if="event.promotedUntil">
-                <ion-label color="tertiary">Promoted</ion-label>
-            </ion-item>
-            <ion-item>
-                <ion-label>Date</ion-label>
-                {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
-            </ion-item>
-            <ion-item>
-                <ion-label>Locaiton</ion-label>
-                {{ event.location }}
-            </ion-item>
-            <ion-item v-if="creator">
-                <ion-label>Creator</ion-label>
-                {{ creator.name }}
-            </ion-item>
-        </ion-list>
-        <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
-            expand="block" fill="clear" shape="round" color="success">
-            Claim Reward
-        </ion-button>
-        <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
-            fill="clear" shape="round" color="success">
-            Subscribe
-        </ion-button>
-        <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" :disabled="hasAttended" shape="round"
-            color="danger">
-            Unsubscribe
-        </ion-button>
-        <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear" shape="round"
-            color="primary">
-            Promote Event
-        </ion-button>
-    </ion-card>
-    <ion-card v-else>
-        <ion-card-header>
-            <ion-card-subtitle>Loading...</ion-card-subtitle>
-            <ion-card-title>Loading...</ion-card-title>
-        </ion-card-header>
-    </ion-card>
-
+    <ion-page>
+        <ion-content :fullscreen="true" class="ion-padding">
+            <ion-card v-if="event">
+            <ion-card-header>
+                <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
+                <ion-card-title>{{ event.title }}</ion-card-title>
+                <ion-card-subtitle>Subscribers: {{ numberOfSubscribers }}</ion-card-subtitle>
+            </ion-card-header>
+            <ion-list>
+                <ion-item>
+                    <ion-label>Description</ion-label>
+                    {{ event.description }}
+                </ion-item>
+                <ion-item v-if="event.promotedUntil">
+                    <ion-label color="tertiary">Promoted</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-label>Date</ion-label>
+                    {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+                </ion-item>
+                <ion-item>
+                    <ion-label>Location</ion-label>
+                    {{ event.location }}
+                </ion-item>
+                <ion-item v-if="creator">
+                    <ion-label>Creator</ion-label>
+                    {{ creator.name }}
+                </ion-item>
+            </ion-list>
+            <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
+                expand="block" fill="clear" shape="round" color="success">
+                Claim Reward
+            </ion-button>
+            <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
+                fill="clear" shape="round" color="success">
+                Subscribe
+            </ion-button>
+            <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" :disabled="hasAttended" shape="round"
+                color="danger">
+                Unsubscribe
+            </ion-button>
+            <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear" shape="round"
+                color="primary">
+                Promote Event
+            </ion-button>
+        </ion-card>
+        <ion-card v-else>
+            <ion-card-header>
+                <ion-card-subtitle>Loading...</ion-card-subtitle>
+                <ion-card-title>Loading...</ion-card-title>
+            </ion-card-header>
+        </ion-card>
+        </ion-content>  
+    </ion-page>
 </template>
 
 
 <script setup lang="ts">
+import { IonPage, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonButton, IonList, IonItem, IonLabel } from '@ionic/vue';
 import { formatDate } from '@/lib/dateFormatter';
 import { SendRequest } from '@/lib/request';
 import { onMounted, ref, computed } from 'vue';

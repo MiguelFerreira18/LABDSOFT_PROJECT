@@ -44,6 +44,8 @@ public class EventService {
                 .endDate(eventRequestDTO.getEndDate())
                 .description(eventRequestDTO.getDescription())
                 .category(eventRequestDTO.getCategory())
+                .latitude(eventRequestDTO.getLatitude())
+                .longitude(eventRequestDTO.getLongitude())
                 .build();
 
         return eventRepository.save(event);
