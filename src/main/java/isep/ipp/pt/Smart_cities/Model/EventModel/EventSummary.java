@@ -21,6 +21,8 @@ public class EventSummary {
     private String title;
     private LocalDate date;
     private String location;
+    private String category;
+    private int totalAttendees=0;
 
     // Constructor to initialize from an Event object
     public EventSummary(Event event) {
@@ -28,6 +30,17 @@ public class EventSummary {
         this.title = event.getTitle();
         this.date = event.getStartDate();  // Assuming date represents the start date
         this.location = event.getLocation();
+        this.category = event.getCategory();  // Assuming Event has a getCategory() method
+        this.totalAttendees =  0;
+    }
+    // Constructor with all fields for custom initialization
+    public EventSummary(String id, String title, LocalDate date, String location, String category, int totalAttendees) {
+        this.id = id;
+        this.title = title;
+        this.date = date;
+        this.location = location;
+        this.category = category;
+        this.totalAttendees = totalAttendees;
     }
 
     // Existing constructor (optional but useful for flexibility)

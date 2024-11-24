@@ -1,3 +1,4 @@
+import axios from "axios";
 import { apiConfig, apiKey } from "./config";
 
 const { baseUrl } = apiConfig;
@@ -65,3 +66,56 @@ export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
     return [];
   }
 }
+
+export const createEvent = async (eventData: {
+  title: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  category: string; // Single category as string
+  creatorID: string; // User ID from local storage or other context
+}) => {
+  try {
+    const response = await axios.post(`${baseUrl}/api/events`, eventData, {
+      headers: {
+        "Content-Type": "application/json", // Ensure JSON payload
+        // Include API key if required
+      },
+    });
+    return response.data; // Return the created event data
+  } catch (error) {
+    console.error("Error creating event:", error);
+    throw error; // Re-throw error for handling in the Vue component
+  }
+};
+
+export interface EventSummary {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  category: string;
+  totalAttendees: number;
+}
+
+export const fetchDashboardSummaries = async (
+  userId: string
+): Promise<EventSummary[]> => {
+  try {
+    // Adjust the API URL if necessary to match your backend
+    const response = await fetch(`${baseUrl}/api/events/dashboard`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch event summaries");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching event summaries:", error);
+    throw error; // Rethrow for further handling in the component
+  }
+};
+
+export const fetchCreatedEvents = async (userId: string) => {
+  const response = await axios.get(`${baseUrl}/api/events/createdBy/${userId}`);
+  return response.data;
+};

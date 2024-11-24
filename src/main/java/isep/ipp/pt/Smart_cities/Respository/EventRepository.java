@@ -34,4 +34,5 @@ public interface EventRepository extends CrudRepository<Event, String> {
     List<Event> findNonPromotedEvents(LocalDateTime now);
 
     List<Event> findByCreatorEmail(String email);
+    List<Event> findByCreatorId(String userId);
 }

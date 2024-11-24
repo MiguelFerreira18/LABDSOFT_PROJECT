@@ -10,6 +10,7 @@ import RewardsDashboard from "@/views/RewardsDashboard.vue";
 import DashboardEventsView from "@/views/Events/DashboardEventsView.vue";
 import AddEventView from "@/views/Events/AddEventView.vue";
 import MapView from "@/views/maps/MapView.vue";
+import MyEventsView from "@/views/Events/MyEventsView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -28,6 +29,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/events/create",
     name: "AddEventView",
     component: AddEventView,
+  },
+  {
+    path: "/events/myevents",
+    name: "MyEvents",
+    component: MyEventsView,
   },
   {
     path: "/events/attended",

@@ -19,9 +19,12 @@ public class EventDashboardController {
     @Autowired
     private EventService eventService;
 
-    @GetMapping("/dashboard/{userId}")
-    public List<EventSummary> getDashboardSummaries(@PathVariable String userId) {
-        // Generate summaries of current events
-        return eventService.generateCurrentEventSummaries(userId);
+    @GetMapping("/dashboard")
+    public List<EventSummary> getDashboardSummaries() {
+        return eventService.generateCurrentEventSummaries();
+    }
+    @GetMapping("/summaries")
+    public List<EventSummary> getAllEventSummaries() {
+        return eventService.getEventSummariesWithDetails();
     }
 }
