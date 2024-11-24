@@ -21,6 +21,7 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 @Getter
 @Setter
 @ToString
+@Builder
 @Entity
 public class Event {
 
@@ -58,7 +59,7 @@ public class Event {
     private User creator;
 
     private LocalDateTime promotedUntil;
-    private int attendees;
+
     
 
     private float latitude;
@@ -75,7 +76,6 @@ public class Event {
         this.endDate = endDate;
         this.description = description;
         this.creator = creator;
-        this.attendees=0;
     }
 
     public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
@@ -86,7 +86,6 @@ public class Event {
         this.description = description;
         this.creator = creator;
         this.promotedUntil = null;
-        this.attendees=0;
     }
 
 
@@ -101,7 +100,6 @@ public class Event {
         this.imagePath = imagePath;
         this.creator = creator;
         this.promotedUntil = null;
-        this.attendees=0;
     }
 
     public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
@@ -141,19 +139,5 @@ public class Event {
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();
-    }
-
-    public int getAttendees() {
-        return this.attendees;
-    }
-    public void incrementAttendees() {
-        this.attendees++;
-    }
-
-    // Example method to decrement attendees when someone unsubscribes
-    public void decrementAttendees() {
-        if (this.attendees > 0) {
-            this.attendees--;
-        }
     }
 }
