@@ -61,6 +61,9 @@ public class Event {
     private int attendees;
     
 
+    private float latitude;
+
+    private float longitude;
 
     public Event() {
     }
@@ -101,6 +104,21 @@ public class Event {
         this.attendees=0;
     }
 
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+        this.id = id;
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.category = category;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.creator = creator;
+        this.promotedUntil = null;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
@@ -120,6 +138,8 @@ public class Event {
                 .description(description)
                 .category(category)
                 .creatorID(creator.getId())
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
     }
 

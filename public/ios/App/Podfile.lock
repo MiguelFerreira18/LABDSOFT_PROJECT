@@ -1,0 +1,69 @@
+PODS:
+  - Capacitor (6.1.2):
+    - CapacitorCordova
+  - CapacitorApp (6.0.1):
+    - Capacitor
+  - CapacitorCommunityCapacitorGooglemapsNative (1.2.0):
+    - Capacitor
+    - GoogleMaps
+  - CapacitorCordova (6.1.2)
+  - CapacitorGeolocation (6.0.2):
+    - Capacitor
+  - CapacitorHaptics (6.0.1):
+    - Capacitor
+  - CapacitorKeyboard (6.0.2):
+    - Capacitor
+  - CapacitorStatusBar (6.0.1):
+    - Capacitor
+  - GoogleMaps (7.4.0):
+    - GoogleMaps/Maps (= 7.4.0)
+  - GoogleMaps/Base (7.4.0)
+  - GoogleMaps/Maps (7.4.0):
+    - GoogleMaps/Base
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorCommunityCapacitorGooglemapsNative (from `../../node_modules/@capacitor-community/capacitor-googlemaps-native`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
+  - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
+  - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+
+SPEC REPOS:
+  trunk:
+    - GoogleMaps
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorApp:
+    :path: "../../node_modules/@capacitor/app"
+  CapacitorCommunityCapacitorGooglemapsNative:
+    :path: "../../node_modules/@capacitor-community/capacitor-googlemaps-native"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorGeolocation:
+    :path: "../../node_modules/@capacitor/geolocation"
+  CapacitorHaptics:
+    :path: "../../node_modules/@capacitor/haptics"
+  CapacitorKeyboard:
+    :path: "../../node_modules/@capacitor/keyboard"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
+
+SPEC CHECKSUMS:
+  Capacitor: 679f9673fdf30597493a6362a5d5bf233d46abc2
+  CapacitorApp: 0bc633b4eae40a1f32cd2834788fad3bc42da6a1
+  CapacitorCommunityCapacitorGooglemapsNative: 44db8c35ed32bbf29a29a186072769520d02c066
+  CapacitorCordova: f48c89f96c319101cd2f0ce8a2b7449b5fb8b3dd
+  CapacitorGeolocation: 9db9e7ed7cfb5d5d8f01b108ab483ad9c9d2865d
+  CapacitorHaptics: fe689ade56ef20ec9b041a753c6da70c5d8ec9a9
+  CapacitorKeyboard: 2700f9b18687be021e28b5a09b59eb151a46d5e0
+  CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
+  GoogleMaps: 032f676450ba0779bd8ce16840690915f84e57ac
+
+PODFILE CHECKSUM: 95c610e6e6e9d7e7ba6244b91ef13d0068fb1352
+
+COCOAPODS: 1.12.1

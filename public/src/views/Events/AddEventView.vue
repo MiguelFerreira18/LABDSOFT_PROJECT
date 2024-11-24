@@ -1,101 +1,97 @@
 <template>
-  <div>
-    <h1>Create New Event</h1>
+  <ion-page>
+    <ion-header>
+        <ion-toolbar>
+            <ion-title>Create New Event</ion-title>
+        </ion-toolbar>
+    </ion-header>
+  <ion-content :fullscreen="true" class="ion-padding">
     <form @submit.prevent="addEvent">
-      <!-- Event Title -->
-      <div>
-        <label for="title">Title</label>
-        <input type="text" id="title" v-model="event.title" required />
-      </div>
 
-      <!-- Event Location -->
-      <div>
-        <label for="location">Location</label>
-        <input type="text" id="location" v-model="event.location" required />
-      </div>
+      <ion-input class="ion-margin-vertical" label="Title" fill="outline" label-placement="floating" placeholder="Run Club" id="title" v-model="event.title" required></ion-input>
+      <ion-input class="ion-margin-vertical" label="Location" fill="outline" label-placement="floating" placeholder="Central Park" id="location" v-model="event.location" required></ion-input>
+      <ion-button @click="navigateToMap" size="small" fill="outline">S<ion-icon slot="start" :icon="navigateOutline"></ion-icon>elect Location On Map</ion-button>
+      <ion-input class="ion-margin-vertical" label="Start Date" fill="outline" label-placement="floating" type="date" id="startDate" v-model="event.startDate" required></ion-input>
+      <ion-input class="ion-margin-vertical" label="End Date" fill="outline" label-placement="floating" type="date" id="endDate" v-model="event.endDate" required></ion-input>
+      <ion-textarea class="ion-margin-vertical" label="Description" fill="outline" label-placement="floating" placeholder="Join us for a run around Central Park!" id="description" v-model="event.description" required></ion-textarea>
+      <ion-select class="ion-margin-vertical" :aria-label="'fruit'" :placeholder="'Select Category'" @ionChange="handleCategoryChange"
+        :key="'category-select'">
+        <ion-select-option v-for="category in categories" :value="category" :key="category">
+          {{ category }}
+        </ion-select-option>
+      </ion-select>
+      <br />
+      <ion-button type="submit">Create Event</ion-button>
+  </form>
+  <div v-if="errorMessage" class="error-message">
 
-      <!-- Start Date -->
-      <div>
-        <label for="startDate">Start Date</label>
-        <input type="date" id="startDate" v-model="event.startDate" required />
-      </div>
-
-      <!-- End Date -->
-      <div>
-        <label for="endDate">End Date</label>
-        <input type="date" id="endDate" v-model="event.endDate" required />
-      </div>
-
-      <!-- Description -->
-      <div>
-        <label for="description">Description</label>
-        <textarea id="description" v-model="event.description" required></textarea>
-      </div>
-
-      <!-- Categories -->
-      <div>
-        <label for="category">Category</label>
-        <select id="category" v-model="event.category" required>
-          <option v-for="category in categories" :key="category" :value="category">
-            {{ category }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit">Create Event</button>
-    </form>
-
-    <!-- Error Message -->
-    <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
     </div>
-  </div>
+  </ion-content>
+</ion-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { createEvent } from "@/lib/eventRequests";
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router';
+import { SendRequest } from "@/lib/request";
+import { categories } from "@/lib/categories";
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonSelect, IonButton, IonSelectOption, IonTextarea, IonIcon } from '@ionic/vue';
+import { navigateOutline } from 'ionicons/icons';
+import { locationState } from "@/stateManagement/locationState";
 
-// Reactive Variables
-const event = ref({
-  title: "",
-  location: "",
-  startDate: "",
-  endDate: "",
-  description: "",
-  category: "",
-});
-const categories = ["Social", "Sports", "Education", "Entertainment", "Other"]; // Predefined categories
-const errorMessage = ref("");
 const router = useRouter();
+const event = ref<any>({});
+const fetchedEvent = ref<any>({});
+const errorMessage = ref("")
 
-// Get user ID
-const userId = localStorage.getItem("uuid");
-if (!userId) {
-  errorMessage.value = "User not logged in. Please log in to create an event.";
-  // Optionally, redirect to login
-  router.push("/login");
+function handleCategoryChange(domEvent: any) {
+  event.value.category = domEvent.target.value;
+
 }
 
 // Add Event Function
 async function addEvent() {
   try {
     const payload = {
-      ...event.value,
-      creatorID: userId,
-    };
 
-    // Call the createEvent function
-    const createdEvent = await createEvent(payload);
+      title: event.value.title,
+      location: event.value.location,
+      startDate: event.value.startDate,
+      endDate: event.value.endDate,
+      description: event.value.description,
+      category: event.value.category,
+      creatorID: localStorage.getItem('uuid') || '',
+      latitude: event.value.latitude,
+      longitude: event.value.longitude,
+    }
+    console.log(payload);
+    const response = await SendRequest('/api/events', 'POST', payload);
+    const data = await response.json();
+    fetchedEvent.value = data;
+    if (response.ok) {
+      router.push(`/event/EventDetail/${fetchedEvent.value.id}`);
+    } else {
+      errorMessage.value = "Failed to create event. Please try again.";
+    }
 
-    console.log("Event created successfully:", createdEvent);
-    router.push(`/event/${createdEvent.id}`); // Navigate to the event detail page
   } catch (error) {
     console.error("Error creating event:", error);
     errorMessage.value = "Failed to create event. Please check the input and try again.";
   }
+}
+
+function navigateToMap() {
+  locationState.onLocationSelected = handleLocationSelected;
+  router.push({ name: 'map'});
+}
+
+// Handle location selected from map
+function handleLocationSelected({ latitude, longitude, address }: { latitude: number; longitude: number; address: string }) {
+  console.log(`Lat: ${latitude}, Lng: ${longitude}`);
+  event.value.latitude = latitude;
+  event.value.longitude = longitude;
+  event.value.location = address;
 }
 </script>
 

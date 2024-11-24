@@ -38,17 +38,20 @@ public class EventService {
         User creator = userService.findById(createEventRequestDto.getCreatorID());
         if (creator == null) {
             throw new IllegalArgumentException("Invalid creator ID");
-        }
-    
-        Event event = new Event();
-        event.setTitle(createEventRequestDto.getTitle());
-        event.setLocation(createEventRequestDto.getLocation());
-        event.setStartDate(createEventRequestDto.getStartDate());
-        event.setEndDate(createEventRequestDto.getEndDate());
-        event.setDescription(createEventRequestDto.getDescription());
-        event.setCategory(createEventRequestDto.getCategory());
-        event.setCreator(creator); // Set the creator based on the user
-    
+
+        Event event = Event.builder()
+                .creator(creator)
+                .title(eventRequestDTO.getTitle())
+                .location(eventRequestDTO.getLocation())
+                .startDate(eventRequestDTO.getStartDate())
+                .endDate(eventRequestDTO.getEndDate())
+                .description(eventRequestDTO.getDescription())
+                .category(eventRequestDTO.getCategory())
+                .latitude(eventRequestDTO.getLatitude())
+                .longitude(eventRequestDTO.getLongitude())
+                .build();
+
+
         return eventRepository.save(event);
     }
 
