@@ -26,7 +26,7 @@ watch(
       await updateMarkers();
     }
   },
-  { immediate: true, deep: true } 
+  { immediate: true, deep: true }
 );
 
 // Function to add/update markers
@@ -115,7 +115,7 @@ async function createMap() {
 </script>
 <template>
   <div>
-    <capacitor-google-map ref="mapRef" style="display: inline-block; width: 100vw; height: 86vh">
+    <capacitor-google-map ref="mapRef" style="display: inline-block; width: 100vw; height: 75vh">
     </capacitor-google-map>
   </div>
 </template>
