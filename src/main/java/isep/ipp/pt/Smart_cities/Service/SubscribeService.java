@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.Dto.RateDTO;
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Mapper.SubscribeMapper.SubscribeMapperImpl;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
@@ -29,7 +30,6 @@ public class SubscribeService {
     private EventRepository eventRepo;
     @Autowired
     private SubscribeMapperImpl subscribeMapper;
-
 
     public Optional<Response> subscribe(String uuid, String eventId) {
         Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
@@ -128,4 +128,15 @@ public class SubscribeService {
         subscribeRepo.deleteAll();
     }
 
+    public boolean rate(RateDTO rateDTO) {
+        List<Subscribe> subscribes = (List<Subscribe>) subscribeRepo.findAllByEventId(rateDTO.getEventId());
+        for (Subscribe subscribe : subscribes) {
+            if (subscribe.getUser().getId().equals(rateDTO.getUuid())) {
+                subscribe.setRate(Integer.parseInt(rateDTO.getRating()));
+                subscribeRepo.save(subscribe);
+                return true;
+            }
+        }
+        return false;
+    }
 }

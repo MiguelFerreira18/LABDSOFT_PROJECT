@@ -9,10 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
-@Builder
 @ToString
 @Entity
 public class Subscribe {
@@ -27,6 +25,8 @@ public class Subscribe {
     private Event event;
 
     private int code;
+
+    private int rate;
 
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
@@ -51,18 +51,16 @@ public class Subscribe {
         this.subscriptionStatus = subscriptionStatus;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus, int rate) {
         this.id = id;
         this.user = user;
         this.event = event;
         this.code = code;
         this.subscriptionStatus = subscriptionStatus;
+        this.rate = rate;
     }
 
     public SubscribeResponseDTO toDTO(){
         return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus);
     }
-
-
-
 }

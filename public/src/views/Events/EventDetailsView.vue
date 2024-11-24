@@ -27,6 +27,13 @@
                         <ion-label>Creator</ion-label>
                         {{ creator.name }}
                     </ion-item>
+                    <ion-item>
+                        <ion-label>Rate this event</ion-label>
+                        <ion-range v-model="rating" min="0" max="5" step="1" snaps="true" ticks="true" pin="true" @ionChange="handleRatingChange">
+                            <ion-icon slot="start" name="star-outline"></ion-icon>
+                            <ion-icon slot="end" name="star"></ion-icon>
+                        </ion-range>
+                    </ion-item>
                 </ion-list>
                 <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
                     expand="block" fill="clear" shape="round" color="success">
@@ -72,6 +79,7 @@ const hasAttended = ref(false);
 const subbedEvent = ref<any>({})
 const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
+const rating = ref<number | null>(null);
 
 onMounted(async () => {
     await getCurrentEvent();
@@ -195,6 +203,27 @@ async function getNumberOfSubscribers() {
     numberOfSubscribers.value = data;
 }
 
+async function handleRatingChange(event: CustomEvent) {
+  const newRating = event.detail.value;
+  const payload: Record<string, string> = {
+        uuid: localStorage.getItem('uuid') || '',
+        eventId: Array.isArray(route.params.id) ? route.params.id[0] : route.params.id || '',
+        rating: newRating.toString()
+    }
+
+  if(newRating != 0 && isSubscribed.value) {
+    const response = await SendRequest(
+        `/api/events/rate`,
+        'POST',
+        payload
+    );
+    if (response.ok) {
+        showToast('Event rated successfully!', 'success');
+    } else {
+        showToast('You have already rated this event.', 'danger');
+    }
+  }
+}
 
 </script>
 
