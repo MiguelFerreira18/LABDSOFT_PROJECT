@@ -4,7 +4,7 @@
             <ion-input ref="email" type="email" fill="solid" label="Email" label-placement="floating"
                 error-text="Invalid email" @ionBlur="markTouched"></ion-input>
 
-            <ion-input ref="password" type="password" fill="solid" label="password" label-placement="floating"
+            <ion-input ref="password" type="password" fill="solid" label="Password" label-placement="floating"
                 error-text="Invalid email" @ionBlur="markTouched"></ion-input>
 
             <ion-button expand="block" @click="login">Submit</ion-button>
@@ -42,23 +42,23 @@ async function login() {
             localStorage.setItem('userId', user.id);
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
             localStorage.setItem('token', authHeader);
-            
+
             try {
                 const rewards = await dailyRewards({ id: user.id });
 
-                if(rewards.pointsEarned > 0) {
-                    await presentToast('top',`You earned ${rewards.pointsEarned} points for logging in!`);
-                }else{
+                if (rewards.pointsEarned > 0) {
+                    await presentToast('top', `You earned ${rewards.pointsEarned} points for logging in!`);
+                } else {
                     // await presentToast('bottom',`You have already claimed your daily rewards!`);
                 }
 
                 // Ensure to only fetch rewards once per login
                 localStorage.setItem('rewardsFetched', 'true');
-                
+
             } catch (error) {
                 console.error('Error fetching daily rewards:', error);
             }
-            
+
             router.push('/tabs/tabHome');
         }
     } catch (error) {
@@ -86,27 +86,27 @@ interface RewardsResponse {
 async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
     try {
 
-    const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
+        const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
 
-    const rewards: RewardsResponse = await res.json();
-    
-    return rewards as RewardsResponse;
+        const rewards: RewardsResponse = await res.json();
+
+        return rewards as RewardsResponse;
     } catch (error) {
-    console.error('Error in dailyRewards function:', error);
-    throw error; 
+        console.error('Error in dailyRewards function:', error);
+        throw error;
     }
 }
 
 async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
     const toast = await toastController.create({
-    message: message,
-    duration: 2500,
-    position: position,
-    color: 'success', 
-    icon: 'trophy-outline', 
-    cssClass: 'reward-toast',
+        message: message,
+        duration: 2500,
+        position: position,
+        color: 'success',
+        icon: 'trophy-outline',
+        cssClass: 'reward-toast',
     });
-    
+
     await toast.present();
 }
 

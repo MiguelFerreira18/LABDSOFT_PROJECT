@@ -2,6 +2,7 @@ package isep.ipp.pt.Smart_cities.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -39,7 +40,7 @@ public class RewardsService {
     private EventRepository eventRepo;
 
     public Optional<Response> givePointsByAttendingAnEvent(String userId, String eventId){
-        return checkIfThereIsAlreadyRewards(userId,eventId) ?
+        return checkIfThereIsAlreadyRewards(userId,eventId).isPresent() ?
                 changSubscriptionStatusToAttended(userRepo.findById(userId).get(),eventRepo.findById(eventId).get())
                         .map(subscribe -> Response.ok("You have already received points for this event",subscribe.toDTO())) :
                 processRewardsIfSubscriptionIsValid(userId, eventId);
@@ -104,9 +105,13 @@ public class RewardsService {
         return validateSubscription(userId, eventId)
                 .map(subscribe -> processRewards(userId, eventId));
     }
-    private boolean checkIfThereIsAlreadyRewards(String userId, String eventId){
-        return StreamSupport.stream(rewardsRepo.findAllByUserId(userId).spliterator(),false)
-                .anyMatch(rewards -> rewards.getEvent().getId().equals(eventId));
+    private Optional<Boolean> checkIfThereIsAlreadyRewards(String userId, String eventId){
+        for(Rewards rewards : rewardsRepo.findAll()){
+            if(rewards == null && rewards.getUser().getId().equals(userId) && rewards.getEvent().getId().equals(eventId)){
+                return Optional.of(true);
+            }
+        }
+        return Optional.of(false);
     }
 
     private Optional<Subscribe> validateSubscription(String userId,String eventId){

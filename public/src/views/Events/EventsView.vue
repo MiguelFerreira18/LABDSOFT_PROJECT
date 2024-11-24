@@ -31,7 +31,7 @@
       <div class="button-container">
         <button class="filter-button" @click="toggleDropdown" data-testid="toggle-dropdown">
           <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="32">
+            <g fill="none" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="32">
               <path d="m368 128h80" />
               <path d="m64 128h240" />
               <path d="m368 384h80" />
@@ -49,12 +49,8 @@
       <!-- Dropdown com filtros de categoria e data -->
       <div v-if="showDropdown" class="dropdown-menu">
         <label for="category-limit">Filter by Category:</label>
-        <ion-button
-          v-for="category in categories"
-          :key="category"
-          @click="toggleCategory(category)"
-          :data-testid="'filter-' + category"
-        >
+        <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
+          :data-testid="'filter-' + category">
           {{ category }}
         </ion-button>
 
@@ -114,11 +110,11 @@ interface Event {
 
 export default {
   setup() {
-    const promotedEvents = ref<Event[]>([]); 
+    const promotedEvents = ref<Event[]>([]);
     const nonPromotedEvents = ref<Event[]>([]);
     const selectedCategories = ref<string[]>([]);
-    const dateLimit = ref<string | null>(null); 
-    const showDropdown = ref(false); 
+    const dateLimit = ref<string | null>(null);
+    const showDropdown = ref(false);
 
     const loadPromoted = async () => {
       try {
@@ -215,13 +211,13 @@ export default {
   text-align: center;
   font-size: 2rem;
   font-weight: bold;
-  color: aliceblue;
+  color: black;
   margin-bottom: 40px;
   animation: fadeIn 1s ease-out;
 }
 
 .promoted-events-section {
-  margin-bottom: 40px; 
+  margin-bottom: 40px;
 }
 
 .promoted-events-bar {
@@ -268,19 +264,19 @@ ion-card-header {
 ion-card-content {
   padding: 12px;
   font-size: 14px;
-  color: aliceblue;
+  color: black;
 }
 
 ion-card-title {
   text-transform: none;
   font-size: 20px;
   font-weight: bold;
-  color: aliceblue;
+  color: var(--ion-color-dark);
 }
 
 ion-card-subtitle {
   font-size: 14px;
-  color: aliceblue;
+  color: var(--ion-color-dark)
 }
 
 .clickable-card {
@@ -303,7 +299,7 @@ ion-card-subtitle {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 250px; 
+  width: 250px;
 }
 
 .date-filter {
@@ -360,15 +356,15 @@ ion-card-subtitle {
 
 .promoted-events-section,
 .event-cards-container {
-  z-index: 1; 
+  z-index: 1;
 }
 
 .promoted-events-section h2 {
-  margin-top: 60px; 
+  margin-top: 60px;
   margin-bottom: 16px;
   font-size: 1.5rem;
   font-weight: bold;
-  color: aliceblue;
+  color: black;
 }
 
 .clear-button {
@@ -379,7 +375,7 @@ ion-card-subtitle {
 
 .promoted-events-section,
 .event-cards-container {
-  z-index: 1; 
+  z-index: 1;
 }
 
 .clear-button {
@@ -387,5 +383,4 @@ ion-card-subtitle {
   align-self: flex-end;
   font-size: 14px;
 }
-
 </style>
