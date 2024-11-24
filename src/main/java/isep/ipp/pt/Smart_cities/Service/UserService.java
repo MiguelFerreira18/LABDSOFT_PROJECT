@@ -3,6 +3,7 @@ package isep.ipp.pt.Smart_cities.Service;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
 import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
 import isep.ipp.pt.Smart_cities.Respository.InstitutionRepo;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import jakarta.transaction.Transactional;
@@ -14,17 +15,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
-    
+
     @Autowired
     public PasswordEncoder encoder;
 
     @Autowired
     public UserRepo userRepo;
-    
+
     @Autowired
     public InstitutionRepo institutionRepo;
 
@@ -47,7 +50,7 @@ public class UserService implements UserDetailsService {
         userRepo.deleteAll();
     }
 
-    public void updateUserLastLogin(String userEmail){
+    public void updateUserLastLogin(String userEmail) {
         userRepo.updateUserLastLogin(userEmail, LocalDateTime.now());
     }
 
@@ -78,10 +81,27 @@ public class UserService implements UserDetailsService {
         return user.orElse(null);
     }
 
-    public User findById(String userId){
+    public User findById(String userId) {
 
         Optional<User> user = userRepo.findById(userId);
 
         return user.orElse(null);
+    }
+
+    public UserView toUserView(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        String id = user.getId();
+        String name = user.getName();
+        Set<Role> authorities = null;
+        Date birth = user.getBirthDate();
+        String gender = user.getGender();
+        String address = user.getAddress();
+        String city = user.getCity();
+        String country = user.getCountry();
+
+        return new UserView(id, name, authorities, birth, gender, address, city, country);
     }
 }

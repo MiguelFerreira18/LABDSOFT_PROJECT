@@ -114,9 +114,10 @@ const userInfo = ref({
 
 // Fetch user information
 const fetchUserInfo = async () => {
+  const userId = localStorage.getItem("userId");
   const email = localStorage.getItem("email");
   try {
-    const response = await SendRequest("/userInfo/info?email=" + email, "GET");
+    const response = await SendRequest("/api/users/getuser?id=" + userId, "GET");
     if (response.ok) {
       const data = await response.json();
       userInfo.value = data;

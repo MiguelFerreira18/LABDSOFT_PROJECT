@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,12 +27,24 @@ public class UserMapperImpl implements UserMapper {
         String id = null;
         String name = null;
         Set<Role> authorities = null;
+        Date birthDate = null;
+        String gender = null;
+        String address = null;
+        String city = null;
+        String country = null;
+
 
         id = user.getId();
         name = user.getName();
         authorities = grantedAuthorityCollectionToRoleSet(user.getAuthorities());
+        birthDate = user.getBirthDate();
+        gender = user.getGender();
+        address = user.getAddress();
+        city = user.getCity();
+        country = user.getCountry();
 
-        UserView userView = new UserView(id, name, authorities);
+
+        UserView userView = new UserView(id, name, authorities, birthDate, gender, address, city, country);
 
         return userView;
     }
