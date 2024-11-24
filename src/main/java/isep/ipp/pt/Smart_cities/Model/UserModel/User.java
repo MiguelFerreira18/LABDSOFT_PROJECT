@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +25,6 @@ import java.util.UUID;
 @Entity
 @ToString
 public class User implements UserDetails {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,9 +49,19 @@ public class User implements UserDetails {
 
     protected LocalDateTime lastLoginAt = LocalDateTime.now();
 
+    @Column
+    protected Date birthDate;
+    @Column
+    protected String gender;
+    @Column
+    protected String address;
+    @Column
+    protected String city;
+    @Column
+    protected String country;
+
     public User() {
         this.authorities = new HashSet<>();
-
     }
 
     public User(String email, String password) {
@@ -60,13 +70,14 @@ public class User implements UserDetails {
         this.authorities = new HashSet<>();
     }
 
-    public User(String email,String username, String password, Role role) {
+    public User(String email, String username, String password, Role role) {
         this.email = email;
         this.name = username;
         this.password = password;
         this.authorities.add(role);
     }
-    public User(String email,String username, String password) {
+
+    public User(String email, String username, String password) {
         this.email = email;
         this.name = username;
         this.password = password;
@@ -98,6 +109,20 @@ public class User implements UserDetails {
         this.lastLoginAt = lastLoginAt;
     }
 
+    public User(String id, String email, String name, Set<Role> authorities, String password, LocalDateTime lastLoginAt, Date birthDate, String gender, String address, String city, String country) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+        this.lastLoginAt = lastLoginAt;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.address = address;
+        this.city = city;
+        this.country = country;
+    }
+
     public User(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt) {
         this.id = id;
         this.email = email;
@@ -116,10 +141,10 @@ public class User implements UserDetails {
             throw new IllegalArgumentException("Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character");
         }
     }
+
     public void addAuthority(Role role) {
         authorities.add(role);
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
