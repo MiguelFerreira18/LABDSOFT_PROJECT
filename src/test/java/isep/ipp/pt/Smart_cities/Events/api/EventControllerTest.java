@@ -74,7 +74,7 @@ class EventControllerTest {
                 .longitude(56.78f)
                 .build();
 
-        when(eventService.createEvent(any(EventRequestDTO.class))).thenReturn(testEvent);
+        when(eventService.createEvent(any())).thenReturn(testEvent);
 
         mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ class EventControllerTest {
                 .andExpect(jsonPath("$.title").value("Test Event"))
                 .andExpect(jsonPath("$.category").value("Art"));
 
-        verify(eventService, times(1)).createEvent(any(EventRequestDTO.class));
+        verify(eventService, times(1)).createEvent(any());
     }
 
     @Test
