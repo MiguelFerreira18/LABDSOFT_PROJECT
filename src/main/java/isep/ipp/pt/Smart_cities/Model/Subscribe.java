@@ -61,6 +61,6 @@ public class Subscribe {
     }
 
     public SubscribeResponseDTO toDTO(){
-        return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus);
+        return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus, this.rate);
     }
 }

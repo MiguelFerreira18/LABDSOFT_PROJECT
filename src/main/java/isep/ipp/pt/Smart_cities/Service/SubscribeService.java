@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -92,12 +94,26 @@ public class SubscribeService {
     }
 
     public Optional<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(String uuid) {
-        return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+        Map<String, Double> averageRates = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
+                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now())
+                        && subscribe.getRate() > 0)
+                .collect(Collectors.groupingBy(subscribe -> subscribe.getEvent().getId(),
+                        Collectors.averagingInt(Subscribe::getRate)));
+
+        List<SubscribeResponseDTO> responseDTOs = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
                         && subscribe.getEvent().getEndDate().isAfter(LocalDate.now()))
-                .map(subscribeMapper::toSubscribeResponseDTO)
-                .toList());
+                .map(subscribe -> {
+                    SubscribeResponseDTO dto = subscribeMapper.toSubscribeResponseDTO(subscribe);
+                    dto.setRate(averageRates.getOrDefault(subscribe.getEvent().getId(), 0.0));
+                    return dto;
+                })
+                .toList();
+
+        return Optional.of(responseDTOs);
     }
 
     public Optional<List<Event>> getAttendedEventsByUserUUID(String uuid) {
@@ -108,6 +124,7 @@ public class SubscribeService {
                 .map(Subscribe::getEvent)
                 .toList());
     }
+    
     public Optional<List<Event>> getSubscribedEventsByUserUUID(String uuid) {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
@@ -130,12 +147,28 @@ public class SubscribeService {
 
     public boolean rate(RateDTO rateDTO) {
         List<Subscribe> subscribes = (List<Subscribe>) subscribeRepo.findAllByEventId(rateDTO.getEventId());
+        float sum_rate = 0;
+        float num_rate = 0;
+        boolean isRated = false;
         for (Subscribe subscribe : subscribes) {
             if (subscribe.getUser().getId().equals(rateDTO.getUuid())) {
                 subscribe.setRate(Integer.parseInt(rateDTO.getRating()));
                 subscribeRepo.save(subscribe);
-                return true;
+                sum_rate += Integer.parseInt(rateDTO.getRating());
+                isRated = true;
+            } else {
+                sum_rate += subscribe.getRate();
             }
+            if(subscribe.getRate() != 0) {
+                num_rate++;
+            }
+        }
+        if (isRated) {
+            float rating = sum_rate / num_rate;
+            Event event = eventRepo.findById(rateDTO.getEventId()).get();
+            event.setRating(rating);
+            eventRepo.save(event);
+            return true;
         }
         return false;
     }

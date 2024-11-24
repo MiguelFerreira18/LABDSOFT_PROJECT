@@ -8,15 +8,17 @@ public class SubscribeResponseDTO {
     private Event event;
     private int code;
     private SubscriptionStatus status;
+    private Double rate;
 
     public SubscribeResponseDTO() {
     }
 
-    public SubscribeResponseDTO(Long id, Event event, int code, SubscriptionStatus status) {
+    public SubscribeResponseDTO(Long id, Event event, int code, SubscriptionStatus status, double rate) {
         this.id = id;
         this.event = event;
         this.code = code;
         this.status = status;
+        this.rate = rate;
     }
 
     public Long getId() {
@@ -49,5 +51,13 @@ public class SubscribeResponseDTO {
 
     public void setStatus(SubscriptionStatus status) {
         this.status = status;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
     }
 }

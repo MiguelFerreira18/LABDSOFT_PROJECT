@@ -68,10 +68,12 @@
 
 <script setup lang="ts">
 
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { SendRequest } from '@/lib/request';
-import router from '@/router';
-import { onMounted, ref } from 'vue';
+import { IonPage, IonContent, IonButton, IonList, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonIcon } from '@ionic/vue';
 import { calendarOutline, locationOutline, personOutline, calendarClearOutline } from 'ionicons/icons';
+
 interface Event {
     id: number;
     title: string;
@@ -82,52 +84,54 @@ interface Event {
     location: string;
     creator: any;
     category: string;
+    rating: number;
 }
+
 const events = ref<Event[]>([]);
 const creator = ref<any>({});
 const isSeeingAttendedEvents = ref(true);
+const router = useRouter();
 
+async function fetchEvents(endpoint: string) {
+  const userId = localStorage.getItem('uuid') || '';
+  const response = await SendRequest(`${endpoint}${userId}`, 'GET');
+  const data = await response.json();
 
-async function fetchEvents(endpoint: any) {
-    const userId = localStorage.getItem('uuid') || '';
-    const response = await SendRequest(`${endpoint}${userId}`, 'GET');
-    const data = await response.json();
-
-    if (response.ok && data) {
-        events.value = data;
-        creator.value = data.creator;
-        events.value = sortEventsByDate(events.value);
-    }
-
+  if (response.ok && data) {
+    events.value = data;
+    creator.value = data.creator;
+    events.value = sortEventsByDate(events.value);
+  }
 }
+
 function sortEventsByDate(eventsList: Event[]) {
-    return eventsList.sort((a, b) =>
-        new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
-    );
+  return eventsList.sort((a, b) =>
+    new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+  );
 }
 
 onMounted(async () => {
-    const endpoint = isSeeingAttendedEvents.value
-        ? '/subscription/attended/event/'
-        : '/subscription/event/';
-    await fetchEvents(endpoint);
+  const endpoint = isSeeingAttendedEvents.value
+    ? '/subscription/attended/event/'
+    : '/subscription/event/';
+  await fetchEvents(endpoint);
 });
 
-
 async function handlePagePush(eventId: number) {
-    router.push({ path: `/event/EventDetail/${eventId}` });
-}
-async function toggleView() {
-    isSeeingAttendedEvents.value = !isSeeingAttendedEvents.value;
-    const endpoint = isSeeingAttendedEvents.value
-        ? '/subscription/attended/event/'
-        : '/subscription/event/';
-    await fetchEvents(endpoint);
-}
-function formatDateRange(startDate: string, endDate: string) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    return `${start.toDateString()} - ${end.toDateString()}`;
+  router.push({ path: `/event/EventDetail/${eventId}` });
 }
 
+async function toggleView() {
+  isSeeingAttendedEvents.value = !isSeeingAttendedEvents.value;
+  const endpoint = isSeeingAttendedEvents.value
+    ? '/subscription/attended/event/'
+    : '/subscription/event/';
+  await fetchEvents(endpoint);
+}
+
+function formatDateRange(startDate: string, endDate: string) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return `${start.toDateString()} - ${end.toDateString()}`;
+}
 </script>

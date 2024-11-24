@@ -63,6 +63,8 @@ public class Event {
 
     private float longitude;
 
+    private float rating;
+
     public Event() {
     }
 
@@ -99,7 +101,7 @@ public class Event {
         this.promotedUntil = null;
     }
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude, float rating) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -112,6 +114,7 @@ public class Event {
         this.promotedUntil = null;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.rating = rating;
     }
 
 

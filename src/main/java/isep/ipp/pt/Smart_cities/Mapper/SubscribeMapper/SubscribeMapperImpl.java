@@ -20,8 +20,9 @@ public class SubscribeMapperImpl implements SubscribeMapper {
         Event event = subscribe.getEvent();
         int code = subscribe.getCode();
         SubscriptionStatus status = subscribe.getSubscriptionStatus();
+        double rate = subscribe.getRate();
 
-        SubscribeResponseDTO subscribeResponseDTO = new SubscribeResponseDTO(id, event, code, status);
+        SubscribeResponseDTO subscribeResponseDTO = new SubscribeResponseDTO(id, event, code, status, rate);
 
         return subscribeResponseDTO;
     }
