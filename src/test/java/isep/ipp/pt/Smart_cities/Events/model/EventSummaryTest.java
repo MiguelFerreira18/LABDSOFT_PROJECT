@@ -1,4 +1,6 @@
-package isep.ipp.pt.Smart_cities.Model.EventModel;
+package isep.ipp.pt.Smart_cities.Events.model;
+
+
 
 import org.junit.jupiter.api.Test;
 

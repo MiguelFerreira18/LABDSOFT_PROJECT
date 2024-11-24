@@ -1,6 +1,5 @@
 package isep.ipp.pt.Smart_cities.Events.model;
-import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
-import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -8,6 +7,9 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
