@@ -27,9 +27,6 @@ public class EventDashboardController {
     public List<EventSummary> getAllEventSummaries() {
         return eventService.getEventSummariesWithDetails();
     }
-    @GetMapping("/summaries")
-public List<EventSummary> getAllEventSummaries() {
-    return eventService.getEventSummariesWithDetails();
-}
+  
 
 }

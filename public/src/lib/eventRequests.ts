@@ -67,26 +67,37 @@ export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
   }
 }
 
+
+
 export const createEvent = async (eventData: {
   title: string;
   location: string;
   startDate: string;
   endDate: string;
   description: string;
-  category: string; // Single category as string
-  creatorID: string; // User ID from local storage or other context
+  category: string;
+  creatorID: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }) => {
   try {
+    // Make API request to create event
     const response = await axios.post(`${baseUrl}/api/events`, eventData, {
       headers: {
-        "Content-Type": "application/json", // Ensure JSON payload
-        // Include API key if required
+        "Content-Type": "application/json",
       },
     });
+
     return response.data; // Return the created event data
-  } catch (error) {
-    console.error("Error creating event:", error);
-    throw error; // Re-throw error for handling in the Vue component
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.error || error.message || "Unknown error occurred.";
+      console.error("Error creating event:", errorMessage);
+      throw new Error(errorMessage); // Re-throw error for handling in the Vue component
+    } else {
+      console.error("Unexpected error:", error);
+      throw new Error("An unexpected error occurred while creating the event.");
+    }
   }
 };
 

@@ -8,6 +8,7 @@ import isep.ipp.pt.Smart_cities.Service.EventService;
 import isep.ipp.pt.Smart_cities.Service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,15 +27,18 @@ public class EventController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
-        try {
-            Event event = eventService.createEvent(createEventRequestDto);
-            return ResponseEntity.ok(event);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+   @PostMapping
+public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
+    try {
+        Event event = eventService.createEvent(createEventRequestDto);
+        return ResponseEntity.ok(event);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(null); // Optional: Return error message for clarity
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // General error
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable String id) {
