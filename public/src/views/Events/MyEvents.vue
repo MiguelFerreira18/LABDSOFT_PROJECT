@@ -20,7 +20,7 @@
               <ion-card-content>
                 <p><strong>Location:</strong> {{ event.location }}</p>
                 <p><strong>Category:</strong> {{ event.category }}</p>
-                <p><strong>Attendees:</strong> {{ event.attendees }}</p>
+                <p><strong>Attendees:</strong> {{ event.attendees.length }}</p>
               </ion-card-content>
             </ion-card>
           </router-link>
@@ -38,9 +38,21 @@
   import { formatDate } from '@/lib/dateFormatter';
   import { categoryColors } from '@/lib/categories';
   
+  // Define an interface for the Event type
+  interface Event {
+    id: string;
+    title: string;
+    category: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    attendees: string[]; // Adjust based on actual data structure
+  }
+  
   export default {
     setup() {
-      const createdEvents = ref([]);
+      // Initialize the array with the correct type
+      const createdEvents = ref<Event[]>([]);
       const userId = localStorage.getItem('uuid'); // Retrieve the user ID from localStorage
   
       const loadCreatedEvents = async () => {
@@ -49,7 +61,8 @@
             console.error('User ID not found.');
             return;
           }
-          createdEvents.value = await fetchCreatedEvents(userId);
+          const events = await fetchCreatedEvents(userId);
+          createdEvents.value = events; // Ensure events match the Event type
         } catch (error) {
           console.error('Error fetching created events:', error);
         }
@@ -111,4 +124,3 @@
     color: lightgray;
   }
   </style>
-  
