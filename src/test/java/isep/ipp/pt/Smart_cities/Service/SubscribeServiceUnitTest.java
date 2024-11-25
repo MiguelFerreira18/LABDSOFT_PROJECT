@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,16 +97,15 @@ class SubscribeServiceUnitTest {
 
         User user = new User();
         Event event = new Event();
-        event.setId(eventId); // Set the event ID
-        event.setLimit(1); // Set the event limit
+        event.setId(eventId);
+        event.setLimit(1);
 
-        // Create a subscription with the user and event
         Subscribe subscribe = new Subscribe(user, event);
         subscribe.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
 
         when(userRepo.findById(uuid)).thenReturn(Optional.of(user));
         when(eventRepo.findById(eventId)).thenReturn(Optional.of(event));
-        when(subscribeRepo.findAll()).thenReturn(List.of(subscribe)); // Return a subscription
+        when(subscribeRepo.findAll()).thenReturn(List.of(subscribe));
 
         Optional<Response> response = subscribeService.subscribe(uuid, eventId);
 
