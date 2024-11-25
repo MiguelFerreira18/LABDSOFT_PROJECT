@@ -24,7 +24,7 @@ public class SubscribeService {
     @Autowired
     private SubscribeRepo subscribeRepo;
     @Autowired
-    private UserRepo userService;
+    private UserRepo userRepo;
     @Autowired
     private EventRepository eventRepo;
     @Autowired
@@ -32,7 +32,7 @@ public class SubscribeService {
 
 
     public Optional<Response> subscribe(String uuid, String eventId) {
-        Optional<User> user= userService.findById(uuid);
+        Optional<User> user= userRepo.findById(uuid);
         if(user.isEmpty()){
             return Optional.of(Response.notFound("User not found"));
         }
@@ -62,7 +62,7 @@ public class SubscribeService {
         }
     }
 
-    private boolean hasReachedLimit(Event event){
+    public boolean hasReachedLimit(Event event){
         return getCountOfSubscriptions(event.getId()) >= event.getLimit();
     }
 
@@ -92,8 +92,9 @@ public class SubscribeService {
 
     private int getCountOfSubscriptions(String eventId) {
         return (int) StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
-                .filter(subscribe -> subscribe.getEvent().getId().equals(eventId)
-                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
+                .filter(subscribe -> subscribe.getEvent() != null && eventId.equals(subscribe.getEvent().getId()) &&
+                        subscribe.getSubscriptionStatus() != null &&
+                        subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
                 .count();
     }
 
