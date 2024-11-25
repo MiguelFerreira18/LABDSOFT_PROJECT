@@ -32,21 +32,23 @@ public class SubscribeService {
 
 
     public Optional<Response> subscribe(String uuid, String eventId) {
-        Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
-        if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
-            return Optional.of(Response.forbidden("User already subscribed to event"));
-        }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
-            return reSubscribeAnEvent(isAlreadySubscribed.get());
-        }
-
         Optional<User> user= userService.findById(uuid);
         if(user.isEmpty()){
             return Optional.of(Response.notFound("User not found"));
         }
-
         Optional<Event> event = eventRepo.findById(eventId);
         if(event.isEmpty()){
             return Optional.of(Response.notFound("Event not found"));
+        }
+
+        Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
+
+        if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
+            return Optional.of(Response.forbidden("User already subscribed to event"));
+        }else if (event.get().getLimit() > 0 && hasReachedLimit(event.get())){
+            return Optional.of(Response.forbidden("Event has reached its maximum capacity"));
+        }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
+            return reSubscribeAnEvent(isAlreadySubscribed.get());
         }
 
         Subscribe subscribeRequest = new Subscribe(user.get(), event.get());
@@ -58,6 +60,10 @@ public class SubscribeService {
         } catch (Exception e) {
             return Optional.of(Response.internalError("Error creating Subscribe Request"));
         }
+    }
+
+    private boolean hasReachedLimit(Event event){
+        return getCountOfSubscriptions(event.getId()) >= event.getLimit();
     }
 
     public Optional<Response> reSubscribeAnEvent(Subscribe subscription) {
