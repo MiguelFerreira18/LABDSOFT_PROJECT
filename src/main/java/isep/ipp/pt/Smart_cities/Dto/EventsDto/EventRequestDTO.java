@@ -15,6 +15,7 @@ public class EventRequestDTO {
     private String location;
     private LocalDate startDate;
     private LocalDate endDate;
+    private int limit;
     private String description;
     private String category;
     private String creatorID;
@@ -29,6 +30,7 @@ public class EventRequestDTO {
         sb.append(", startDate=").append(startDate);
         sb.append(", endDate=").append(endDate);
         sb.append(", descrption='").append(description).append('\'');
+        sb.append(", limit=").append(limit);
         sb.append(", category='").append(category).append('\'');
         sb.append(", creatorID='").append(creatorID).append('\'');
         sb.append(", latitude=").append(latitude);

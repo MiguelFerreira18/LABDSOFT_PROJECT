@@ -42,6 +42,7 @@ public class EventService {
                 .location(eventRequestDTO.getLocation())
                 .startDate(eventRequestDTO.getStartDate())
                 .endDate(eventRequestDTO.getEndDate())
+                .limit(eventRequestDTO.getLimit())
                 .description(eventRequestDTO.getDescription())
                 .category(eventRequestDTO.getCategory())
                 .latitude(eventRequestDTO.getLatitude())
