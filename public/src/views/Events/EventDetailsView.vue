@@ -5,7 +5,7 @@
                 <ion-card-header>
                     <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
                     <ion-card-title>{{ event.title }}</ion-card-title>
-                    <ion-card-subtitle >Subscribers:{{ numberOfSubscribers}}/{{ event.limit }}</ion-card-subtitle>
+                    <ion-card-subtitle >Subscribers: {{ numberOfSubscribers <= 0 ? 0: numberOfSubscribers  }}{{ event.limit == 0 ? '' : '/'+event.limit   }}</ion-card-subtitle>
                 </ion-card-header>
                 <ion-list>
                     <ion-item>
@@ -28,11 +28,11 @@
                         {{ creator.name }}
                     </ion-item>
                 </ion-list>
-                <ion-button v-if="hasLimitReached()" :disabled="hasAttended"
+                <ion-button v-if="hasLimitReached()" :disabled="true"
                     expand="block" fill="clear" shape="round" color="danger">
                     No more subscriptions are being accepted
                 </ion-button>
-                <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
+                <ion-button v-else-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
                     expand="block" fill="clear" shape="round" color="success">
                     Claim Reward
                 </ion-button>
