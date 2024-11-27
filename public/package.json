@@ -13,9 +13,9 @@
     "test:unitEvents": "jest",
     "lint:fix": "eslint . --ext .ts,.html --fix",
     "format": "prettier --write \"src/**/*.{ts,html,scss,vue}\"",
+    "prepare": "cd .. && husky public/.husky",
     "lint": "eslint .",
-    "build:run": "go run ./scripts/decide_ide.go npm run build && npx cap run android",
-    "prepare": "husky"
+    "build:run": "go run ./scripts/decide_ide.go npm run build && npx cap run android"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
