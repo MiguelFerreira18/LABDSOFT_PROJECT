@@ -38,8 +38,8 @@ class EventTest {
         Event event = new Event(
                 "Sample Event",
                 "Sample Location",
-                LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2),
                 "This is a sample event description.",
                 mockUser
         );
