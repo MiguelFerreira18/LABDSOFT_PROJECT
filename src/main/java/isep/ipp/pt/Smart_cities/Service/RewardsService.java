@@ -106,13 +106,14 @@ public class RewardsService {
     }
     private boolean checkIfThereIsAlreadyRewards(String userId, String eventId){
         return StreamSupport.stream(rewardsRepo.findAllByUserId(userId).spliterator(),false)
+                .filter(rewards -> rewards.getEvent()!=null)
                 .anyMatch(rewards -> rewards.getEvent().getId().equals(eventId));
     }
 
     private Optional<Subscribe> validateSubscription(String userId,String eventId){
         return subscribeRepo.findByEventIdAndUserId(eventId,userId)
                 .filter(subscribe -> subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED) &&
-                        LocalDate.now().isAfter(subscribe.getEvent().getEndDate()));
+                        LocalDate.now().isAfter(subscribe.getEvent().getStartDate()));
     }
 
     private Response processRewards(String userId, String eventId) {
