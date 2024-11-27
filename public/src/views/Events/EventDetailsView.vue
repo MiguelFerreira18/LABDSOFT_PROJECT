@@ -14,7 +14,7 @@
                     </ion-item>
                     <ion-item v-if="event.promotedUntil">
                         <ion-label color="tertiary">Promoted</ion-label>
-                    </ion-item>
+                    </ion-item>npm install @capacitor/barcode-scanner
                     <ion-item>
                         <ion-label>Date</ion-label>
                         {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
@@ -28,6 +28,7 @@
                         {{ creator.name }}
                     </ion-item>
                 </ion-list>
+                <canvas ref="canvas"></canvas>
                 <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
                     expand="block" fill="clear" shape="round" color="success">
                     Claim Reward
@@ -64,6 +65,7 @@ import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
 
+const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
 const creator = ref<any>({});
 const numberOfSubscribers = ref(0);
