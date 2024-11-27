@@ -38,11 +38,11 @@ public class Event {
 
     @FutureOrPresent(message = "Start date must not be in the past")
     @NotNull(message = "Start date is required")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @FutureOrPresent(message = "End date must be in the future")
     @NotNull(message = "End date is required")
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     @Pattern(regexp = "^(Art|Sports|Volunteering|Social|Educational|Recreational|Political)$", message = "Invalid category, please choose one from: Art, Sports, Volunteering, Social, Educational, Recreational or Political")
     private String category;
@@ -66,7 +66,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator) {
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
@@ -75,7 +75,7 @@ public class Event {
         this.creator = creator;
     }
 
-    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator, LocalDateTime promotedUntil) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
@@ -86,7 +86,7 @@ public class Event {
     }
 
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -99,7 +99,7 @@ public class Event {
         this.promotedUntil = null;
     }
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
         this.id = id;
         this.title = title;
         this.location = location;

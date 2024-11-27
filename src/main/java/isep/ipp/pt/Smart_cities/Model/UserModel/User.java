@@ -49,6 +49,9 @@ public class User implements UserDetails {
 
     protected LocalDateTime lastLoginAt = LocalDateTime.now();
 
+    @Column(nullable = true)
+    protected String pushTokenMobile;
+
     @Column
     protected Date birthDate;
     @Column
@@ -59,6 +62,7 @@ public class User implements UserDetails {
     protected String city;
     @Column
     protected String country;
+
 
     public User() {
         this.authorities = new HashSet<>();
@@ -109,6 +113,15 @@ public class User implements UserDetails {
         this.lastLoginAt = lastLoginAt;
     }
 
+    public User(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.authorities = authorities;
+        this.password = password;
+        this.hasPromotedEvent = hasPromotedEvent;
+        this.lastLoginAt = lastLoginAt;
+    }
     public User(String id, String email, String name, Set<Role> authorities, String password, LocalDateTime lastLoginAt, Date birthDate, String gender, String address, String city, String country) {
         this.id = id;
         this.email = email;
@@ -123,7 +136,7 @@ public class User implements UserDetails {
         this.country = country;
     }
 
-    public User(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt) {
+    public User(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt, String pushTokenMobile, Date birthDate, String gender, String address, String city, String country) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -131,8 +144,13 @@ public class User implements UserDetails {
         this.password = password;
         this.hasPromotedEvent = hasPromotedEvent;
         this.lastLoginAt = lastLoginAt;
+        this.pushTokenMobile = pushTokenMobile;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.address = address;
+        this.city = city;
+        this.country = country;
     }
-
 
     public void setPassword(String password, PasswordEncoder encoder) {
         if (password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$")) {

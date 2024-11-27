@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,8 +38,8 @@ class EventTest {
         Event event = new Event(
                 "Sample Event",
                 "Sample Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
                 "This is a sample event description.",
                 mockUser
         );
@@ -53,8 +54,8 @@ class EventTest {
         Event event = new Event(
                 "",
                 "Sample Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
                 "Valid description",
                 mockUser
         );
@@ -70,8 +71,8 @@ class EventTest {
         Event event = new Event(
                 "Valid Title",
                 "L".repeat(256), // Exceeds max length
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
                 "Valid description",
                 mockUser
         );
@@ -87,8 +88,8 @@ class EventTest {
         Event event = new Event(
                 "Valid Title",
                 "Valid Location",
-                LocalDate.now().minusDays(1), // Invalid start date
-                LocalDate.now().plusDays(1),
+                LocalDateTime.now().minusDays(1), // Invalid start date
+                LocalDateTime.now().plusDays(1),
                 "Valid description",
                 mockUser
         );
@@ -104,8 +105,8 @@ class EventTest {
         Event event = new Event(
                 "Valid Title",
                 "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().minusDays(1), // Invalid end date
+                LocalDateTime.now(),
+                LocalDateTime.now().minusDays(1), // Invalid end date
                 "Valid description",
                 mockUser
         );
@@ -120,8 +121,8 @@ class EventTest {
         Event event = new Event(
                 "Valid Title",
                 "Valid Location",
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
                 "Valid description",
                 mockUser
         );

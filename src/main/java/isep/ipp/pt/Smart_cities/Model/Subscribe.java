@@ -28,20 +28,26 @@ public class Subscribe {
 
     private int code;
 
+    private boolean isNotified;
+
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
 
     public Subscribe() {
+        this.isNotified = false;
+        this.subscriptionStatus = SubscriptionStatus.SUBSCRIBED;
     }
 
     public Subscribe(User user, Event event) {
         this.user = user;
         this.event = event;
+        this.isNotified = false;
     }
 
     public Subscribe(User user, int code) {
         this.user = user;
         this.code = code;
+        this.isNotified = false;
     }
 
     public Subscribe(Long id, User user, int code, SubscriptionStatus subscriptionStatus) {
@@ -49,13 +55,24 @@ public class Subscribe {
         this.user = user;
         this.code = code;
         this.subscriptionStatus = subscriptionStatus;
+        this.isNotified = false;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus,boolean isNotified) {
         this.id = id;
         this.user = user;
         this.event = event;
         this.code = code;
+        this.subscriptionStatus = subscriptionStatus;
+        this.isNotified = isNotified;
+    }
+
+    public Subscribe(Long id, User user, Event event, int code, boolean isNotified, SubscriptionStatus subscriptionStatus) {
+        this.id = id;
+        this.user = user;
+        this.event = event;
+        this.code = code;
+        this.isNotified = isNotified;
         this.subscriptionStatus = subscriptionStatus;
     }
 

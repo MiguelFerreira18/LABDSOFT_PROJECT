@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -95,7 +96,7 @@ public class SubscribeService {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
-                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now()))
+                        && subscribe.getEvent().getEndDate().isAfter(LocalDateTime.now()))
                 .map(subscribeMapper::toSubscribeResponseDTO)
                 .toList());
     }
@@ -104,7 +105,7 @@ public class SubscribeService {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.ATTENDED)
-                        && subscribe.getEvent().getEndDate().isBefore(LocalDate.now()))
+                        && subscribe.getEvent().getEndDate().isBefore(LocalDateTime.now()))
                 .map(Subscribe::getEvent)
                 .toList());
     }
