@@ -14,7 +14,7 @@
                     </ion-item>
                     <ion-item v-if="event.promotedUntil">
                         <ion-label color="tertiary">Promoted</ion-label>
-                    </ion-item>npm install @capacitor/barcode-scanner
+                    </ion-item>
                     <ion-item>
                         <ion-label>Date</ion-label>
                         {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
@@ -28,9 +28,13 @@
                         {{ creator.name }}
                     </ion-item>
                 </ion-list>
-                <canvas ref="canvas"></canvas>
-                <ion-button v-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
-                    expand="block" fill="clear" shape="round" color="success">
+                <ion-row class="ion-justify-content-center">
+                    <ion-col size="auto">
+                        <canvas v-if="hasEventStarted() && !hasAttended" ref="canvas"></canvas>
+                    </ion-col>
+                </ion-row>
+                <ion-button v-if="hasAttended" @click="handleClaimReward" :disabled="hasAttended" expand="block"
+                    fill="clear" shape="round" color="success">
                     Claim Reward
                 </ion-button>
                 <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
@@ -61,9 +65,12 @@
 import { IonPage, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonButton, IonList, IonItem, IonLabel } from '@ionic/vue';
 import { formatDate } from '@/lib/dateFormatter';
 import { SendRequest } from '@/lib/request';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
+import QRCode from 'qrcode'
+import { apiConfig } from '@/lib/config';
+const { baseUrl } = apiConfig;
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
@@ -88,8 +95,22 @@ onMounted(async () => {
     else if (response.ok && data && data.status === 'SUBSCRIBED') {
         subbedEvent.value = data;
         isSubscribed.value = true;
+
+        getQrCodeIfEventHasStarted(subbedEvent.value.qrdata);
     }
 });
+
+function hasEventStarted() {
+    if (!subbedEvent.value?.event) return false;
+    const event = subbedEvent.value.event;
+
+    if (event.startDate && Array.isArray(event.startDate)) {
+        const [year, month, day] = event.startDate;
+        const startDate = new Date(year, month - 1, day);
+        return startDate <= new Date();
+    }
+    return false;
+}
 
 async function handleSubscription() {
     if (isSubscribed.value) return;
@@ -111,20 +132,7 @@ async function handleClaimReward() {
         hasAttended.value = true;
     }
 }
-function hasAttendedAndEventAsPassed() {
-    if (!subbedEvent.value?.event) return false;
-    const event = subbedEvent.value.event;
 
-    if (event.endDate && Array.isArray(event.endDate)) {
-        const [year, month, day] = event.endDate;
-        const endDate = new Date(year, month - 1, day);
-        const hasPassedEndDate = new Date() > endDate;
-
-        return hasPassedEndDate;
-    }
-
-    return false;
-}
 async function handleUnsubscribe() {
     if (!isSubscribed.value && hasAttended.value) return;
     if (subbedEvent.value === undefined) {
@@ -187,14 +195,30 @@ async function getCurrentEvent() {
     const data = await response.json();
     event.value = data;
     creator.value = data.creator;
-    console.log(data);
-
 }
 async function getNumberOfSubscribers() {
     const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
     const response = await SendRequest(`/subscription/event/count/${eventId}`, 'GET');
     const { data } = await response.json();
     numberOfSubscribers.value = data;
+}
+
+async function getQrCodeIfEventHasStarted(url: string) {
+    if (!hasEventStarted() || !url) return;
+
+    await nextTick();
+
+    if (!canvas.value) {
+        console.warn("Canvas still not available");
+        return;
+    }
+
+    const fullURL = `${baseUrl}${url}`;
+
+    QRCode.toCanvas(canvas.value, fullURL, function (error: any) {
+        if (error) console.error(error);
+    });
+
 }
 
 
