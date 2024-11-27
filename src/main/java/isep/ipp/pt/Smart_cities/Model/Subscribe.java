@@ -26,7 +26,7 @@ public class Subscribe {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
-    private int code;
+    private String QRData;
 
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
@@ -39,28 +39,28 @@ public class Subscribe {
         this.event = event;
     }
 
-    public Subscribe(User user, int code) {
+    public Subscribe(User user, String QRData) {
         this.user = user;
-        this.code = code;
+        this.QRData = QRData;
     }
 
-    public Subscribe(Long id, User user, int code, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, String QRData, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.user = user;
-        this.code = code;
+        this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, Event event, String QRData, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.user = user;
         this.event = event;
-        this.code = code;
+        this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
     }
 
     public SubscribeResponseDTO toDTO(){
-        return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus);
+        return new SubscribeResponseDTO(this.id, this.event, this.QRData, this.subscriptionStatus);
     }
 
 

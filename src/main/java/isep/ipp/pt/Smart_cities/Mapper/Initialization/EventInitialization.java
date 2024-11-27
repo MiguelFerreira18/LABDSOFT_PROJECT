@@ -163,8 +163,8 @@ public class EventInitialization implements CommandLineRunner {
             event10.setId("0b2f589d-b5c2-4616-958c-504eeca80e68");
             event10.setTitle("Innovation and Startup Forum");
             event10.setLocation("Lisbon, Portugal");
-            event10.setStartDate(java.time.LocalDate.of(2024, 11, 25));
-            event10.setEndDate(java.time.LocalDate.of(2024, 11, 26));
+            event10.setStartDate(java.time.LocalDate.of(2025, 11, 25));
+            event10.setEndDate(java.time.LocalDate.of(2025, 11, 26));
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
             event10.setCategory("Educational");
