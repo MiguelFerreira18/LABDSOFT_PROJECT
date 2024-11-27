@@ -64,8 +64,3 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-
-
-./google-services.json
-google-services.json
-/android/google-services.json
