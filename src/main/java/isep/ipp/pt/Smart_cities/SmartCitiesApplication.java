@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.InetAddress;
 
 @SpringBootApplication
+@EnableScheduling
 public class SmartCitiesApplication {
 	private static final Logger logger = LoggerFactory.getLogger(SmartCitiesApplication.class);
 	public static void main(String[] args) {
