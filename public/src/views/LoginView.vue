@@ -11,6 +11,10 @@
             <ion-text class="signup-link" @click="pushToSignUp">
                 <p>Sign up</p>
             </ion-text>
+            <ion-text color="primary">
+                <h1 v-if="hasPushToken()"><b>Push Token:</b> {{ hasPushToken() }}></h1>
+                <h1 v-else><b>Push Token:</b> Not found</h1>
+            </ion-text>
         </div>
     </ion-content>
 </template>
@@ -28,10 +32,15 @@ import router from '@/router';
 const password = ref<HTMLInputElement | null>(null);
 const email = ref<HTMLInputElement | null>(null);
 
+function hasPushToken() {
+    return localStorage.getItem('pushToken');
+}
+
 async function login() {
     const payload = {
         email: email.value?.value || '',
-        password: password.value?.value || ''
+        password: password.value?.value || '',
+        pushToken: localStorage.getItem('pushToken') || ''
     }
     try {
         const response = await SendRequest('/auth/public/login', 'POST', payload);
@@ -42,29 +51,32 @@ async function login() {
             localStorage.setItem('userId', user.id);
             SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
             localStorage.setItem('token', authHeader);
-            
+
             try {
                 const rewards = await dailyRewards({ id: user.id });
 
-                if(rewards.pointsEarned > 0) {
-                    await presentToast('top',`You earned ${rewards.pointsEarned} points for logging in!`);
-                }else{
+                if (rewards.pointsEarned > 0) {
+                    await presentToast('top', `You earned ${rewards.pointsEarned} points for logging in!`);
+                } else {
                     // await presentToast('bottom',`You have already claimed your daily rewards!`);
                 }
 
                 // Ensure to only fetch rewards once per login
                 localStorage.setItem('rewardsFetched', 'true');
-                
+
             } catch (error) {
                 console.error('Error fetching daily rewards:', error);
             }
-            
+
             router.push('/tabs/tabHome');
         }
     } catch (error) {
         console.log(error);
     }
 }
+
+
+
 
 function pushToSignUp() {
     router.push('/signup');
@@ -86,27 +98,27 @@ interface RewardsResponse {
 async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
     try {
 
-    const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
+        const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
 
-    const rewards: RewardsResponse = await res.json();
-    
-    return rewards as RewardsResponse;
+        const rewards: RewardsResponse = await res.json();
+
+        return rewards as RewardsResponse;
     } catch (error) {
-    console.error('Error in dailyRewards function:', error);
-    throw error; 
+        console.error('Error in dailyRewards function:', error);
+        throw error;
     }
 }
 
 async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
     const toast = await toastController.create({
-    message: message,
-    duration: 2500,
-    position: position,
-    color: 'success', 
-    icon: 'trophy-outline', 
-    cssClass: 'reward-toast',
+        message: message,
+        duration: 2500,
+        position: position,
+        color: 'success',
+        icon: 'trophy-outline',
+        cssClass: 'reward-toast',
     });
-    
+
     await toast.present();
 }
 
