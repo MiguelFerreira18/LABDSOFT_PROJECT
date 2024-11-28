@@ -5,17 +5,23 @@
         <ion-row class="profile1">
           <ion-col size="12" class="profile1">
             <ion-row>
-              <img class="img_profile"
-                src="https://media.tenor.com/wy2zHeWyf2gAAAAe/side-eye-dog-suspicious-look.png"></img>
+              <img
+                class="img_profile"
+                src="https://media.tenor.com/wy2zHeWyf2gAAAAe/side-eye-dog-suspicious-look.png"
+              />
               <ion-col class="text-center">
                 <ion-row>
-                  <ion-card-title><b>{{ userInfo.name }}</b></ion-card-title>
+                  <ion-card-title
+                    ><b>{{ userInfo.name }}</b></ion-card-title
+                  >
                 </ion-row>
                 <ion-row>
                   <ion-card-subtitle>{{ userInfo.email }}</ion-card-subtitle>
                 </ion-row>
                 <ion-row>
-                  <ion-card-subtitle>Points: {{ userPoints }}</ion-card-subtitle>
+                  <ion-card-subtitle
+                    >Points: {{ userPoints }}</ion-card-subtitle
+                  >
                 </ion-row>
               </ion-col>
             </ion-row>
@@ -24,18 +30,28 @@
         <ion-row>
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
-              <ion-icon class="icon1" aria-hidden="true" :icon="checkmarkDoneCircleOutline"></ion-icon>
+              <ion-icon
+                class="icon1"
+                aria-hidden="true"
+                :icon="checkmarkDoneCircleOutline"
+              ></ion-icon>
               <h1><b>Bio</b></h1>
             </div>
             <ion-text>
-              User is a tech enthusiast and entrepreneur with a strong focus on smart city solutions,
-              gamification, and community-driven platforms. Passionate about creating innovative digital tools,
-              he combines technical expertise with a vision to enhance social connections and urban living.
+              User is a tech enthusiast and entrepreneur with a strong focus on
+              smart city solutions, gamification, and community-driven
+              platforms. Passionate about creating innovative digital tools, he
+              combines technical expertise with a vision to enhance social
+              connections and urban living.
             </ion-text>
           </ion-col>
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
-              <ion-icon class="icon2" aria-hidden="true" :icon="trailSignOutline"></ion-icon>
+              <ion-icon
+                class="icon2"
+                aria-hidden="true"
+                :icon="trailSignOutline"
+              ></ion-icon>
               <h1><b>Location</b></h1>
             </div>
             <ion-list>
@@ -57,7 +73,11 @@
         <ion-row>
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
-              <ion-icon class="icon3" aria-hidden="true" :icon="personCircleOutline"></ion-icon>
+              <ion-icon
+                class="icon3"
+                aria-hidden="true"
+                :icon="personCircleOutline"
+              ></ion-icon>
               <h1><b>Personal Information</b></h1>
             </div>
             <ion-list>
@@ -90,8 +110,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { SendRequest } from "@/lib/request";
+import { ref, onMounted } from 'vue';
+import { SendRequest } from '@/lib/request';
 import {
   IonPage,
   IonContent,
@@ -102,53 +122,60 @@ import {
   IonCardSubtitle,
   IonButton,
   IonIcon,
-} from "@ionic/vue";
-import { checkmarkDoneCircle, checkmarkDoneCircleOutline, personCircleOutline, trailSignOutline } from "ionicons/icons";
+} from '@ionic/vue';
+import {
+  checkmarkDoneCircle,
+  checkmarkDoneCircleOutline,
+  personCircleOutline,
+  trailSignOutline,
+} from 'ionicons/icons';
 
 // Reactive state to store user information
 const userInfo = ref({
-  name: "",
-  email: "",
-  birthDate: "",
-  gender: "",
-  address: "",
-  city: "",
-  country: "",
+  name: '',
+  email: '',
+  birthDate: '',
+  gender: '',
+  address: '',
+  city: '',
+  country: '',
 });
 const userPoints = ref(0);
 
 // Fetch user information
 const fetchUserInfo = async () => {
-  const userId = localStorage.getItem("userId");
-  const email = localStorage.getItem("email");
+  const userId = localStorage.getItem('userId');
+  const email = localStorage.getItem('email');
   try {
-    const response = await SendRequest("/api/users/getuser?id=" + userId, "GET");
+    const response = await SendRequest(
+      '/api/users/getuser?id=' + userId,
+      'GET',
+    );
     if (response.ok) {
       const data = await response.json();
       userInfo.value = data;
-      userInfo.value.email = email || "";
+      userInfo.value.email = email || '';
     } else {
-      console.error("Error fetching user info:", response.statusText);
+      console.error('Error fetching user info:', response.statusText);
     }
   } catch (error) {
-    console.error("Error fetching user info:", error);
+    console.error('Error fetching user info:', error);
   }
 };
 const fetchUserPoints = async () => {
-
-  const userId = localStorage.getItem("uuid");
+  const userId = localStorage.getItem('uuid');
   try {
-    const response = await SendRequest(`/api/rewards/points/${userId}`, "GET");
+    const response = await SendRequest(`/api/rewards/points/${userId}`, 'GET');
     if (response.ok) {
       const { data } = await response.json();
       userPoints.value = data;
     } else {
-      console.error("Error fetching user points:", response.statusText);
+      console.error('Error fetching user points:', response.statusText);
     }
   } catch (error) {
-    console.error("Error fetching user points:", error);
+    console.error('Error fetching user points:', error);
   }
-}
+};
 
 // Fetch data on component mount
 onMounted(() => {
@@ -189,7 +216,6 @@ onMounted(() => {
   background-color: #a9c3af;
   color: #4f6554;
   font-size: 24px;
-
 }
 
 .icon2 {
@@ -197,12 +223,11 @@ onMounted(() => {
   background-color: #ffd1a9;
   color: #805938;
   font-size: 24px;
-
 }
 
 .icon3 {
   border-radius: 50%;
-  background-color: #D4EBF8;
+  background-color: #d4ebf8;
   color: #6a767c;
   font-size: 24px;
 }

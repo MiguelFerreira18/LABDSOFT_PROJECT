@@ -1,6 +1,6 @@
 export function ConfirmPasswordMatch(
   password: string,
-  confirmPassword: string
+  confirmPassword: string,
 ) {
   return password === confirmPassword;
 }
