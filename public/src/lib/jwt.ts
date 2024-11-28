@@ -1,6 +1,6 @@
 export function ParseJwt(header: string) {
   const token = header.substring(7);
-  const base64Url = token.split(".")[1];
+  const base64Url = token.split('.')[1];
   const payloadJson = atob(base64Url);
   return JSON.parse(payloadJson);
 }
