@@ -2,11 +2,7 @@ package isep.ipp.pt.Smart_cities.Model.EventModel;
 
 import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +13,7 @@ import java.time.LocalDateTime;
 
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+
 @Builder
 @Getter
 @Setter
@@ -51,6 +48,9 @@ public class Event {
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
+    @Column(name = "event_limit")
+    private int limit;
+
     private String imagePath;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -73,6 +73,7 @@ public class Event {
         this.endDate = endDate;
         this.description = description;
         this.creator = creator;
+        this.limit = 0;
     }
 
     public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
@@ -83,6 +84,7 @@ public class Event {
         this.description = description;
         this.creator = creator;
         this.promotedUntil = null;
+        this.limit = 0;
     }
 
 
@@ -97,9 +99,10 @@ public class Event {
         this.imagePath = imagePath;
         this.creator = creator;
         this.promotedUntil = null;
+        this.limit = 0;
     }
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, int limit, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -107,13 +110,13 @@ public class Event {
         this.endDate = endDate;
         this.category = category;
         this.description = description;
+        this.limit = limit;
         this.imagePath = imagePath;
         this.creator = creator;
-        this.promotedUntil = null;
+        this.promotedUntil = promotedUntil;
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
