@@ -118,7 +118,7 @@ public class RewardsService {
                         return false;
                     }
                     return subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED) &&
-                            LocalDate.now().isAfter(event.getStartDate());
+                            LocalDateTime.now().isAfter(event.getStartDate());
                 });
     }
 

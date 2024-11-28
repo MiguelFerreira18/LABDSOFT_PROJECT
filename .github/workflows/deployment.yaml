@@ -143,7 +143,7 @@ jobs:
         id: docker-scout
         uses: docker/scout-action@v1
         with:
-          command: cves,recommendations,quickview
+          command: quickview
           image: ${{ secrets.DOCKER_USERNAME }}/smart-city-api:latest
           to-latest: true
           ignore-unchanged: true

@@ -41,43 +41,46 @@ const password = ref<HTMLInputElement | null>(null);
 const email = ref<HTMLInputElement | null>(null);
 
 async function login() {
-  const payload = {
-    email: email.value?.value || '',
-    password: password.value?.value || '',
-  };
-  try {
-    const response = await SendRequest('/auth/public/login', 'POST', payload);
-    const user = await response.json();
-    const authHeader = response.headers.get('authorization');
-    if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
-      localStorage.setItem('userId', user.id);
-      SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
-      localStorage.setItem('token', authHeader);
-
-      try {
-        const rewards = await dailyRewards({ id: user.id });
-
-        if (rewards.pointsEarned > 0) {
-          await presentToast(
-            'top',
-            `You earned ${rewards.pointsEarned} points for logging in!`,
-          );
-        } else {
-          // await presentToast('bottom',`You have already claimed your daily rewards!`);
-        }
-
-        // Ensure to only fetch rewards once per login
-        localStorage.setItem('rewardsFetched', 'true');
-      } catch (error) {
-        console.error('Error fetching daily rewards:', error);
-      }
-
-      router.push('/tabs/tabHome');
+    const payload = {
+        email: email.value?.value || '',
+        password: password.value?.value || '',
+        pushToken: localStorage.getItem('pushToken') || ''
     }
-  } catch (error) {
-    console.log(error);
-  }
+    try {
+        const response = await SendRequest('/auth/public/login', 'POST', payload);
+        const user = await response.json();
+        const authHeader = response.headers.get('authorization');
+        if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
+
+            localStorage.setItem('userId', user.id);
+            SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
+            localStorage.setItem('token', authHeader);
+
+            try {
+                const rewards = await dailyRewards({ id: user.id });
+
+                if (rewards.pointsEarned > 0) {
+                    await presentToast('top', `You earned ${rewards.pointsEarned} points for logging in!`);
+                } else {
+                    // await presentToast('bottom',`You have already claimed your daily rewards!`);
+                }
+
+                // Ensure to only fetch rewards once per login
+                localStorage.setItem('rewardsFetched', 'true');
+
+            } catch (error) {
+                console.error('Error fetching daily rewards:', error);
+            }
+
+            router.push('/tabs/tabHome');
+        }
+    } catch (error) {
+        console.log(error);
+    }
 }
+
+
+
 
 function pushToSignUp() {
   router.push('/signup');
@@ -96,39 +99,31 @@ interface RewardsResponse {
   pointsEarned: number;
 }
 
-async function dailyRewards(response: {
-  id: string;
-}): Promise<RewardsResponse> {
-  try {
-    const res = await SendRequest(
-      `/api/rewards/${response.id}/daily`,
-      'POST',
-      {},
-    );
+async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
+    try {
 
-    const rewards: RewardsResponse = await res.json();
+        const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
 
-    return rewards as RewardsResponse;
-  } catch (error) {
-    console.error('Error in dailyRewards function:', error);
-    throw error;
-  }
+        const rewards: RewardsResponse = await res.json();
+
+        return rewards as RewardsResponse;
+    } catch (error) {
+        console.error('Error in dailyRewards function:', error);
+        throw error;
+    }
 }
 
-async function presentToast(
-  position: 'top' | 'middle' | 'bottom',
-  message: string,
-) {
-  const toast = await toastController.create({
-    message: message,
-    duration: 2500,
-    position: position,
-    color: 'success',
-    icon: 'trophy-outline',
-    cssClass: 'reward-toast',
-  });
+async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
+    const toast = await toastController.create({
+        message: message,
+        duration: 2500,
+        position: position,
+        color: 'success',
+        icon: 'trophy-outline',
+        cssClass: 'reward-toast',
+    });
 
-  await toast.present();
+    await toast.present();
 }
 </script>
 

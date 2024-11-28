@@ -40,7 +40,7 @@ class EventServiceTest {
 
         testEvent = Event.builder()
                 .id("event1")
-                .endDate(LocalDate.now().minusDays(1))
+                .endDate(LocalDateTime.now().minusDays(1))
                 .build();
 
 

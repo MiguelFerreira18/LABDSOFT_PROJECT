@@ -28,20 +28,26 @@ public class Subscribe {
 
     private String QRData;
 
+    private boolean isNotified;
+
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
 
     public Subscribe() {
+        this.isNotified = false;
+        this.subscriptionStatus = SubscriptionStatus.SUBSCRIBED;
     }
 
     public Subscribe(User user, Event event) {
         this.user = user;
         this.event = event;
+        this.isNotified = false;
     }
 
     public Subscribe(User user, String QRData) {
         this.user = user;
         this.QRData = QRData;
+        this.isNotified = false;
     }
 
     public Subscribe(Long id, User user, String QRData, SubscriptionStatus subscriptionStatus) {
@@ -49,13 +55,24 @@ public class Subscribe {
         this.user = user;
         this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
+        this.isNotified = false;
     }
 
-    public Subscribe(Long id, User user, Event event, String QRData, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, Event event, String QRData, SubscriptionStatus subscriptionStatus,boolean isNotified) {
         this.id = id;
         this.user = user;
         this.event = event;
         this.QRData = QRData;
+        this.subscriptionStatus = subscriptionStatus;
+        this.isNotified = isNotified;
+    }
+
+    public Subscribe(Long id, User user, Event event, String QRData, boolean isNotified, SubscriptionStatus subscriptionStatus) {
+        this.id = id;
+        this.user = user;
+        this.event = event;
+        this.QRData = QRData;
+        this.isNotified = isNotified;
         this.subscriptionStatus = subscriptionStatus;
     }
 

@@ -58,8 +58,8 @@ class RewardsServiceTest {
 
         testEvent = Event.builder()
                 .id("event1")
-                .endDate(LocalDate.now().plusDays(1))
-                .startDate(LocalDate.now().minusDays(1))
+                .startDate(LocalDateTime.now().minusDays(1))
+                .endDate(LocalDateTime.now().minusDays(1))
                 .build();
 
         testSubscription = Subscribe.builder()
@@ -95,7 +95,7 @@ class RewardsServiceTest {
 
     @Test
     void givePointsByAttendingAnEvent_EventNotFinished() {
-        testEvent.setStartDate(LocalDate.now().plusDays(1));
+        testEvent.setEndDate(LocalDateTime.now().plusDays(1));
         when(subscribeRepo.findByEventIdAndUserId("event1", "user1"))
                 .thenReturn(Optional.of(testSubscription));
 
@@ -134,17 +134,17 @@ class RewardsServiceTest {
     void givePointsBonusForFrequentAttendance() {
         Subscribe subscription1 = Subscribe.builder()
                 .user(testUser)
-                .event(Event.builder().endDate(LocalDate.now().plusDays(3)).build())
+                .event(Event.builder().endDate(LocalDateTime.now().plusDays(3)).build())
                 .subscriptionStatus(SubscriptionStatus.SUBSCRIBED)
                 .build();
         Subscribe subscription2 = Subscribe.builder()
                 .user(testUser)
-                .event(Event.builder().endDate(LocalDate.now().plusDays(3)).build())
+                .event(Event.builder().endDate(LocalDateTime.now().plusDays(3)).build())
                 .subscriptionStatus(SubscriptionStatus.SUBSCRIBED)
                 .build();
         Subscribe subscription3 = Subscribe.builder()
                 .user(testUser)
-                .event(Event.builder().endDate(LocalDate.now().plusDays(3)).build())
+                .event(Event.builder().endDate(LocalDateTime.now().plusDays(3)).build())
                 .subscriptionStatus(SubscriptionStatus.SUBSCRIBED)
                 .build();
 

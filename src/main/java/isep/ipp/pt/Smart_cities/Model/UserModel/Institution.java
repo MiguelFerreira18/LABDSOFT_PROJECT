@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,5 +65,23 @@ public class Institution extends User  {
         this.rating = rating;
     }
 
+    public Institution(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt, float rating) {
+        super(id, email, name, authorities, password, hasPromotedEvent, lastLoginAt);
+        this.rating = rating;
+    }
 
+    public Institution(String id, String email, String name, Set<Role> authorities, String password, LocalDateTime lastLoginAt, Date birthDate, String gender, String address, String city, String country, float rating) {
+        super(id, email, name, authorities, password, lastLoginAt, birthDate, gender, address, city, country);
+        this.rating = rating;
+    }
+
+    public Institution(String id, String email, String name, Set<Role> authorities, String password, boolean hasPromotedEvent, LocalDateTime lastLoginAt, String pushTokenMobile, Date birthDate, String gender, String address, String city, String country, float rating) {
+        super(id, email, name, authorities, password, hasPromotedEvent, lastLoginAt, pushTokenMobile, birthDate, gender, address, city, country);
+        this.rating = rating;
+    }
+
+    public Institution(UserBuilder<?, ?> b, float rating) {
+        super(b);
+        this.rating = rating;
+    }
 }
