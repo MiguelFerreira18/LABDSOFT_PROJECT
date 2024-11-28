@@ -26,7 +26,7 @@ public class Subscribe {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
-    private int code;
+    private String QRData;
 
     private boolean isNotified;
 
@@ -44,40 +44,40 @@ public class Subscribe {
         this.isNotified = false;
     }
 
-    public Subscribe(User user, int code) {
+    public Subscribe(User user, String QRData) {
         this.user = user;
-        this.code = code;
+        this.QRData = QRData;
         this.isNotified = false;
     }
 
-    public Subscribe(Long id, User user, int code, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, String QRData, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.user = user;
-        this.code = code;
+        this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
         this.isNotified = false;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus,boolean isNotified) {
+    public Subscribe(Long id, User user, Event event, String QRData, SubscriptionStatus subscriptionStatus,boolean isNotified) {
         this.id = id;
         this.user = user;
         this.event = event;
-        this.code = code;
+        this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
         this.isNotified = isNotified;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, boolean isNotified, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, Event event, String QRData, boolean isNotified, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.user = user;
         this.event = event;
-        this.code = code;
+        this.QRData = QRData;
         this.isNotified = isNotified;
         this.subscriptionStatus = subscriptionStatus;
     }
 
     public SubscribeResponseDTO toDTO(){
-        return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus);
+        return new SubscribeResponseDTO(this.id, this.event, this.QRData, this.subscriptionStatus);
     }
 
 

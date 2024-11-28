@@ -6,6 +6,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
+      <canvas ref="canvas"></canvas>
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Tab 2</ion-title>
@@ -26,4 +27,23 @@ import {
   IonContent,
 } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
+import QRCode from 'qrcode'
+import {ref } from 'vue';
+import { onMounted } from 'vue';
+
+const canvas = ref<HTMLCanvasElement | null>(null);
+const text = ref<string>('Hello World');
+
+function generateQRCode() {
+  if (canvas.value) {
+    QRCode.toCanvas(canvas.value, text.value, function (error:any) {
+      if (error) console.error(error)
+      console.log('success!');
+    })
+  }
+}
+onMounted(() => {
+  generateQRCode()
+})
+
 </script>

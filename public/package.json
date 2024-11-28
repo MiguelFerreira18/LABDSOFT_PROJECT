@@ -20,6 +20,7 @@
   "dependencies": {
     "@capacitor/android": "^6.1.2",
     "@capacitor/app": "6.0.1",
+    "@capacitor/barcode-scanner": "^1.0.1",
     "@capacitor/core": "6.1.2",
     "@capacitor/geolocation": "^6.0.2",
     "@capacitor/google-maps": "^6.0.1",
@@ -32,9 +33,11 @@
     "@coreui/icons-vue": "^2.2.0",
     "@ionic/vue": "^8.0.0",
     "@ionic/vue-router": "^8.0.0",
+    "@types/qrcode": "^1.5.5",
     "axios": "^1.7.7",
     "ionicons": "^7.0.0",
     "public": "file:",
+    "qrcode": "^1.5.4",
     "vue": "^3.3.0",
     "vue-router": "^4.2.0"
   },

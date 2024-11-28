@@ -28,26 +28,27 @@
                         {{ creator.name }}
                     </ion-item>
                 </ion-list>
-                <ion-button v-if="hasLimitReached()" :disabled="true"
-                    expand="block" fill="clear" shape="round" color="danger">
-                    No more subscriptions are being accepted
-                </ion-button>
-                <ion-button v-else-if="hasAttendedAndEventAsPassed()" @click="handleClaimReward" :disabled="hasAttended"
-                    expand="block" fill="clear" shape="round" color="success">
-                    Claim Reward
-                </ion-button>
-                <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
-                    fill="clear" shape="round" color="success">
-                    Subscribe
-                </ion-button>
-                <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" :disabled="hasAttended"
-                    shape="round" color="danger">
-                    Unsubscribe
-                </ion-button>
-                <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear" shape="round"
-                    color="primary">
-                    Promote Event
-                </ion-button>
+              <ion-row class="ion-justify-content-center">
+                <ion-col size="auto">
+                  <canvas v-if="hasEventStarted() && !hasAttended" ref="canvas"></canvas>
+                </ion-col>
+              </ion-row>
+              <ion-button v-if="hasLimitReached()" :disabled="true"
+                          expand="block" fill="clear" shape="round" color="danger">
+                No more subscriptions are being accepted
+              </ion-button>
+              <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
+                          fill="clear" shape="round" color="success">
+                Subscribe
+              </ion-button>
+              <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" :disabled="hasAttended"
+                          shape="round" color="danger">
+                Unsubscribe
+              </ion-button>
+              <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear" shape="round"
+                          color="primary">
+                Promote Event
+              </ion-button>
             </ion-card>
             <ion-card v-else>
                 <ion-card-header>
@@ -74,10 +75,14 @@ import {
 } from '@ionic/vue';
 import { formatDate } from '@/lib/dateFormatter';
 import { SendRequest } from '@/lib/request';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
+import QRCode from 'qrcode'
+import { apiConfig } from '@/lib/config';
+const { baseUrl } = apiConfig;
 
+const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
 const creator = ref<any>({});
 const numberOfSubscribers = ref(0);
@@ -88,18 +93,34 @@ const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 
 onMounted(async () => {
-  await getCurrentEvent();
-  await getNumberOfSubscribers();
-  const { data, response } = await getIsSubscribed();
-  if (response.ok && data && data.status === 'ATTENDED') {
-    hasAttended.value = true;
-    isSubscribed.value = true;
-    subbedEvent.value = data;
-  } else if (response.ok && data && data.status === 'SUBSCRIBED') {
-    subbedEvent.value = data;
-    isSubscribed.value = true;
-  }
+    await getCurrentEvent();
+    await getNumberOfSubscribers();
+    const { data, response } = await getIsSubscribed();
+    if (response.ok && data && data.status === 'ATTENDED') {
+        hasAttended.value = true;
+        isSubscribed.value = true;
+        subbedEvent.value = data;
+
+    }
+    else if (response.ok && data && data.status === 'SUBSCRIBED') {
+        subbedEvent.value = data;
+        isSubscribed.value = true;
+
+        getQrCodeIfEventHasStarted(subbedEvent.value.qrdata);
+    }
 });
+
+function hasEventStarted() {
+    if (!subbedEvent.value?.event) return false;
+    const event = subbedEvent.value.event;
+
+    if (event.startDate && Array.isArray(event.startDate)) {
+        const [year, month, day] = event.startDate;
+        const startDate = new Date(year, month - 1, day);
+        return startDate <= new Date();
+    }
+    return false;
+}
 
 async function handleSubscription() {
   if (isSubscribed.value) return;
@@ -130,20 +151,7 @@ async function handleClaimReward() {
     hasAttended.value = true;
   }
 }
-function hasAttendedAndEventAsPassed() {
-  if (!subbedEvent.value?.event) return false;
-  const event = subbedEvent.value.event;
 
-  if (event.endDate && Array.isArray(event.endDate)) {
-    const [year, month, day] = event.endDate;
-    const endDate = new Date(year, month - 1, day);
-    const hasPassedEndDate = new Date() > endDate;
-
-    return hasPassedEndDate;
-  }
-
-  return false;
-}
 async function handleUnsubscribe() {
   if (!isSubscribed.value && hasAttended.value) return;
   if (subbedEvent.value === undefined) {
@@ -209,14 +217,11 @@ async function showToast(message: string, color: 'success' | 'danger') {
 }
 
 async function getCurrentEvent() {
-  const eventId = Array.isArray(route.params.id)
-    ? route.params.id[0]
-    : route.params.id;
-  const response = await SendRequest(`/api/events/${eventId}`, 'GET');
-  const data = await response.json();
-  event.value = data;
-  creator.value = data.creator;
-  console.log(data);
+    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+    const response = await SendRequest(`/api/events/${eventId}`, 'GET');
+    const data = await response.json();
+    event.value = data;
+    creator.value = data.creator;
 }
 async function getNumberOfSubscribers() {
   const eventId = Array.isArray(route.params.id)
@@ -229,13 +234,35 @@ async function getNumberOfSubscribers() {
   const { data } = await response.json();
   numberOfSubscribers.value = data;
 }
-function hasLimitReached(){
-    if  (numberOfSubscribers.value >= event.value.limit && event.value.limit > 0){
-        return true;
-    }else{
-        return false;
+
+
+
+
+async function getQrCodeIfEventHasStarted(url: string) {
+    if (!hasEventStarted() || !url) return;
+
+    await nextTick();
+
+    if (!canvas.value) {
+        console.warn("Canvas still not available");
+        return;
     }
+
+    const fullURL = `${baseUrl}${url}`;
+
+    QRCode.toCanvas(canvas.value, fullURL, function (error: any) {
+        if (error) console.error(error);
+    });
+
 }
+function hasLimitReached(){
+  if  (numberOfSubscribers.value >= event.value.limit && event.value.limit > 0){
+    return true;
+  }else{
+    return false;
+  }
+}
+
 </script>
 
 <style></style>

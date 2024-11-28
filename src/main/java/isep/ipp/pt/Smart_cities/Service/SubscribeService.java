@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class SubscribeService {
+    private static final String API_IP = "http://127.0.0.1:9091/api";
 
     @Autowired
     private SubscribeRepo subscribeRepo;
@@ -54,7 +55,8 @@ public class SubscribeService {
 
         Subscribe subscribeRequest = new Subscribe(user.get(), event.get());
         try {
-            subscribeRequest.setCode((int) (Math.random() * 10000));
+            String url = String.format("/api/rewards/claim/%s/%s", user.get().getId(), event.get().getId());
+            subscribeRequest.setQRData(url);
             subscribeRequest.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
             return Optional.of(Response.created("Subscribe Request created",
                     subscribeRepo.save(subscribeRequest).toDTO()));
