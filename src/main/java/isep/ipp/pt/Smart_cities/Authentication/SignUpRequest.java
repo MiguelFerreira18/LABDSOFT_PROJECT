@@ -17,6 +17,7 @@ public class SignUpRequest {
     String password;
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,128}$", message = "Password must contain at least one letter and one number")
     String repeatPassword;
+    String pushToken;
     @NotNull
     Types type;
 }

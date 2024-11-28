@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,9 +44,9 @@ class SubscribeServiceTest {
 
         User user = userRepo.findByEmail("AnyNormalUser@gmail.com").orElseThrow();
 
-        Event event1 = eventRepository.save(new Event("AnyTitle1", "AnyLocation1", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription1", user ));
-        Event event2 = eventRepository.save(new Event("AnyTitle2", "AnyLocation2", LocalDate.now(), LocalDate.now().plusDays(2), "AnyDescription2", user));
-        Event event3 = eventRepository.save(new Event("AnyTitle3", "AnyLocation3", LocalDate.now(), LocalDate.now().plusDays(3), "AnyDescription3", user));
+        Event event1 = eventRepository.save(new Event("AnyTitle1", "AnyLocation1", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), "AnyDescription1", user ));
+        Event event2 = eventRepository.save(new Event("AnyTitle2", "AnyLocation2", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), "AnyDescription2", user));
+        Event event3 = eventRepository.save(new Event("AnyTitle3", "AnyLocation3", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(4), "AnyDescription3", user));
 
         subscribeRepo.save(Subscribe.builder().id(10L).user(user).event(event1).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());
         subscribeRepo.save(Subscribe.builder().id(11L).user(user).event(event2).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());

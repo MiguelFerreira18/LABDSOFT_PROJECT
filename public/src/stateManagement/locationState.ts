@@ -1,5 +1,11 @@
 import { reactive } from 'vue';
 
 export const locationState = reactive({
-  onLocationSelected: null as null | ((location: { latitude: number; longitude: number; address: string }) => void),
+  onLocationSelected: null as
+    | null
+    | ((location: {
+        latitude: number;
+        longitude: number;
+        address: string;
+      }) => void),
 });

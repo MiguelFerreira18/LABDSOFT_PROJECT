@@ -46,6 +46,14 @@ public class UserService implements UserDetailsService {
         return userOptional;
     }
 
+    public void savePushTokenIfDoesntExist(String email, String pushToken) {
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isPresent() && pushToken != null && pushToken.length() > 10) {
+            user.get().setPushTokenMobile(pushToken);
+            userRepo.save(user.get());
+        }
+    }
+
     public void DeleteAllUsers() {
         userRepo.deleteAll();
     }
