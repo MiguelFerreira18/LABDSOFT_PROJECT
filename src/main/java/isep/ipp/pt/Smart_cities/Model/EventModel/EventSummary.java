@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class EventSummary {
     private String id;
 
     private String title;
-    private LocalDate date;
+    private LocalDateTime date;
     private String location;
 
     // Constructor to initialize from an Event object
@@ -31,7 +32,7 @@ public class EventSummary {
     }
 
     // Existing constructor (optional but useful for flexibility)
-    public EventSummary(String id, String title, LocalDate date, String location, int totalAttendees) {
+    public EventSummary(String id, String title, LocalDateTime date, String location, int totalAttendees) {
         this.id = id;
         this.title = title;
         this.date = date;

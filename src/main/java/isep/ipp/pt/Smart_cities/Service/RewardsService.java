@@ -112,7 +112,7 @@ public class RewardsService {
     private Optional<Subscribe> validateSubscription(String userId,String eventId){
         return subscribeRepo.findByEventIdAndUserId(eventId,userId)
                 .filter(subscribe -> subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED) &&
-                        LocalDate.now().isAfter(subscribe.getEvent().getEndDate()));
+                        LocalDate.now().isAfter(subscribe.getEvent().getEndDate().toLocalDate()));
     }
 
     private Response processRewards(String userId, String eventId) {

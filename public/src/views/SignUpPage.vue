@@ -58,6 +58,7 @@
 import { SendRequest } from '@/lib/request';
 import { ConfirmPasswordMatch, IsAGoodPassword } from '@/lib/signUpUtil';
 import router from '@/router';
+import { push } from 'ionicons/icons';
 import { ref } from 'vue';
 
 const email = ref<HTMLInputElement | null>(null);
@@ -88,13 +89,15 @@ async function signUp() {
     return;
   }
 
-  const payload = {
-    email: email.value?.value.trim() || '',
-    name: name.value?.value.trim() || '',
-    password: password.value?.value.trim() || '',
-    repeatPassword: confirmPassword.value?.value.trim() || '',
-    type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER',
-  };
+
+    const payload = {
+        email: email.value?.value.trim() || '',
+        name: name.value?.value.trim() || '',
+        password: password.value?.value.trim() || '',
+        pushToken: localStorage.getItem('pushToken') || '',
+        repeatPassword: confirmPassword.value?.value.trim() || '',
+        type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER'
+    }
 
   try {
     const response = await SendRequest('/auth/public/signup', 'POST', payload);

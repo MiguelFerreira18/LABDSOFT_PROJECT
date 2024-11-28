@@ -77,6 +77,7 @@ public class AuthenticationApi {
 
             // Save last login autentication
             userService.updateUserLastLogin(request.email);
+            userService.savePushTokenIfDoesntExist(request.email, request.pushToken);
 
             return buildAuthenticationResponse(authentication, principal);
 

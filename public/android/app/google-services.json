@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1035178737678",
+    "project_id": "labdsoft-1c7f3",
+    "storage_bucket": "labdsoft-1c7f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1035178737678:android:167f686a7225502f267c5f",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo3L1yXWgsAN66kAbmWcUWMC4g5GeC_W4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
