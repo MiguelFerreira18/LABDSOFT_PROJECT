@@ -11,10 +11,6 @@
             <ion-text class="signup-link" @click="pushToSignUp">
                 <p>Sign up</p>
             </ion-text>
-            <ion-text color="primary">
-                <h1 v-if="hasPushToken()"><b>Push Token:</b> {{ hasPushToken() }}></h1>
-                <h1 v-else><b>Push Token:</b> Not found</h1>
-            </ion-text>
         </div>
     </ion-content>
 </template>
@@ -31,10 +27,6 @@ import router from '@/router';
 
 const password = ref<HTMLInputElement | null>(null);
 const email = ref<HTMLInputElement | null>(null);
-
-function hasPushToken() {
-    return localStorage.getItem('pushToken');
-}
 
 async function login() {
     const payload = {
