@@ -49,6 +49,7 @@ public class EventInitialization implements CommandLineRunner {
             event1.setLocation("Lisbon, Portugal");
             event1.setStartDate(LocalDateTime.of(2024, 12, 10, 9, 0));
             event1.setEndDate(LocalDateTime.of(2024, 12, 15, 17, 0));
+            event1.setLimit(10);
             event1.setDescription("A conference on the latest tech innovations.");
             event1.setCreator(user);
             event1.setCategory("Art");
@@ -62,6 +63,7 @@ public class EventInitialization implements CommandLineRunner {
             event2.setLocation("Porto, Portugal");
             event2.setStartDate(LocalDateTime.of(2025, 6, 10, 9, 0));
             event2.setEndDate(LocalDateTime.of(2025, 6, 12, 23, 59));
+            event2.setLimit(1);
             event2.setDescription("A 3-day music festival featuring international artists.");
             event2.setCreator(user);
             event2.setCategory("Sports");
@@ -75,6 +77,7 @@ public class EventInitialization implements CommandLineRunner {
             event3.setLocation("Lisbon, Portugal");
             event3.setStartDate(LocalDateTime.of(2025, 11, 20, 9, 0));
             event3.setEndDate(LocalDateTime.of(2025, 11, 25, 17, 0));
+            event3.setLimit(5);
             event3.setDescription("An exhibition showcasing modern art.");
             event3.setCreator(user);
             event3.setCategory( "Social");
@@ -88,6 +91,7 @@ public class EventInitialization implements CommandLineRunner {
             event4.setLocation("Madrid, Spain");
             event4.setStartDate(LocalDateTime.of(2025, 3, 10, 9, 0));
             event4.setEndDate(LocalDateTime.of(2025, 3, 15, 23, 59));
+            event4.setLimit(20);
             event4.setDescription("A football tournament with teams from across the globe.");
             event4.setCreator(user);
             event4.setCategory("Volunteering");
@@ -101,6 +105,7 @@ public class EventInitialization implements CommandLineRunner {
             event5.setLocation("Lisbon, Portugal");
             event5.setStartDate(LocalDateTime.of(2026, 8, 10, 9, 0));
             event5.setEndDate(LocalDateTime.of(2026, 8, 15, 17, 0));
+            event5.setLimit(20);
             event5.setDescription("A bootcamp for learning Java programming.");
             event5.setCreator(user);
             event5.setCategory("Educational");
@@ -114,6 +119,7 @@ public class EventInitialization implements CommandLineRunner {
             event6.setLocation("Porto, Portugal");
             event6.setStartDate(LocalDateTime.of(2024, 12, 10, 9, 0));
             event6.setEndDate(LocalDateTime.of(2024, 12, 10, 17, 0));
+            event6.setLimit(20);
             event6.setDescription("A networking event for entrepreneurs and investors.");
             event6.setCreator(user);
             event6.setCategory( "Recreational");
@@ -127,6 +133,7 @@ public class EventInitialization implements CommandLineRunner {
             event7.setLocation("Braga, Portugal");
             event7.setStartDate(LocalDateTime.of(2024, 12, 15, 9, 0));
             event7.setEndDate(LocalDateTime.of(2024, 12, 15, 17, 0));
+            event7.setLimit(20);
             event7.setDescription("A seminar on mental and physical health improvement.");
             event7.setCreator(user);
             event7.setCategory("Political");
@@ -140,6 +147,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setLocation("Funchal, Madeira");
             event8.setStartDate(LocalDateTime.of(2025, 2, 10, 8, 0));
             event8.setEndDate(LocalDateTime.of(2025, 2, 14, 23, 59));
+            event8.setLimit(20);
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
             event8.setCategory( "Sports");
@@ -153,6 +161,7 @@ public class EventInitialization implements CommandLineRunner {
             event9.setLocation("Lisbon, Portugal");
             event9.setStartDate(LocalDateTime.of(2024, 12, 22, 8, 0));
             event9.setEndDate(LocalDateTime.of(2024, 12, 22, 12, 0));
+            event9.setLimit(20);
             event9.setDescription("A charity run to raise funds for underprivileged children.");
             event9.setCreator(user);
             event9.setCategory("Art");
@@ -166,6 +175,7 @@ public class EventInitialization implements CommandLineRunner {
             event10.setLocation("Lisbon, Portugal");
             event10.setStartDate(LocalDateTime.of(2025, 11, 25, 9, 0));
             event10.setEndDate(LocalDateTime.of(2025, 11, 25, 17, 0));
+            event10.setLimit(20);
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
             event10.setCategory("Educational");
