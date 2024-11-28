@@ -1,67 +1,67 @@
-import { apiConfig, apiKey } from "./config";
+import { apiConfig, apiKey } from './config';
 
 const { baseUrl } = apiConfig;
 
-export async function fetchAllEvents(token: string = ""): Promise<any[]> {
+export async function fetchAllEvents(token: string = ''): Promise<any[]> {
   try {
     const response = await fetch(`${baseUrl}/api/events`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": apiKey,
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey,
       },
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching events");
+      throw new Error('Error fetching events');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error('Error fetching events:', error);
     return [];
   }
 }
 export async function fetchNonPromotedEvents(
-  token: string = ""
+  token: string = '',
 ): Promise<any[]> {
   try {
     const response = await fetch(`${baseUrl}/api/events/non-promoted`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": apiKey,
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey,
       },
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching events");
+      throw new Error('Error fetching events');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error('Error fetching events:', error);
     return [];
   }
 }
 
-export async function fetchPromotedEvents(token: string = ""): Promise<any[]> {
+export async function fetchPromotedEvents(token: string = ''): Promise<any[]> {
   try {
     const response = await fetch(`${baseUrl}/api/events/promoted`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": apiKey,
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey,
       },
     });
 
     if (!response.ok) {
-      throw new Error("Error fetching events");
+      throw new Error('Error fetching events');
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error('Error fetching events:', error);
     return [];
   }
 }

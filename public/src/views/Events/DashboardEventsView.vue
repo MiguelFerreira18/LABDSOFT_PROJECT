@@ -12,15 +12,23 @@
 
     <div v-else class="dashboard-cards-container">
       <div class="dashboard-cards">
-        <ion-card v-for="summary in eventSummaries" :key="summary.id" class="dashboard-card">
+        <ion-card
+          v-for="summary in eventSummaries"
+          :key="summary.id"
+          class="dashboard-card"
+        >
           <ion-card-header>
             <ion-card-title>{{ summary.title }}</ion-card-title>
-            <ion-card-subtitle>{{ formatDate(summary.date) }}</ion-card-subtitle>
+            <ion-card-subtitle>{{
+              formatDate(summary.date)
+            }}</ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
             <p><strong>Location:</strong> {{ summary.location }}</p>
-            <p><strong>Total Attendees:</strong> {{ summary.totalAttendees }}</p>
+            <p>
+              <strong>Total Attendees:</strong> {{ summary.totalAttendees }}
+            </p>
           </ion-card-content>
         </ion-card>
       </div>
@@ -31,7 +39,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { formatDate } from '@/lib/dateFormatter';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonSpinner } from '@ionic/vue';
+import {
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonSpinner,
+} from '@ionic/vue';
 import { SendRequest } from '@/lib/request';
 
 const eventSummaries = ref<any>([]);
@@ -39,7 +54,7 @@ const loading = ref(true);
 
 onMounted(async () => {
   await loadDashboard();
-})
+});
 
 async function loadDashboard() {
   console.log('Loading dashboard...');
@@ -56,9 +71,7 @@ async function loadDashboard() {
   } finally {
     loading.value = false;
   }
-
 }
-
 </script>
 
 <style scoped>

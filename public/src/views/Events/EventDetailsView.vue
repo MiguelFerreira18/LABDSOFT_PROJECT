@@ -60,9 +60,19 @@
     </ion-page>
 </template>
 
-
 <script setup lang="ts">
-import { IonPage, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonButton, IonList, IonItem, IonLabel } from '@ionic/vue';
+import {
+  IonPage,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonButton,
+  IonList,
+  IonItem,
+  IonLabel,
+} from '@ionic/vue';
 import { formatDate } from '@/lib/dateFormatter';
 import { SendRequest } from '@/lib/request';
 import { onMounted, ref, computed, nextTick } from 'vue';
@@ -78,7 +88,7 @@ const creator = ref<any>({});
 const numberOfSubscribers = ref(0);
 const isSubscribed = ref(false);
 const hasAttended = ref(false);
-const subbedEvent = ref<any>({})
+const subbedEvent = ref<any>({});
 const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 
@@ -113,80 +123,97 @@ function hasEventStarted() {
 }
 
 async function handleSubscription() {
-    if (isSubscribed.value) return;
-    const payload: Record<string, string> = {
-        uuid: localStorage.getItem('uuid') || '',
-        eventId: Array.isArray(route.params.id) ? route.params.id[0] : route.params.id || ''
-    }
-    const response = await SendRequest('/subscription/subscribe', 'POST', payload);
-    if (response.ok) {
-        const { data } = await response.json();
-        isSubscribed.value = true;
-        subbedEvent.value = data;
-    }
+  if (isSubscribed.value) return;
+  const payload: Record<string, string> = {
+    uuid: localStorage.getItem('uuid') || '',
+    eventId: Array.isArray(route.params.id)
+      ? route.params.id[0]
+      : route.params.id || '',
+  };
+  const response = await SendRequest(
+    '/subscription/subscribe',
+    'POST',
+    payload,
+  );
+  if (response.ok) {
+    const { data } = await response.json();
+    isSubscribed.value = true;
+    subbedEvent.value = data;
+  }
 }
 async function handleClaimReward() {
-    if (hasAttended.value) return;
-    const response = await SendRequest(`/api/rewards/claim/${localStorage.getItem('uuid')}/${route.params.id}`, 'POST');
-    if (response.ok) {
-        hasAttended.value = true;
-    }
+  if (hasAttended.value) return;
+  const response = await SendRequest(
+    `/api/rewards/claim/${localStorage.getItem('uuid')}/${route.params.id}`,
+    'POST',
+  );
+  if (response.ok) {
+    hasAttended.value = true;
+  }
 }
 
 async function handleUnsubscribe() {
-    if (!isSubscribed.value && hasAttended.value) return;
-    if (subbedEvent.value === undefined) {
-        const { data, response } = await getIsSubscribed();
-        if (response.ok && data.status === 'SUBSCRIBED') {
-            subbedEvent.value = data;
-        }
+  if (!isSubscribed.value && hasAttended.value) return;
+  if (subbedEvent.value === undefined) {
+    const { data, response } = await getIsSubscribed();
+    if (response.ok && data.status === 'SUBSCRIBED') {
+      subbedEvent.value = data;
     }
-    const response = await SendRequest(`/subscription/unsubscribe/${subbedEvent.value.id}`, 'POST');
-    if (response.ok) {
-        isSubscribed.value = false;
-    }
+  }
+  const response = await SendRequest(
+    `/subscription/unsubscribe/${subbedEvent.value.id}`,
+    'POST',
+  );
+  if (response.ok) {
+    isSubscribed.value = false;
+  }
 }
 
 async function getIsSubscribed() {
-    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
-    const response = await SendRequest(`/subscription/isSubscribed/${localStorage.getItem('uuid')}/${eventId}`, 'GET');
-    const { data } = await response.json();
-    return { data, response };
+  const eventId = Array.isArray(route.params.id)
+    ? route.params.id[0]
+    : route.params.id;
+  const response = await SendRequest(
+    `/subscription/isSubscribed/${localStorage.getItem('uuid')}/${eventId}`,
+    'GET',
+  );
+  const { data } = await response.json();
+  return { data, response };
 }
 
 async function handlePromoteEvent() {
-    const userId = localStorage.getItem('uuid');
-    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+  const userId = localStorage.getItem('uuid');
+  const eventId = Array.isArray(route.params.id)
+    ? route.params.id[0]
+    : route.params.id;
 
-    if (!userId || !eventId) {
-        console.error('Missing userId or eventId.');
-        return;
-    }
+  if (!userId || !eventId) {
+    console.error('Missing userId or eventId.');
+    return;
+  }
 
-    const response = await SendRequest(
-        `/api/events/${eventId}/promote?userId=${userId}`,
-        'POST'
-    );
+  const response = await SendRequest(
+    `/api/events/${eventId}/promote?userId=${userId}`,
+    'POST',
+  );
 
-    if (response.ok) {
-
-        showToast('Event promoted successfully!', 'success');
-    } else {
-
-        showToast('You have already promoted an event.', 'danger');
-    }
+  if (response.ok) {
+    showToast('Event promoted successfully!', 'success');
+  } else {
+    showToast('You have already promoted an event.', 'danger');
+  }
 }
 
 async function showToast(message: string, color: 'success' | 'danger') {
-    const toast = await toastController.create({
-        message: message,
-        duration: 2500,
-        position: 'top',
-        color: color,
-        icon: 'trophy-outline',
-    });
+  const toast = await toastController.create({
+    message: message,
+    duration: 2500,
+    position: 'top',
+    color: color,
+    icon: 'trophy-outline',
+  });
 
-    await toast.present();
+  await toast.present();
 }
 
 async function getCurrentEvent() {
@@ -197,10 +224,15 @@ async function getCurrentEvent() {
     creator.value = data.creator;
 }
 async function getNumberOfSubscribers() {
-    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
-    const response = await SendRequest(`/subscription/event/count/${eventId}`, 'GET');
-    const { data } = await response.json();
-    numberOfSubscribers.value = data;
+  const eventId = Array.isArray(route.params.id)
+    ? route.params.id[0]
+    : route.params.id;
+  const response = await SendRequest(
+    `/subscription/event/count/${eventId}`,
+    'GET',
+  );
+  const { data } = await response.json();
+  numberOfSubscribers.value = data;
 }
 
 async function getQrCodeIfEventHasStarted(url: string) {
