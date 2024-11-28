@@ -1,6 +1,6 @@
-import { apiConfig, apiKey } from "./config";
-import { Encrypt } from "./encryption";
-import { IsJWTExpired } from "./jwt";
+import { apiConfig, apiKey } from './config';
+import { Encrypt } from './encryption';
+import { IsJWTExpired } from './jwt';
 
 const { baseUrl } = apiConfig;
 
@@ -8,21 +8,21 @@ export async function SendRequest(
   path: string,
   method: string,
   data: Record<string, string> = {},
-  fieldsToEncrypt: string[] = []
+  fieldsToEncrypt: string[] = [],
 ): Promise<Response> {
-  const token = localStorage.getItem("token") || "";
+  const token = localStorage.getItem('token') || '';
 
   const headers: Record<string, string> = {
-    "Content-type": "application/json",
-    Authorization: "",
+    'Content-type': 'application/json',
+    Authorization: '',
   };
-  headers["X-API-KEY"] = apiKey;
-  if (token !== "" && !IsJWTExpired(token)) {
-    headers["Authorization"] = `Bearer ${token}`;
+  headers['X-API-KEY'] = apiKey;
+  if (token !== '' && !IsJWTExpired(token)) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const processedData: Record<string, string> = { ...data };
-  if (["POST", "PATCH", "PUT"].includes(method.toUpperCase()) && data) {
+  if (['POST', 'PATCH', 'PUT'].includes(method.toUpperCase()) && data) {
     for (const key of fieldsToEncrypt) {
       if (processedData[key]) {
         const encryptedValue = Encrypt(processedData[key]);
@@ -38,8 +38,8 @@ export async function SendRequest(
   const options: RequestInit = {
     method: method,
     headers: headers,
-    mode: "cors",
-    credentials: "include",
+    mode: 'cors',
+    credentials: 'include',
   };
 
   if (Object.keys(data).length > 0) {
