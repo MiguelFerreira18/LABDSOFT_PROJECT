@@ -30,7 +30,11 @@
                 </ion-list>
                 <ion-row class="ion-justify-content-center">
                     <ion-col size="auto">
-                        <canvas v-if="hasEventStarted() && !hasAttended" ref="canvas"></canvas>
+                        <canvas v-if="hasEventStarted() && !hasAttended && !isOwnerOfTheEvent()" ref="canvas"></canvas>
+                        <ion-button @click="handleScanQrCode" v-else-if="hasEventStarted() && isOwnerOfTheEvent()"
+                            expand="block" fill="clear" shape="round" color="warning">
+                            Scan QR Codes
+                        </ion-button>
                     </ion-col>
                 </ion-row>
                 <ion-button v-if="hasAttended" @click="handleClaimReward" :disabled="hasAttended" expand="block"
@@ -63,14 +67,14 @@
 
 <script setup lang="ts">
 import { IonPage, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonButton, IonList, IonItem, IonLabel } from '@ionic/vue';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 import { formatDate } from '@/lib/dateFormatter';
 import { SendRequest } from '@/lib/request';
 import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
 import QRCode from 'qrcode'
-import { apiConfig } from '@/lib/config';
-const { baseUrl } = apiConfig;
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
@@ -81,6 +85,7 @@ const hasAttended = ref(false);
 const subbedEvent = ref<any>({})
 const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
+const scanResult = ref<string | null>(null);
 
 onMounted(async () => {
     await getCurrentEvent();
@@ -110,6 +115,10 @@ function hasEventStarted() {
         return startDate <= new Date();
     }
     return false;
+}
+
+function isOwnerOfTheEvent() {
+    return creator.value.id === localStorage.getItem('uuid');
 }
 
 async function handleSubscription() {
@@ -177,6 +186,35 @@ async function handlePromoteEvent() {
     }
 }
 
+async function handleScanQrCode() {
+    try {
+        const isAvailable = Capacitor.isPluginAvailable('Camera');
+        if (!isAvailable) {
+            alert('Camera plugin not available');
+            return;
+        }
+        const result = await CapacitorBarcodeScanner.scanBarcode({
+            hint: 0 || 17,
+            cameraDirection: 1,
+        });
+
+        if (result && result.ScanResult) {
+            scanResult.value = result.ScanResult;
+            const response = await SendRequest(`${scanResult.value}`, 'POST');
+            if (response.ok) {
+                showToast('QR Code scanned successfully!', 'success');
+            } else {
+                showToast('Failed to scan QR Code', 'danger');
+            }
+        } else {
+            alert('No barcode detected');
+        }
+    } catch (error) {
+        console.error('Barcode scan error:', error);
+        alert('Failed to scan barcode');
+    }
+}
+
 async function showToast(message: string, color: 'success' | 'danger') {
     const toast = await toastController.create({
         message: message,
@@ -213,7 +251,7 @@ async function getQrCodeIfEventHasStarted(url: string) {
         return;
     }
 
-    const fullURL = `${baseUrl}${url}`;
+    const fullURL = `${url}`;
 
     QRCode.toCanvas(canvas.value, fullURL, function (error: any) {
         if (error) console.error(error);
