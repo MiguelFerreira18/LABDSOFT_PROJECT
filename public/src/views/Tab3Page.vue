@@ -6,6 +6,10 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
+      <router-link to="/events">Events</router-link>
+      <ion-button @click="goToEvents" expand="block" fill="clear" shape="round">
+        ToEvents
+      </ion-button>
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Tab 3</ion-title>
@@ -26,4 +30,12 @@ import {
   IonContent,
 } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
+
+import router from '@/router';
+
+
+async function goToEvents() {
+  router.push('/events');
+}
+
 </script>

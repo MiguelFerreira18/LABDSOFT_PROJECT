@@ -1,6 +1,7 @@
 <template>
-  <ion-content class="ion-padding">
-    <h1 class="title">Events</h1>
+  <ion-page>
+    <ion-content class="ion-padding">
+      <h1 class="title">Events</h1>
 
     <!-- Barra Horizontal de Eventos Promovidos -->
     <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
@@ -65,17 +66,13 @@
       </button>
     </div>
 
-    <!-- Dropdown com filtros de categoria e data -->
-    <div v-if="showDropdown" class="dropdown-menu">
-      <label for="category-limit">Filter by Category:</label>
-      <ion-button
-        v-for="category in categories"
-        :key="category"
-        @click="toggleCategory(category)"
-        :data-testid="'filter-' + category"
-      >
-        {{ category }}
-      </ion-button>
+      <!-- Dropdown com filtros de categoria e data -->
+      <div v-if="showDropdown" class="dropdown-menu">
+        <label for="category-limit">Filter by Category:</label>
+        <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
+          :data-testid="'filter-' + category">
+          {{ category }}
+        </ion-button>
 
       <!-- Filtro por data -->
       <div class="date-filter">
@@ -130,6 +127,7 @@
       </div>
     </div>
   </ion-content>
+    </ion-page>
 </template>
 
 <script lang="ts">
@@ -275,12 +273,14 @@ export default {
   font-size: 2rem;
   font-weight: bold;
   color: aliceblue;
-  margin-bottom: 40px; /* Aumenta o espaçamento inferior entre o título e o conteúdo */
+  margin-bottom: 40px;
+  /* Aumenta o espaçamento inferior entre o título e o conteúdo */
   animation: fadeIn 1s ease-out;
 }
 
 .promoted-events-section {
-  margin-bottom: 40px; /* Aumenta o espaçamento inferior entre a seção de eventos promovidos e o conteúdo abaixo */
+  margin-bottom: 40px;
+  /* Aumenta o espaçamento inferior entre a seção de eventos promovidos e o conteúdo abaixo */
 }
 
 .promoted-events-bar {
@@ -357,17 +357,20 @@ ion-card-subtitle {
 
 .dropdown-menu {
   position: fixed;
-  top: 130px; /* Ajusta para ficar logo abaixo do botão */
+  top: 130px;
+  /* Ajusta para ficar logo abaixo do botão */
   right: 16px;
   background: var(--ion-color-light);
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 200; /* Garante que o dropdown sobreponha outros elementos */
+  z-index: 200;
+  /* Garante que o dropdown sobreponha outros elementos */
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 250px; /* Ajuste a largura para que não fique tão grande */
+  width: 250px;
+  /* Ajuste a largura para que não fique tão grande */
 }
 
 .date-filter {
@@ -405,7 +408,8 @@ ion-card-subtitle {
   cursor: pointer;
   width: 48px;
   height: 48px;
-  z-index: 100; /* Garante que o botão sempre fique visível */
+  z-index: 100;
+  /* Garante que o botão sempre fique visível */
 }
 
 .filter-button svg {
@@ -426,13 +430,16 @@ ion-card-subtitle {
 /* Estilos para a seção de eventos promovidos */
 .promoted-events-section,
 .event-cards-container {
-  z-index: 1; /* Garante que os eventos fiquem abaixo do dropdown */
+  z-index: 1;
+  /* Garante que os eventos fiquem abaixo do dropdown */
 }
 
 /* Novo estilo para o título da seção de eventos promovidos */
 .promoted-events-section h2 {
-  margin-top: 60px; /* Aumenta o espaçamento entre o ícone do filtro e o título */
-  margin-bottom: 16px; /* Espaçamento inferior do título */
+  margin-top: 60px;
+  /* Aumenta o espaçamento entre o ícone do filtro e o título */
+  margin-bottom: 16px;
+  /* Espaçamento inferior do título */
   font-size: 1.5rem;
   font-weight: bold;
   color: aliceblue;
@@ -447,7 +454,8 @@ ion-card-subtitle {
 /* Estilos para a seção de eventos promovidos */
 .promoted-events-section,
 .event-cards-container {
-  z-index: 1; /* Garante que os eventos fiquem abaixo do dropdown */
+  z-index: 1;
+  /* Garante que os eventos fiquem abaixo do dropdown */
 }
 
 .clear-button {
