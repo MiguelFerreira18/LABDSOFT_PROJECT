@@ -4,11 +4,12 @@
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Tab 1</ion-title>
+          <ion-title size="large">Home Page</ion-title>
         </ion-toolbar>
       </ion-header>
 
       <RewardsOverview />
+      <EventsView />
     </ion-content>
   </ion-page>
 </template>
@@ -23,4 +24,5 @@ import {
 } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
 import RewardsOverview from '@/components/RewardsOverview.vue';
+import EventsView from './Events/EventsView.vue';
 </script>

@@ -73,12 +73,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/TabHomePage.vue'),
       },
       {
-        path: "tab2",
-        component: () => import("@/views/Events/EventsView.vue"),
+        path: 'tab2',
+        component: () => import('@/views/Events/EventHistoryView.vue'),
       },
       {
         path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue'),
+        component: () => import('@/views/Events/DashboardEventsView.vue'),
       },
       {
         path: 'tabProfile',

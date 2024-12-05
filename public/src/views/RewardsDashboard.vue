@@ -53,6 +53,7 @@ import {
   IonIcon,
 } from '@ionic/vue';
 import { ref, onMounted } from 'vue';
+import EventsView from './Events/EventsView.vue';
 
 interface RewardsResponse {
   points: number;
