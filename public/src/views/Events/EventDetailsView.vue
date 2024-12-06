@@ -50,7 +50,7 @@
           </ion-col>
         </ion-row>
         <ion-button
-          v-if="hasLimitReached()"
+          v-if="hasLimitReached() && !isOwner()"
           :disabled="true"
           expand="block"
           fill="clear"
@@ -60,7 +60,7 @@
           No more subscriptions are being accepted
         </ion-button>
         <ion-button
-          v-else-if="!isSubscribed"
+          v-else-if="!isSubscribed && !isOwner()"
           @click="handleSubscription"
           :disabled="hasAttended"
           expand="block"
@@ -71,7 +71,7 @@
           Subscribe
         </ion-button>
         <ion-button
-          v-else
+          v-else-if="!isOwner()"
           @click="handleUnsubscribe"
           expand="block"
           fill="clear"
@@ -334,6 +334,10 @@ function hasLimitReached() {
   } else {
     return false;
   }
+}
+
+function isOwner() {
+  return creator.value.id === localStorage.getItem('uuid');
 }
 </script>
 
