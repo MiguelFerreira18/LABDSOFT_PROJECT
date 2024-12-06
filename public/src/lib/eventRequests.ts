@@ -1,15 +1,18 @@
 import { apiConfig, apiKey } from './config';
+import { IsJWTExpired } from './jwt';
 
 const { baseUrl } = apiConfig;
 
-export async function fetchAllEvents(token: string = ''): Promise<any[]> {
+export async function fetchAllEvents(): Promise<any[]> {
+  const token = localStorage.getItem('token') || '';
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-API-KEY': apiKey,
+    };
     const response = await fetch(`${baseUrl}/api/events`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': apiKey,
-      },
+      headers: headers,
     });
 
     if (!response.ok) {
@@ -22,16 +25,19 @@ export async function fetchAllEvents(token: string = ''): Promise<any[]> {
     return [];
   }
 }
-export async function fetchNonPromotedEvents(
-  token: string = '',
-): Promise<any[]> {
+export async function fetchNonPromotedEvents(): Promise<any[]> {
+  const token = localStorage.getItem('token') || '';
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-API-KEY': apiKey,
+    };
+    if (token !== '' && !IsJWTExpired(token)) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     const response = await fetch(`${baseUrl}/api/events/non-promoted`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': apiKey,
-      },
+      headers: headers,
     });
 
     if (!response.ok) {
@@ -45,14 +51,19 @@ export async function fetchNonPromotedEvents(
   }
 }
 
-export async function fetchPromotedEvents(token: string = ''): Promise<any[]> {
+export async function fetchPromotedEvents(): Promise<any[]> {
+  const token = localStorage.getItem('token') || '';
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'X-API-KEY': apiKey,
+    };
+    if (token !== '' && !IsJWTExpired(token)) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     const response = await fetch(`${baseUrl}/api/events/promoted`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': apiKey,
-      },
+      headers: headers,
     });
 
     if (!response.ok) {

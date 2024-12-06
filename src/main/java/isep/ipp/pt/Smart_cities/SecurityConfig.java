@@ -88,14 +88,14 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						auth -> auth
-								.requestMatchers("/subscription/**").permitAll()
+								.requestMatchers("/subscription/**").authenticated()
 								.requestMatchers("/auth/public/signup").permitAll()
 								.requestMatchers("/auth/public/login").permitAll()
 								.requestMatchers("/api-docs/**").permitAll()
 								.requestMatchers("/swagger-ui/**").permitAll()
-								.requestMatchers("/api/events").permitAll()
-								.requestMatchers("/api/rewards/**").permitAll()
-								.requestMatchers("/api/users/getuser").permitAll()
+								.requestMatchers("/api/events").authenticated()
+								.requestMatchers("/api/rewards/**").authenticated()
+								.requestMatchers("/api/users/getuser").authenticated()
 								.anyRequest().permitAll()
 
 				)
