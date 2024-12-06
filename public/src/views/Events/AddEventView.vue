@@ -5,7 +5,7 @@
         <ion-title>Create New Event</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" class="ion-padding">
+    <ion-content class="ion-padding">
       <form @submit.prevent="addEvent">
         <ion-input
           class="ion-margin-vertical"

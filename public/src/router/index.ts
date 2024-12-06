@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue';
 import LoginView from '@/views/LoginView.vue';
 import SignUpPage from '@/views/SignUpPage.vue';
 import EventDetailsView from '@/views/Events/EventDetailsView.vue';
@@ -10,6 +9,9 @@ import RewardsDashboard from '@/views/RewardsDashboard.vue';
 import DashboardEventsView from '@/views/Events/DashboardEventsView.vue';
 import AddEventView from '@/views/Events/AddEventView.vue';
 import MapView from '@/views/maps/MapView.vue';
+import HomeView from '@/views/TabHomePage.vue';
+import ProfileView from '@/views/TabProfilePage.vue';
+import FooterComponent from '@/components/FooterComponent.vue';
 import { IsJWTExpired } from '@/lib/jwt';
 import { IsDataTheSame } from '@/lib/signUpUtil';
 
@@ -27,68 +29,67 @@ const routes: Array<RouteRecordRaw> = [
     meta: { public: true },
   },
   {
-    path: '/events/create',
-    name: 'AddEventView',
-    component: AddEventView,
+    path: '/',
+    redirect: '/home',
   },
   {
-    path: '/events/attended',
-    name: 'AttendedEvents',
-    component: EventHistoryView,
-  },
-  {
-    path: '/events/dashboard',
-    name: 'DashboardEventsView',
-    component: DashboardEventsView,
-  },
-  {
-    path: '/event/EventDetail/:id',
-    name: 'EventDetails',
-    component: EventDetailsView,
-  },
-  {
-    path: '/events',
-    name: 'Events',
-    component: EventsView,
-  },
-  {
-    path: '/rewards',
-    name: 'Rewards',
-    component: RewardsDashboard,
-  },
-  {
-    path: '/map',
-    name: 'map',
-    component: MapView,
-  },
-  {
-    path: '/tabs/',
-    component: TabsPage,
+    path: '/',
+    component: FooterComponent,
     meta: { requiresAuth: true, roles: ['Admin', 'User', 'Institution'] },
     children: [
       {
         path: '',
-        redirect: '/tabs/tabHome',
+        redirect: '/home',
       },
       {
-        path: 'tabHome',
-        component: () => import('@/views/TabHomePage.vue'),
+        path: 'home',
+        component: HomeView,
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/Events/EventHistoryView.vue'),
+        path: 'search',
+        component: EventHistoryView,
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/Events/DashboardEventsView.vue'),
+        path: 'events/create',
+        component: AddEventView,
       },
       {
-        path: 'tabProfile',
-        component: () => import('@/views/TabProfilePage.vue'),
+        path: 'profile',
+        component: ProfileView,
+      },
+      {
+        path: '/events/attended',
+        name: 'AttendedEvents',
+        component: EventHistoryView,
+      },
+      {
+        path: '/events/dashboard',
+        name: 'DashboardEventsView',
+        component: DashboardEventsView,
+      },
+      {
+        path: '/event/EventDetail/:id',
+        name: 'EventDetails',
+        component: EventDetailsView,
+      },
+      {
+        path: '/events',
+        name: 'Events',
+        component: EventsView,
+      },
+      {
+        path: '/rewards',
+        name: 'Rewards',
+        component: RewardsDashboard,
+      },
+      {
+        path: '/map',
+        name: 'map',
+        component: MapView,
       },
     ],
   },
-  { path: '/:pathMatch(.*)*', redirect: '/login' },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
 const router = createRouter({
