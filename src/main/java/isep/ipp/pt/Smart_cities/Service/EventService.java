@@ -40,8 +40,8 @@ public class EventService {
                 .creator(creator)
                 .title(eventRequestDTO.getTitle())
                 .location(eventRequestDTO.getLocation())
-                .startDate(eventRequestDTO.getStartDate())
-                .endDate(eventRequestDTO.getEndDate())
+                .startDate(eventRequestDTO.getStartDate().atStartOfDay())
+                .endDate(eventRequestDTO.getEndDate().atStartOfDay())
                 .limit(eventRequestDTO.getLimit())
                 .description(eventRequestDTO.getDescription())
                 .category(eventRequestDTO.getCategory())
@@ -138,9 +138,11 @@ public class EventService {
     public List<EventSummary> generateCurrentEventSummaries(String userId) {
             List<Event> currentEvents = eventRepository.findAll().stream().filter(event -> event.getCreator().getId().equals(userId)).toList(); // Fetch all events
         System.out.println(currentEvents);
-            return currentEvents.stream()
-                    .map(EventSummary::new)
-                    .toList();
+        return currentEvents.stream().map(event -> {
+                EventSummary eventSummary = new EventSummary(event);
+                eventSummary.setTotalAttendees(subscribeRepository.allAttendeesFromEvent(event.getId()).size());
+                return eventSummary;
+            }).toList();
     }
 
 
