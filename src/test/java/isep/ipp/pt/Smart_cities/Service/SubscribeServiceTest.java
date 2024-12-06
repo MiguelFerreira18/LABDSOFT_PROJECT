@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.BaseTest;
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
@@ -16,6 +17,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,8 +32,8 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class SubscribeServiceTest {
+
+class SubscribeServiceTest extends BaseTest {
 
     @Autowired
     private SubscribeService subscribeService;

@@ -89,15 +89,14 @@ async function signUp() {
     return;
   }
 
-
-    const payload = {
-        email: email.value?.value.trim() || '',
-        name: name.value?.value.trim() || '',
-        password: password.value?.value.trim() || '',
-        pushToken: localStorage.getItem('pushToken') || '',
-        repeatPassword: confirmPassword.value?.value.trim() || '',
-        type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER'
-    }
+  const payload = {
+    email: email.value?.value.trim() || '',
+    name: name.value?.value.trim() || '',
+    password: password.value?.value.trim() || '',
+    pushToken: localStorage.getItem('pushToken') || '',
+    repeatPassword: confirmPassword.value?.value.trim() || '',
+    type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER',
+  };
 
   try {
     const response = await SendRequest('/auth/public/signup', 'POST', payload);

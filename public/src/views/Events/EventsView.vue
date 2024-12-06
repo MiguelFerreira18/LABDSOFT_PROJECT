@@ -1,7 +1,6 @@
 <template>
-  <ion-page>
-    <ion-content class="ion-padding">
-      <h1 class="title">Events</h1>
+  <ion-content class="ion-padding">
+    <h1 class="title">Events</h1>
 
     <!-- Barra Horizontal de Eventos Promovidos -->
     <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
@@ -47,7 +46,7 @@
         <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
           <g
             fill="none"
-            stroke="white"
+            stroke="black"
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="32"
@@ -66,18 +65,23 @@
       </button>
     </div>
 
-      <!-- Dropdown com filtros de categoria e data -->
-      <div v-if="showDropdown" class="dropdown-menu">
-        <label for="category-limit">Filter by Category:</label>
-        <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
-          :data-testid="'filter-' + category">
-          {{ category }}
-        </ion-button>
+    <!-- Dropdown com filtros de categoria e data -->
+    <div v-if="showDropdown" class="dropdown-menu">
+      <label for="category-limit">Filter by Category:</label>
+      <ion-button
+        v-for="category in categories"
+        :key="category"
+        @click="toggleCategory(category)"
+        :data-testid="'filter-' + category"
+      >
+        {{ category }}
+      </ion-button>
 
       <!-- Filtro por data -->
       <div class="date-filter">
         <label for="date-limit">Filter by Date:</label>
         <input
+          style="background-color: var(--ion-color-light)"
           id="date-limit"
           type="date"
           v-model="dateLimit"
@@ -127,7 +131,6 @@
       </div>
     </div>
   </ion-content>
-    </ion-page>
 </template>
 
 <script lang="ts">
@@ -272,7 +275,7 @@ export default {
   text-align: center;
   font-size: 2rem;
   font-weight: bold;
-  color: aliceblue;
+  color: black;
   margin-bottom: 40px;
   /* Aumenta o espaçamento inferior entre o título e o conteúdo */
   animation: fadeIn 1s ease-out;
@@ -331,19 +334,19 @@ ion-card-header {
 ion-card-content {
   padding: 12px;
   font-size: 14px;
-  color: aliceblue;
+  color: black;
 }
 
 ion-card-title {
   text-transform: none;
   font-size: 20px;
   font-weight: bold;
-  color: aliceblue;
+  color: black;
 }
 
 ion-card-subtitle {
   font-size: 14px;
-  color: aliceblue;
+  color: black;
 }
 
 .clickable-card {
@@ -382,7 +385,7 @@ ion-card-subtitle {
 
 .date-filter label {
   font-weight: bold;
-  color: var(--ion-color-dark);
+  color: blue;
 }
 
 .dropdown-menu label {

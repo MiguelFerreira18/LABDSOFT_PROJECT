@@ -19,17 +19,27 @@ function getMonthName(monthNumber: number): string {
 }
 
 function formatDate(date: string | Date): string {
-  const d = new Date(date);
+  let d: Date;
+
+  // Handle array input
+  if (Array.isArray(date)) {
+    const [year, month, day, hours = 0, minutes = 0] = date; // Destructure with defaults
+    d = new Date(year, month - 1, day, hours, minutes); // Month is 0-indexed
+  } else {
+    // Fallback to standard Date parsing
+    d = new Date(date);
+  }
+
   if (isNaN(d.getTime())) {
-    // Se não for uma data válida, retorna uma string de fallback
+    // If the date is invalid, return a fallback
     return 'Invalid date';
   }
 
-  const day = d.getDate().toString().padStart(2, '0'); // Obtém o dia e garante que tenha 2 dígitos
-  const month = getMonthName(d.getMonth() + 1); // Obtém o mês, lembrando que getMonth() retorna 0-11
-  const year = d.getFullYear(); // Obtém o ano
+  const day = d.getDate().toString().padStart(2, '0'); // Ensure 2-digit day
+  const month = getMonthName(d.getMonth() + 1); // Month name (1-indexed)
+  const year = d.getFullYear(); // Full year
 
-  return `${day} ${month} ${year}`; // Formata como "21 Feb 2024"
+  return `${day} ${month} ${year}`; // Format as "10 August 2026"
 }
 
 export { formatDate }; // Exporta a função para ser reutilizada em outros arquivos
