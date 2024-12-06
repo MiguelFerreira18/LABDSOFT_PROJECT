@@ -33,9 +33,7 @@ import ExploreContainer from '@/components/ExploreContainer.vue';
 
 import router from '@/router';
 
-
 async function goToEvents() {
   router.push('/events');
 }
-
 </script>
