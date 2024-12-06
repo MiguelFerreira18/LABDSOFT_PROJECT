@@ -11,6 +11,7 @@ import DashboardEventsView from '@/views/Events/DashboardEventsView.vue';
 import AddEventView from '@/views/Events/AddEventView.vue';
 import MapView from '@/views/maps/MapView.vue';
 import { IsJWTExpired } from '@/lib/jwt';
+import { IsDataTheSame } from '@/lib/signUpUtil';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -94,16 +95,24 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  const isDataTheSame = await IsDataTheSame();
+  if (!isDataTheSame) {
+    localStorage.clear();
+  }
   const token = localStorage.getItem('token');
-  const isAuthenticated = Boolean(token);
+  let isAuthenticated = Boolean(token);
   const role = localStorage.getItem('role');
   const isOutDated = IsJWTExpired(token || '');
 
   if ((to.meta.requiresAuth && !isAuthenticated) || isOutDated) {
     next('/login');
+  } else if (
+    to.meta.roles &&
+    role &&
     //@ts-expect-error includes might not exist on null
-  } else if (to.meta.roles && !to.meta.roles.includes(role)) {
+    !to.meta.roles.includes(role)
+  ) {
     next('/login');
   } else {
     next();
