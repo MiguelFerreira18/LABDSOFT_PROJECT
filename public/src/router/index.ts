@@ -10,6 +10,7 @@ import RewardsDashboard from '@/views/RewardsDashboard.vue';
 import DashboardEventsView from '@/views/Events/DashboardEventsView.vue';
 import AddEventView from '@/views/Events/AddEventView.vue';
 import MapView from '@/views/maps/MapView.vue';
+import { IsJWTExpired } from '@/lib/jwt';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -97,7 +98,9 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
   const isAuthenticated = Boolean(token);
   const role = localStorage.getItem('role');
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  const isOutDated = IsJWTExpired(token || '');
+
+  if ((to.meta.requiresAuth && !isAuthenticated) || isOutDated) {
     next('/login');
     //@ts-expect-error includes might not exist on null
   } else if (to.meta.roles && !to.meta.roles.includes(role)) {
