@@ -96,6 +96,7 @@ import {
   personOutline,
   calendarClearOutline,
 } from 'ionicons/icons';
+import { formatDate } from '@/lib/dateFormatter';
 interface Event {
   id: number;
   title: string;
@@ -146,8 +147,8 @@ async function toggleView() {
   await fetchEvents(endpoint);
 }
 function formatDateRange(startDate: string, endDate: string) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  return `${start.toDateString()} - ${end.toDateString()}`;
+  const start = formatDate(startDate);
+  const end = formatDate(endDate);
+  return `${start} - ${end}`;
 }
 </script>
