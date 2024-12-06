@@ -13,6 +13,7 @@
     "test:unitEvents": "jest",
     "lint:fix": "eslint . --ext .ts,.html --fix",
     "format": "prettier --write \"src/**/*.{ts,html,scss,vue}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss,vue}\"",
     "prepare": "husky install && cd .. && husky public/.husky",
     "lint": "eslint .",
     "build:run": "go run ./scripts/decide_ide.go npm run build && npx cap run android"
@@ -29,8 +30,8 @@
     "@capacitor/haptics": "6.0.1",
     "@capacitor/ios": "6.1.2",
     "@capacitor/keyboard": "6.0.2",
-    "@capacitor/push-notifications": "^6.0.3",
     "@capacitor/preferences": "^6.0.3",
+    "@capacitor/push-notifications": "^6.0.3",
     "@capacitor/status-bar": "6.0.1",
     "@coreui/icons": "^3.0.1",
     "@coreui/icons-vue": "^2.2.0",
