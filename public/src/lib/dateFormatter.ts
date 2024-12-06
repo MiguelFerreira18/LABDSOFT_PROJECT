@@ -15,23 +15,20 @@ function getMonthName(monthNumber: number): string {
     'Dec',
   ];
 
-  return months[monthNumber - 1] || ''; // Retorna o mês correspondente, ou uma string vazia se inválido
+  return months[monthNumber - 1] || '';
 }
 
 function formatDate(date: string | Date): string {
   let d: Date;
 
-  // Handle array input
   if (Array.isArray(date)) {
-    const [year, month, day, hours = 0, minutes = 0] = date; // Destructure with defaults
-    d = new Date(year, month - 1, day, hours, minutes); // Month is 0-indexed
+    const [year, month, day, hours = 0, minutes = 0] = date;
+    d = new Date(year, month - 1, day, hours, minutes);
   } else {
-    // Fallback to standard Date parsing
     d = new Date(date);
   }
 
   if (isNaN(d.getTime())) {
-    // If the date is invalid, return a fallback
     return 'Invalid date';
   }
 
