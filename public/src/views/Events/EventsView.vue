@@ -7,6 +7,12 @@
     </ion-header>
     <ion-content class="ion-padding">
       
+      <ion-fab horizontal="end">
+        <ion-fab-button @click="toggleDropdown">
+          <ion-icon :icon="filterCircleOutline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+
       <!-- Barra Horizontal de Eventos Promovidos -->
       <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
         <h2 class="subtitle">Promoted Events</h2>
@@ -39,35 +45,6 @@
             </ion-card>
           </router-link>
         </div>
-      </div>
-
-      <!-- Botão para abrir/fechar o filtro -->
-      <div class="button-container">
-        <button
-          class="filter-button"
-          @click="toggleDropdown"
-          data-testid="toggle-dropdown"
-        >
-          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-            <g
-              fill="none"
-              stroke="black"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="32"
-            >
-              <path d="m368 128h80" />
-              <path d="m64 128h240" />
-              <path d="m368 384h80" />
-              <path d="m64 384h240" />
-              <path d="m208 256h240" />
-              <path d="m64 256h80" />
-              <circle cx="336" cy="128" r="32" />
-              <circle cx="176" cy="256" r="32" />
-              <circle cx="336" cy="384" r="32" />
-            </g>
-          </svg>
-        </button>
       </div>
 
       <!-- Dropdown com filtros de categoria e data -->
@@ -148,6 +125,7 @@ import {
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories';
 import { IonPage } from '@ionic/vue';
+import { filterCircleOutline } from 'ionicons/icons';
 
 interface Event {
   id: number;
@@ -272,6 +250,7 @@ export default {
       formatDate,
       clearFilters,
       categoryColors,
+      filterCircleOutline
     };
   },
 };

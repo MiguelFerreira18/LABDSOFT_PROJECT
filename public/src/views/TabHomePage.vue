@@ -5,7 +5,7 @@
           <ion-title size="large">Home Page</ion-title>
         </ion-toolbar>
       </ion-header>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" id="main-content">
       <RewardsOverview />
       <EventsView />
     </ion-content>
