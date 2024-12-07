@@ -1,5 +1,6 @@
 <template>
   <ion-page>
+    <HeaderComponent title="Profile" />
     <ion-content class="content-center">
       <ion-grid class="profileInfo">
         <ion-row class="profile1">
@@ -129,6 +130,7 @@ import {
   personCircleOutline,
   trailSignOutline,
 } from 'ionicons/icons';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 // Reactive state to store user information
 const userInfo = ref({

@@ -1,136 +1,139 @@
 <template>
-  <ion-content class="ion-padding">
-    <h1 class="title">Events</h1>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Events</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-fab horizontal="end">
+        <ion-fab-button @click="toggleDropdown">
+          <ion-icon :icon="filterCircleOutline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
 
-    <!-- Barra Horizontal de Eventos Promovidos -->
-    <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
-      <h2 class="subtitle">Promoted Events</h2>
-      <div class="promoted-events-bar">
-        <!-- Cartões de Eventos Promovidos -->
-        <router-link
-          v-for="event in filteredPromotedEvents"
-          :key="event.id"
-          :to="`/event/EventDetail/${event.id}`"
-          class="clickable-card"
-          :data-testid="'promoted-event-' + event.id"
-        >
-          <ion-card>
-            <ion-card-header
-              :style="{
-                backgroundColor: categoryColors[event.category] || '#ccc',
-              }"
-            >
-              <ion-card-title>{{ event.title }}</ion-card-title>
-              <ion-card-subtitle>
-                {{ formatDate(event.startDate) }} -
-                {{ formatDate(event.endDate) }}
-              </ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content>
-              <p><strong>Creator:</strong> {{ event.creator.name }}</p>
-              <p><strong>Location:</strong> {{ event.location }}</p>
-              <p><strong>Category:</strong> {{ event.category }}</p>
-            </ion-card-content>
-          </ion-card>
-        </router-link>
-      </div>
-    </div>
+      <!-- Barra Horizontal de Eventos Promovidos -->
+      <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
+        <h2 class="subtitle">Promoted Events</h2>
+        <div class="promoted-events-bar">
+          <!-- Cartões de Eventos Promovidos -->
+          <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
+            <ion-card>
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
+                <ion-card-title>{{ event.title }}</ion-card-title>
+                <ion-card-subtitle>
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p><strong>Category:</strong> {{ event.category }}</p>
+              </ion-card-content>
+            </ion-card>
+           </ion-nav-link> -->
 
-    <!-- Botão para abrir/fechar o filtro -->
-    <div class="button-container">
-      <button
-        class="filter-button"
-        @click="toggleDropdown"
-        data-testid="toggle-dropdown"
-      >
-        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-          <g
-            fill="none"
-            stroke="black"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="32"
+          <router-link
+            v-for="event in filteredPromotedEvents"
+            :key="event.id"
+            :to="`/event/EventDetail/${event.id}`"
+            class="clickable-card"
+            :data-testid="'promoted-event-' + event.id"
           >
-            <path d="m368 128h80" />
-            <path d="m64 128h240" />
-            <path d="m368 384h80" />
-            <path d="m64 384h240" />
-            <path d="m208 256h240" />
-            <path d="m64 256h80" />
-            <circle cx="336" cy="128" r="32" />
-            <circle cx="176" cy="256" r="32" />
-            <circle cx="336" cy="384" r="32" />
-          </g>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Dropdown com filtros de categoria e data -->
-    <div v-if="showDropdown" class="dropdown-menu">
-      <label for="category-limit">Filter by Category:</label>
-      <ion-button
-        v-for="category in categories"
-        :key="category"
-        @click="toggleCategory(category)"
-        :data-testid="'filter-' + category"
-      >
-        {{ category }}
-      </ion-button>
-
-      <!-- Filtro por data -->
-      <div class="date-filter">
-        <label for="date-limit">Filter by Date:</label>
-        <input
-          style="background-color: var(--ion-color-light)"
-          id="date-limit"
-          type="date"
-          v-model="dateLimit"
-          data-testid="date-filter"
-        />
+            <ion-card>
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
+                <ion-card-title>{{ event.title }}</ion-card-title>
+                <ion-card-subtitle>
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p><strong>Category:</strong> {{ event.category }}</p>
+              </ion-card-content>
+            </ion-card>
+          </router-link>
+        </div>
       </div>
 
-      <ion-button
-        color="danger"
-        @click="clearFilters()"
-        class="clear-button"
-        data-testid="clear-filters"
-      >
-        Clear
-      </ion-button>
-    </div>
-
-    <!-- Cartões de Eventos -->
-    <div class="event-cards-container">
-      <div class="event-cards">
-        <router-link
-          v-for="event in filteredNonPromotedEvents"
-          :key="event.id"
-          :to="`/event/EventDetail/${event.id}`"
-          class="clickable-card"
-          :data-testid="'event-' + event.id"
+      <!-- Dropdown com filtros de categoria e data -->
+      <div v-if="showDropdown" class="dropdown-menu">
+        <label for="category-limit">Filter by Category:</label>
+        <ion-button
+          v-for="category in categories"
+          :key="category"
+          @click="toggleCategory(category)"
+          :data-testid="'filter-' + category"
         >
-          <ion-card>
-            <ion-card-header
-              :style="{
-                backgroundColor: categoryColors[event.category] || '#ccc',
-              }"
-            >
-              <ion-card-title>{{ event.title }}</ion-card-title>
-              <ion-card-subtitle>
-                {{ formatDate(event.startDate) }} -
-                {{ formatDate(event.endDate) }}
-              </ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content>
-              <p><strong>Creator:</strong> {{ event.creator.name }}</p>
-              <p><strong>Location:</strong> {{ event.location }}</p>
-              <p><strong>Category:</strong> {{ event.category }}</p>
-            </ion-card-content>
-          </ion-card>
-        </router-link>
+          {{ category }}
+        </ion-button>
+
+        <!-- Filtro por data -->
+        <div class="date-filter">
+          <label for="date-limit">Filter by Date:</label>
+          <input
+            style="background-color: var(--ion-color-light)"
+            id="date-limit"
+            type="date"
+            v-model="dateLimit"
+            data-testid="date-filter"
+          />
+        </div>
+
+        <ion-button
+          color="danger"
+          @click="clearFilters()"
+          class="clear-button"
+          data-testid="clear-filters"
+        >
+          Clear
+        </ion-button>
       </div>
-    </div>
-  </ion-content>
+
+      <!-- Cartões de Eventos -->
+      <div class="event-cards-container">
+        <div class="event-cards">
+          <router-link
+            v-for="event in filteredNonPromotedEvents"
+            :key="event.id"
+            :to="`/event/EventDetail/${event.id}`"
+            class="clickable-card"
+            :data-testid="'event-' + event.id"
+          >
+            <ion-card>
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
+                <ion-card-title>{{ event.title }}</ion-card-title>
+                <ion-card-subtitle>
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p><strong>Category:</strong> {{ event.category }}</p>
+              </ion-card-content>
+            </ion-card>
+          </router-link>
+        </div>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script lang="ts">
@@ -141,6 +144,9 @@ import {
 } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories';
+import { IonPage } from '@ionic/vue';
+import { filterCircleOutline } from 'ionicons/icons';
+import EventDetailsView from './EventDetailsView.vue';
 
 interface Event {
   id: number;
@@ -265,6 +271,8 @@ export default {
       formatDate,
       clearFilters,
       categoryColors,
+      filterCircleOutline,
+      EventDetailsView,
     };
   },
 };
