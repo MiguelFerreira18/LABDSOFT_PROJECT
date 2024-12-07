@@ -1,11 +1,16 @@
 <template>
+  <!-- <MenuComponent /> -->
   <ion-page>
-    <ion-header>
+    <HeaderComponent title="Event History" />
+    <!-- <ion-header>
       <ion-toolbar>
         <ion-title>Event History</ion-title>
+        <ion-buttons slot="end">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
       </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
+    </ion-header> -->
+    <ion-content id="main-content" class="ion-padding">
       <ion-button
         v-if="!isSeeingAttendedEvents"
         expand="block"
@@ -107,7 +112,11 @@ import { formatDate } from '@/lib/dateFormatter';
 import {
   IonHeader, 
   IonPage,
+  IonMenuButton,
+  IonButtons,
 } from '@ionic/vue';
+import MenuComponent from '@/components/MenuComponent.vue';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface Event {
   id: number;
