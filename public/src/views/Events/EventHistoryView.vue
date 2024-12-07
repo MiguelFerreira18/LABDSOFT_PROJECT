@@ -5,7 +5,7 @@
       <ion-button
         v-if="!isSeeingAttendedEvents"
         expand="block"
-        fill="clear"
+        fill="outline"
         shape="round"
         @click="toggleView"
       >
@@ -14,7 +14,7 @@
       <ion-button
         v-else
         expand="block"
-        fill="clear"
+        fill="outline"
         shape="round"
         @click="toggleView"
       >

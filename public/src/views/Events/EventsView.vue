@@ -18,6 +18,27 @@
         <h2 class="subtitle">Promoted Events</h2>
         <div class="promoted-events-bar">
           <!-- Cartões de Eventos Promovidos -->
+           <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
+            <ion-card>
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
+                <ion-card-title>{{ event.title }}</ion-card-title>
+                <ion-card-subtitle>
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p><strong>Category:</strong> {{ event.category }}</p>
+              </ion-card-content>
+            </ion-card>
+           </ion-nav-link> -->
+
           <router-link
             v-for="event in filteredPromotedEvents"
             :key="event.id"
@@ -126,6 +147,7 @@ import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories';
 import { IonPage } from '@ionic/vue';
 import { filterCircleOutline } from 'ionicons/icons';
+import EventDetailsView from './EventDetailsView.vue';
 
 interface Event {
   id: number;
@@ -250,7 +272,8 @@ export default {
       formatDate,
       clearFilters,
       categoryColors,
-      filterCircleOutline
+      filterCircleOutline,
+      EventDetailsView
     };
   },
 };

@@ -1,7 +1,6 @@
 <template>
+  <HeaderComponent title="Dashboard" />
   <ion-content class="ion-padding">
-    <h1 class="title">Dashboard</h1>
-
     <div v-if="loading" class="loading-spinner">
       <ion-spinner name="crescent"></ion-spinner>
     </div>
@@ -48,6 +47,7 @@ import {
   IonSpinner,
 } from '@ionic/vue';
 import { SendRequest } from '@/lib/request';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 const eventSummaries = ref<any>([]);
 const loading = ref(true);

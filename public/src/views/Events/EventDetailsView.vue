@@ -1,5 +1,13 @@
 <template>
   <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/events"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Event Details</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <ion-content :fullscreen="true" class="ion-padding">
       <ion-card v-if="event">
         <ion-card-header>
@@ -114,6 +122,8 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/vue';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
