@@ -47,7 +47,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'search',
-        component: EventHistoryView,
+        component: EventsView,
       },
       {
         path: 'events/create',

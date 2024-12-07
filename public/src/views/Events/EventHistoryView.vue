@@ -58,7 +58,9 @@
                   <ion-icon :icon="calendarOutline" slot="start"></ion-icon>
                   <ion-label>
                     <p>Date</p>
-                    <h3>{{ formatDateRange(event.startDate, event.endDate) }}</h3>
+                    <h3>
+                      {{ formatDateRange(event.startDate, event.endDate) }}
+                    </h3>
                   </ion-label>
                 </ion-item>
 
@@ -100,12 +102,7 @@ import {
   calendarClearOutline,
 } from 'ionicons/icons';
 import { formatDate } from '@/lib/dateFormatter';
-import {
-  IonHeader, 
-  IonPage,
-  IonMenuButton,
-  IonButtons,
-} from '@ionic/vue';
+import { IonHeader, IonPage, IonMenuButton, IonButtons } from '@ionic/vue';
 import MenuComponent from '@/components/common/MenuComponent.vue';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
 

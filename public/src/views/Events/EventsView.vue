@@ -6,7 +6,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      
       <ion-fab horizontal="end">
         <ion-fab-button @click="toggleDropdown">
           <ion-icon :icon="filterCircleOutline"></ion-icon>
@@ -18,7 +17,7 @@
         <h2 class="subtitle">Promoted Events</h2>
         <div class="promoted-events-bar">
           <!-- Cartões de Eventos Promovidos -->
-           <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
+          <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
             <ion-card>
               <ion-card-header
                 :style="{
@@ -273,7 +272,7 @@ export default {
       clearFilters,
       categoryColors,
       filterCircleOutline,
-      EventDetailsView
+      EventDetailsView,
     };
   },
 };
