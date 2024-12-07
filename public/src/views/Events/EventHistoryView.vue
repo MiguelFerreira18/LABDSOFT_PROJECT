@@ -1,15 +1,6 @@
 <template>
-  <!-- <MenuComponent /> -->
   <ion-page>
     <HeaderComponent title="Event History" />
-    <!-- <ion-header>
-      <ion-toolbar>
-        <ion-title>Event History</ion-title>
-        <ion-buttons slot="end">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header> -->
     <ion-content id="main-content" class="ion-padding">
       <ion-button
         v-if="!isSeeingAttendedEvents"
@@ -115,7 +106,7 @@ import {
   IonMenuButton,
   IonButtons,
 } from '@ionic/vue';
-import MenuComponent from '@/components/MenuComponent.vue';
+import MenuComponent from '@/components/common/MenuComponent.vue';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface Event {

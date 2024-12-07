@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from '@ionic/vue';
-import MenuComponent from '@/components/MenuComponent.vue';
+import MenuComponent from '@/components/common/MenuComponent.vue';
 
 // Define props
 defineProps({

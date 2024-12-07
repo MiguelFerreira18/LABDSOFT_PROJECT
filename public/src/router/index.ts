@@ -11,7 +11,7 @@ import AddEventView from '@/views/Events/AddEventView.vue';
 import MapView from '@/views/maps/MapView.vue';
 import HomeView from '@/views/TabHomePage.vue';
 import ProfileView from '@/views/TabProfilePage.vue';
-import FooterComponent from '@/components/FooterComponent.vue';
+import FooterComponent from '@/components/common/FooterComponent.vue';
 import { IsJWTExpired } from '@/lib/jwt';
 import { IsDataTheSame } from '@/lib/signUpUtil';
 
