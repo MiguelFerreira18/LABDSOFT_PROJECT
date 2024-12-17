@@ -113,7 +113,11 @@ public class UserInitialization implements CommandLineRunner {
                     .email("devInstitution@smartcity.com")
                     .name("devInstitution")
                     .password(passwordEncoder.encode("DevPassword$123"))
-                    .rating(0)
+                    .rating(4.55f)
+                    .address("Rua 10")
+                    .city("Vila Nova de Gaia")
+                    .country("Portugal")
+                    .birthDate(new Date())
                     .build();
             institution.addAuthority(new Role(Role.INSTITUTION));
             institutionRepo.save(institution);

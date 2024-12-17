@@ -17,7 +17,7 @@ public class UserView {
     String address;
     String city;
     String country;
-
+    float rating;
 
     public UserView(String id, String name, Set<Role> authorities) {
         this.id = id;
@@ -35,4 +35,18 @@ public class UserView {
         this.city = city;
         this.country = country;
     }
+
+    public UserView(String id, String name, Set<Role> authorities, Date birth, String gender, String address, String city, String country, float rating) {
+        this.id = id;
+        this.name = name;
+        this.authorities = authorities;
+        this.birthDate = birth;
+        this.gender = gender;
+        this.address = address;
+        this.city = city;
+        this.country = country;
+        this.rating = rating;
+    }
+
+
 }
