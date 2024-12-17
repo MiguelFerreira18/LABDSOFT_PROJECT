@@ -19,6 +19,12 @@
           </ion-card-subtitle>
         </ion-card-header>
         <ion-list>
+          <ion-item v-if="creatorRating !== null">
+            <ion-label>Creator Rating</ion-label>
+            <div class="star-rating">
+              <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= creatorRating }">&#9733;</span>
+            </div>
+          </ion-item>
           <ion-item>
             <ion-label>Description</ion-label>
             {{ event.description }}
@@ -48,12 +54,6 @@
             <ion-label>Rate this event</ion-label>
             <div class="star-rating">
               <span v-for="star in 5" :key="star" class="star" @click="rateEvent(star)" :class="{ filled: star <= userRating }">&#9733;</span>
-            </div>
-          </ion-item>
-          <ion-item v-if="creatorRating !== null">
-            <ion-label>Creator Rating</ion-label>
-            <div class="star-rating">
-              <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= creatorRating }">&#9733;</span>
             </div>
           </ion-item>
         </ion-list>
