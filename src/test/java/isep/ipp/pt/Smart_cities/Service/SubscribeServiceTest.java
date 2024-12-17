@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.BaseTest;
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.Subscribe;
@@ -16,8 +17,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,8 +32,8 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class SubscribeServiceTest {
+
+class SubscribeServiceTest extends BaseTest {
 
     @Autowired
     private SubscribeService subscribeService;
@@ -43,9 +50,9 @@ class SubscribeServiceTest {
 
         User user = userRepo.findByEmail("AnyNormalUser@gmail.com").orElseThrow();
 
-        Event event1 = eventRepository.save(new Event("AnyTitle1", "AnyLocation1", LocalDate.now(), LocalDate.now().plusDays(1), "AnyDescription1", user ));
-        Event event2 = eventRepository.save(new Event("AnyTitle2", "AnyLocation2", LocalDate.now(), LocalDate.now().plusDays(2), "AnyDescription2", user));
-        Event event3 = eventRepository.save(new Event("AnyTitle3", "AnyLocation3", LocalDate.now(), LocalDate.now().plusDays(3), "AnyDescription3", user));
+        Event event1 = eventRepository.save(new Event("AnyTitle1", "AnyLocation1", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), "AnyDescription1", user ));
+        Event event2 = eventRepository.save(new Event("AnyTitle2", "AnyLocation2", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3), "AnyDescription2", user));
+        Event event3 = eventRepository.save(new Event("AnyTitle3", "AnyLocation3", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(4), "AnyDescription3", user));
 
         subscribeRepo.save(Subscribe.builder().id(10L).user(user).event(event1).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());
         subscribeRepo.save(Subscribe.builder().id(11L).user(user).event(event2).subscriptionStatus(SubscriptionStatus.SUBSCRIBED).build());

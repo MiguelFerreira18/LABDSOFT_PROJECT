@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 import router from './router';
 
 import { IonicVue } from '@ionic/vue';
@@ -41,10 +41,11 @@ import '@ionic/vue/css/typography.css';
 /* Theme variables */
 import './theme/variables.css';
 import './theme/custom.css';
+import { initializePushNotifications } from './lib/Notification/push-notification';
 
-const app = createApp(App)
-  .use(IonicVue)
-  .use(router);
+const app = createApp(App).use(IonicVue).use(router);
+
+initializePushNotifications();
 
 router.isReady().then(() => {
   app.mount('#app');

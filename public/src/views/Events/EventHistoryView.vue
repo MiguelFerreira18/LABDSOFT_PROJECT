@@ -1,23 +1,43 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding">
-      <ion-button v-if="!isSeeingAttendedEvents" expand="block" fill="clear" shape="round" @click="toggleView">
+    <HeaderComponent title="Event History" />
+    <ion-content id="main-content" class="ion-padding">
+      <ion-button
+        v-if="!isSeeingAttendedEvents"
+        expand="block"
+        fill="outline"
+        shape="round"
+        @click="toggleView"
+      >
         See Subscribed Events
       </ion-button>
-      <ion-button v-else expand="block" fill="clear" shape="round" @click="toggleView">
+      <ion-button
+        v-else
+        expand="block"
+        fill="outline"
+        shape="round"
+        @click="toggleView"
+      >
         See Attended Events
       </ion-button>
       <ion-list v-if="events.length > 0">
         <!-- Events list -->
         <div class="event-grid">
-          <ion-card v-for="event in events" :key="event.id" @click="handlePagePush(event.id)" class="event-card">
+          <ion-card
+            v-for="event in events"
+            :key="event.id"
+            @click="handlePagePush(event.id)"
+            class="event-card"
+          >
             <!-- Category chips -->
             <div class="ion-padding-horizontal ion-padding-top">
               <ion-label>{{ event.category }}</ion-label>
             </div>
 
             <ion-card-header>
-              <ion-card-title class="ion-padding-bottom">{{ event.title }}</ion-card-title>
+              <ion-card-title class="ion-padding-bottom">{{
+                event.title
+              }}</ion-card-title>
             </ion-card-header>
 
             <ion-card-content>
@@ -38,7 +58,9 @@
                   <ion-icon :icon="calendarOutline" slot="start"></ion-icon>
                   <ion-label>
                     <p>Date</p>
-                    <h3>{{ formatDateRange(event.startDate, event.endDate) }}</h3>
+                    <h3>
+                      {{ formatDateRange(event.startDate, event.endDate) }}
+                    </h3>
                   </ion-label>
                 </ion-item>
 
@@ -58,7 +80,10 @@
 
       <!-- Empty state -->
       <div v-else class="empty-state ion-text-center ion-padding">
-        <ion-icon :icon="calendarClearOutline" class="empty-state-icon"></ion-icon>
+        <ion-icon
+          :icon="calendarClearOutline"
+          class="empty-state-icon"
+        ></ion-icon>
         <h2>No Events Yet</h2>
         <p>Your upcoming events will appear here</p>
       </div>
@@ -67,32 +92,37 @@
 </template>
 
 <script setup lang="ts">
-
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { SendRequest } from '@/lib/request';
-import { IonPage, IonContent, IonButton, IonList, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonIcon } from '@ionic/vue';
-import { calendarOutline, locationOutline, personOutline, calendarClearOutline } from 'ionicons/icons';
+import router from '@/router';
+import { onMounted, ref } from 'vue';
+import {
+  calendarOutline,
+  locationOutline,
+  personOutline,
+  calendarClearOutline,
+} from 'ionicons/icons';
+import { formatDate } from '@/lib/dateFormatter';
+import { IonHeader, IonPage, IonMenuButton, IonButtons } from '@ionic/vue';
+import MenuComponent from '@/components/common/MenuComponent.vue';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface Event {
-    id: number;
-    title: string;
-    name: string;
-    endDate: string;
-    startDate: string;
-    description: string;
-    location: string;
-    creator: any;
-    category: string;
-    rating: number;
+  id: number;
+  title: string;
+  name: string;
+  endDate: string;
+  startDate: string;
+  description: string;
+  location: string;
+  creator: any;
+  category: string;
 }
 
 const events = ref<Event[]>([]);
 const creator = ref<any>({});
 const isSeeingAttendedEvents = ref(true);
-const router = useRouter();
 
-async function fetchEvents(endpoint: string) {
+async function fetchEvents(endpoint: any) {
   const userId = localStorage.getItem('uuid') || '';
   const response = await SendRequest(`${endpoint}${userId}`, 'GET');
   const data = await response.json();
@@ -105,8 +135,8 @@ async function fetchEvents(endpoint: string) {
 }
 
 function sortEventsByDate(eventsList: Event[]) {
-  return eventsList.sort((a, b) =>
-    new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+  return eventsList.sort(
+    (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
   );
 }
 
@@ -130,8 +160,8 @@ async function toggleView() {
 }
 
 function formatDateRange(startDate: string, endDate: string) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  return `${start.toDateString()} - ${end.toDateString()}`;
+  const start = formatDate(startDate);
+  const end = formatDate(endDate);
+  return `${start} - ${end}`;
 }
 </script>

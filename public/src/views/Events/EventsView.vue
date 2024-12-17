@@ -1,20 +1,60 @@
 <template>
   <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Events</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <ion-content class="ion-padding">
-      <h1 class="title">Events</h1>
+      <ion-fab horizontal="end">
+        <ion-fab-button @click="toggleDropdown">
+          <ion-icon :icon="filterCircleOutline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
 
       <!-- Barra Horizontal de Eventos Promovidos -->
       <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
         <h2 class="subtitle">Promoted Events</h2>
         <div class="promoted-events-bar">
           <!-- Cartões de Eventos Promovidos -->
-          <router-link v-for="event in filteredPromotedEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
-            class="clickable-card" :data-testid="'promoted-event-' + event.id">
+          <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
             <ion-card>
-              <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
                 <ion-card-title>{{ event.title }}</ion-card-title>
                 <ion-card-subtitle>
-                  {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p><strong>Category:</strong> {{ event.category }}</p>
+              </ion-card-content>
+            </ion-card>
+           </ion-nav-link> -->
+
+          <router-link
+            v-for="event in filteredPromotedEvents"
+            :key="event.id"
+            :to="`/event/EventDetail/${event.id}`"
+            class="clickable-card"
+            :data-testid="'promoted-event-' + event.id"
+          >
+            <ion-card>
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
+                <ion-card-title>{{ event.title }}</ion-card-title>
+                <ion-card-subtitle>
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
                 </ion-card-subtitle>
               </ion-card-header>
               <ion-card-content>
@@ -27,40 +67,36 @@
         </div>
       </div>
 
-      <!-- Botão para abrir/fechar o filtro -->
-      <div class="button-container">
-        <button class="filter-button" @click="toggleDropdown" data-testid="toggle-dropdown">
-          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="32">
-              <path d="m368 128h80" />
-              <path d="m64 128h240" />
-              <path d="m368 384h80" />
-              <path d="m64 384h240" />
-              <path d="m208 256h240" />
-              <path d="m64 256h80" />
-              <circle cx="336" cy="128" r="32" />
-              <circle cx="176" cy="256" r="32" />
-              <circle cx="336" cy="384" r="32" />
-            </g>
-          </svg>
-        </button>
-      </div>
-
       <!-- Dropdown com filtros de categoria e data -->
       <div v-if="showDropdown" class="dropdown-menu">
         <label for="category-limit">Filter by Category:</label>
-        <ion-button v-for="category in categories" :key="category" @click="toggleCategory(category)"
-          :data-testid="'filter-' + category">
+        <ion-button
+          v-for="category in categories"
+          :key="category"
+          @click="toggleCategory(category)"
+          :data-testid="'filter-' + category"
+        >
           {{ category }}
         </ion-button>
 
         <!-- Filtro por data -->
         <div class="date-filter">
           <label for="date-limit">Filter by Date:</label>
-          <input id="date-limit" type="date" v-model="dateLimit" data-testid="date-filter" />
+          <input
+            style="background-color: var(--ion-color-light)"
+            id="date-limit"
+            type="date"
+            v-model="dateLimit"
+            data-testid="date-filter"
+          />
         </div>
 
-        <ion-button color="danger" @click="clearFilters()" class="clear-button" data-testid="clear-filters">
+        <ion-button
+          color="danger"
+          @click="clearFilters()"
+          class="clear-button"
+          data-testid="clear-filters"
+        >
           Clear
         </ion-button>
       </div>
@@ -68,13 +104,23 @@
       <!-- Cartões de Eventos -->
       <div class="event-cards-container">
         <div class="event-cards">
-          <router-link v-for="event in filteredNonPromotedEvents" :key="event.id" :to="`/event/EventDetail/${event.id}`"
-            class="clickable-card" :data-testid="'event-' + event.id">
+          <router-link
+            v-for="event in filteredNonPromotedEvents"
+            :key="event.id"
+            :to="`/event/EventDetail/${event.id}`"
+            class="clickable-card"
+            :data-testid="'event-' + event.id"
+          >
             <ion-card>
-              <ion-card-header :style="{ backgroundColor: categoryColors[event.category] || '#ccc' }">
+              <ion-card-header
+                :style="{
+                  backgroundColor: categoryColors[event.category] || '#ccc',
+                }"
+              >
                 <ion-card-title>{{ event.title }}</ion-card-title>
                 <ion-card-subtitle>
-                  {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+                  {{ formatDate(event.startDate) }} -
+                  {{ formatDate(event.endDate) }}
                 </ion-card-subtitle>
               </ion-card-header>
               <ion-card-content>
@@ -92,9 +138,15 @@
 
 <script lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { fetchNonPromotedEvents, fetchPromotedEvents } from '@/lib/eventRequests';
+import {
+  fetchNonPromotedEvents,
+  fetchPromotedEvents,
+} from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories';
+import { IonPage } from '@ionic/vue';
+import { filterCircleOutline } from 'ionicons/icons';
+import EventDetailsView from './EventDetailsView.vue';
 
 interface Event {
   id: number;
@@ -140,12 +192,17 @@ export default {
           selectedCategories.value.includes(event.category);
 
         const isDateMatch =
-          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+          !dateLimit.value ||
+          new Date(event.endDate) <= new Date(dateLimit.value);
 
         return isCategoryMatch && isDateMatch;
       });
 
-      return filteredEvents.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      // Ordena os eventos pela data de início do mais próximo ao mais distante
+      return filteredEvents.sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      );
     });
 
     const filteredPromotedEvents = computed(() => {
@@ -155,12 +212,17 @@ export default {
           selectedCategories.value.includes(event.category);
 
         const isDateMatch =
-          !dateLimit.value || new Date(event.endDate) <= new Date(dateLimit.value);
+          !dateLimit.value ||
+          new Date(event.endDate) <= new Date(dateLimit.value);
 
         return isCategoryMatch && isDateMatch;
       });
 
-      return filteredEvents.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      // Ordena os eventos pela data de início do mais próximo ao mais distante
+      return filteredEvents.sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      );
     });
 
     const toggleDropdown = () => {
@@ -200,6 +262,8 @@ export default {
       formatDate,
       clearFilters,
       categoryColors,
+      filterCircleOutline,
+      EventDetailsView,
     };
   },
 };
@@ -212,11 +276,13 @@ export default {
   font-weight: bold;
   color: black;
   margin-bottom: 40px;
+  /* Aumenta o espaçamento inferior entre o título e o conteúdo */
   animation: fadeIn 1s ease-out;
 }
 
 .promoted-events-section {
   margin-bottom: 40px;
+  /* Aumenta o espaçamento inferior entre a seção de eventos promovidos e o conteúdo abaixo */
 }
 
 .promoted-events-bar {
@@ -257,7 +323,6 @@ ion-card-header {
   padding: 10px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-
 }
 
 ion-card-content {
@@ -270,12 +335,12 @@ ion-card-title {
   text-transform: none;
   font-size: 20px;
   font-weight: bold;
-  color: var(--ion-color-dark);
+  color: black;
 }
 
 ion-card-subtitle {
   font-size: 14px;
-  color: var(--ion-color-dark)
+  color: black;
 }
 
 .clickable-card {
@@ -289,16 +354,19 @@ ion-card-subtitle {
 .dropdown-menu {
   position: fixed;
   top: 130px;
+  /* Ajusta para ficar logo abaixo do botão */
   right: 16px;
   background: var(--ion-color-light);
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 200;
+  /* Garante que o dropdown sobreponha outros elementos */
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 250px;
+  /* Ajuste a largura para que não fique tão grande */
 }
 
 .date-filter {
@@ -310,7 +378,7 @@ ion-card-subtitle {
 
 .date-filter label {
   font-weight: bold;
-  color: var(--ion-color-dark);
+  color: blue;
 }
 
 .dropdown-menu label {
@@ -336,6 +404,7 @@ ion-card-subtitle {
   width: 48px;
   height: 48px;
   z-index: 100;
+  /* Garante que o botão sempre fique visível */
 }
 
 .filter-button svg {
@@ -356,11 +425,14 @@ ion-card-subtitle {
 .promoted-events-section,
 .event-cards-container {
   z-index: 1;
+  /* Garante que os eventos fiquem abaixo do dropdown */
 }
 
 .promoted-events-section h2 {
   margin-top: 60px;
+  /* Aumenta o espaçamento entre o ícone do filtro e o título */
   margin-bottom: 16px;
+  /* Espaçamento inferior do título */
   font-size: 1.5rem;
   font-weight: bold;
   color: black;
@@ -375,6 +447,7 @@ ion-card-subtitle {
 .promoted-events-section,
 .event-cards-container {
   z-index: 1;
+  /* Garante que os eventos fiquem abaixo do dropdown */
 }
 
 .clear-button {

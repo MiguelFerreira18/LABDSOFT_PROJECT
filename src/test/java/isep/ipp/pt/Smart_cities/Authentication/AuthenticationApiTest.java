@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Authentication;
 
+import isep.ipp.pt.Smart_cities.BaseTest;
 import isep.ipp.pt.Smart_cities.Model.UserModel.UserView;
 import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import isep.ipp.pt.Smart_cities.Service.UserService;
@@ -11,12 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
-class AuthenticationApiTest {
+
+class AuthenticationApiTest extends BaseTest {
+
+
     private static UserService staticUserService;
     @Autowired
     private AuthenticationApi authenticationApi;
@@ -24,8 +32,6 @@ class AuthenticationApiTest {
     private UserService userService;
     @Autowired
     private UserRepo userRepo;
-
-
 
 
     @BeforeAll
@@ -40,7 +46,7 @@ class AuthenticationApiTest {
             "goodname, myEmail@hotmail.com, IsAPassword%123, IsAPassword%123,USER",
             "nonya, businessEmail@business.pt, AnyNormalPassword@123, AnyNormalPassword@123,USER"
     })
-    void testSignupWithValidData(String name, String email, String password, String repeatPassword,Types type) {
+    void testSignupWithValidData(String name, String email, String password, String repeatPassword, Types type) {
         SignUpRequest request = new SignUpRequest();
         request.setType(type);
         request.setName(name);
@@ -54,6 +60,7 @@ class AuthenticationApiTest {
         assertNotNull(userView);
         assertEquals(name, userView.getName());
     }
+
     @ParameterizedTest
     @CsvSource({
             "anyName, email@gmail.com,Password$123,Passwor$12345",
@@ -71,6 +78,7 @@ class AuthenticationApiTest {
         ResponseEntity<UserView> response = authenticationApi.signup(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
+
     @ParameterizedTest
     @CsvSource({
             "anyName, emailgmail.com,Password$123,Password$123",
@@ -88,6 +96,7 @@ class AuthenticationApiTest {
         ResponseEntity<UserView> response = authenticationApi.signup(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
+
     @ParameterizedTest
     @CsvSource({
             "anyName, emailgmail.com,Password+123,Password123",
@@ -105,6 +114,7 @@ class AuthenticationApiTest {
         ResponseEntity<UserView> response = authenticationApi.signup(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
+
     @ParameterizedTest
     @CsvSource({
             "anyName, email@gmail.com,Pa+1,Pa+1",
@@ -122,6 +132,7 @@ class AuthenticationApiTest {
         ResponseEntity<UserView> response = authenticationApi.signup(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
+
     @ParameterizedTest
     @CsvSource({
             "justabignamewithnosense, emailgmaill.com,Password+123,Password123",
@@ -206,9 +217,4 @@ class AuthenticationApiTest {
         ResponseEntity<UserView> response = authenticationApi.login(request);
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
-
-    
-
-
-
 }

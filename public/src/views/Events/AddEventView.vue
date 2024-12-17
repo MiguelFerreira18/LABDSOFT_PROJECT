@@ -5,7 +5,7 @@
         <ion-title>Create New Event</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" class="ion-padding">
+    <ion-content class="ion-padding">
       <form @submit.prevent="addEvent">
         <ion-input
           class="ion-margin-vertical"
@@ -27,10 +27,10 @@
           v-model="event.location"
           required
         ></ion-input>
-        <ion-button @click="navigateToMap" size="small" fill="outline">
-          <ion-icon slot="start" :icon="navigateOutline"></ion-icon>
-          Select Location On Map
-        </ion-button>
+        <ion-button @click="navigateToMap" size="small" fill="outline"
+          >S<ion-icon slot="start" :icon="navigateOutline"></ion-icon>elect
+          Location On Map</ion-button
+        >
         <ion-input
           class="ion-margin-vertical"
           label="Start Date"
@@ -51,6 +51,24 @@
           v-model="event.endDate"
           required
         ></ion-input>
+        <ion-button
+          @click="() => (wantAlimit = !wantAlimit)"
+          size="small"
+          fill="outline"
+          >{{ wantAlimit ? 'Define your limit' : 'Add a limit' }}</ion-button
+        >
+        <ion-input
+          v-if="wantAlimit"
+          class="ion-margin-vertical"
+          label="Number Limit"
+          fill="outline"
+          label-placement="floating"
+          type="number"
+          id="limit"
+          v-model="event.limit"
+          min="0"
+          value="0"
+        ></ion-input>
         <ion-textarea
           class="ion-margin-vertical"
           label="Description"
@@ -68,7 +86,11 @@
           @ionChange="handleCategoryChange"
           :key="'category-select'"
         >
-          <ion-select-option v-for="category in categories" :value="category" :key="category">
+          <ion-select-option
+            v-for="category in categories"
+            :value="category"
+            :key="category"
+          >
             {{ category }}
           </ion-select-option>
         </ion-select>
@@ -83,18 +105,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { SendRequest } from "@/lib/request";
-import { categories } from "@/lib/categories";
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonSelect, IonButton, IonSelectOption, IonTextarea, IonIcon } from '@ionic/vue';
+import { SendRequest } from '@/lib/request';
+import { categories } from '@/lib/categories';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonInput,
+  IonSelect,
+  IonButton,
+  IonSelectOption,
+  IonTextarea,
+  IonIcon,
+} from '@ionic/vue';
 import { navigateOutline } from 'ionicons/icons';
-import { locationState } from "@/stateManagement/locationState";
+import { locationState } from '@/stateManagement/locationState';
 
 const router = useRouter();
 const event = ref<any>({});
+const wantAlimit = ref<boolean>(false);
 const fetchedEvent = ref<any>({});
-const errorMessage = ref("")
+const errorMessage = ref('');
 
 function handleCategoryChange(domEvent: any) {
   event.value.category = domEvent.target.value;
@@ -109,10 +144,11 @@ async function addEvent() {
       endDate: event.value.endDate,
       description: event.value.description,
       category: event.value.category,
+      limit: giveLimit(),
       creatorID: localStorage.getItem('uuid') || '',
       latitude: event.value.latitude,
       longitude: event.value.longitude,
-    }
+    };
     console.log(payload);
     const response = await SendRequest('/api/events', 'POST', payload);
     const data = await response.json();
@@ -120,20 +156,36 @@ async function addEvent() {
     if (response.ok) {
       router.push(`/event/EventDetail/${fetchedEvent.value.id}`);
     } else {
-      errorMessage.value = "Failed to create event. Please try again.";
+      errorMessage.value = 'Failed to create event. Please try again.';
     }
   } catch (error) {
-    errorMessage.value = "Failed to create event. Please try again.";
+    errorMessage.value = 'Failed to create event. Please try again.';
+  }
+}
+
+function giveLimit() {
+  if (wantAlimit.value && event.value.limit > 0) {
+    return event.value.limit;
+  } else {
+    return 0;
   }
 }
 
 function navigateToMap() {
   locationState.onLocationSelected = handleLocationSelected;
-  router.push({ name: 'map'});
+  router.push({ name: 'map' });
 }
 
 // Handle location selected from map
-function handleLocationSelected({ latitude, longitude, address }: { latitude: number; longitude: number; address: string }) {
+function handleLocationSelected({
+  latitude,
+  longitude,
+  address,
+}: {
+  latitude: number;
+  longitude: number;
+  address: string;
+}) {
   console.log(`Lat: ${latitude}, Lng: ${longitude}`);
   event.value.latitude = latitude;
   event.value.longitude = longitude;

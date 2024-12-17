@@ -1,6 +1,8 @@
+import { SendRequest } from './request';
+
 export function ConfirmPasswordMatch(
   password: string,
-  confirmPassword: string
+  confirmPassword: string,
 ) {
   return password === confirmPassword;
 }
@@ -15,4 +17,20 @@ export function IsAGoodPassword(password: string) {
   );
 }
 
-export default { ConfirmPasswordMatch, IsAGoodPassword };
+export async function IsDataTheSame() {
+  const email = localStorage.getItem('email');
+  const id = localStorage.getItem('uuid');
+  if (!email || !id) {
+    return false;
+  }
+  const request = await SendRequest(`/api/users/info/${email}`, 'GET');
+  const data = await request.json();
+  console.log(data);
+
+  if (data) {
+    return email === data.email && data.id == id;
+  }
+  return false;
+}
+
+export default { ConfirmPasswordMatch, IsAGoodPassword, IsDataTheSame };

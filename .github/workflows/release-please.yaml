@@ -4,6 +4,8 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
+  id-token: write
 
 name: release-please
 
@@ -28,3 +30,5 @@ jobs:
           # this is a built-in strategy in release-please, see "Action Inputs"
           # for more options
           release-type: simple
+          package-name: labdsoft-project
+          

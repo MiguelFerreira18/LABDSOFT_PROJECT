@@ -6,17 +6,17 @@ import isep.ipp.pt.Smart_cities.Model.SubscriptionStatus;
 public class SubscribeResponseDTO {
     private Long id;
     private Event event;
-    private int code;
+    private String QRData;
     private SubscriptionStatus status;
     private Double rate;
 
     public SubscribeResponseDTO() {
     }
 
-    public SubscribeResponseDTO(Long id, Event event, int code, SubscriptionStatus status, double rate) {
+    public SubscribeResponseDTO(Long id, Event event, String QRData, SubscriptionStatus status) {
         this.id = id;
         this.event = event;
-        this.code = code;
+        this.QRData = QRData;
         this.status = status;
         this.rate = rate;
     }
@@ -37,12 +37,12 @@ public class SubscribeResponseDTO {
         this.event = event;
     }
 
-    public int getCode() {
-        return code;
+    public String getQRData() {
+        return QRData;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setQRData(String QRData) {
+        this.QRData = QRData;
     }
 
     public SubscriptionStatus getStatus() {

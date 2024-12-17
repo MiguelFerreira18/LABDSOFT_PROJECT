@@ -1,14 +1,22 @@
 <template>
   <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/events"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Event Details</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <ion-content :fullscreen="true" class="ion-padding">
       <ion-card v-if="event">
         <ion-card-header>
           <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
           <ion-card-title>{{ event.title }}</ion-card-title>
           <ion-card-subtitle
-            >Subscribers: {{ numberOfSubscribers }}</ion-card-subtitle
+            >Subscribers: {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers
+            }}{{ event.limit == 0 ? '' : '/' + event.limit }}</ion-card-subtitle
           >
-          <ion-card-subtitle>Rate: {{ event.rating }}</ion-card-subtitle>
         </ion-card-header>
         <ion-list>
           <ion-item>
@@ -30,37 +38,37 @@
             <ion-label>Creator</ion-label>
             {{ creator.name }}
           </ion-item>
-          <ion-item>
-            <ion-label>Rate this event</ion-label>
-            <ion-range
-              v-model="rating"
-              :min="0"
-              :max="5"
-              :step="1"
-              :snaps="true"
-              :ticks="true"
-              :pin="true"
-              @ionChange="handleRatingChange"
-              :disabled="hasRated"
-            >
-              <ion-icon slot="start" name="star-outline"></ion-icon>
-              <ion-icon slot="end" name="star"></ion-icon>
-            </ion-range>
-          </ion-item>
         </ion-list>
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="auto">
+            <canvas
+              v-if="hasEventStarted() && !hasAttended && !isOwnerOfTheEvent()"
+              ref="canvas"
+            ></canvas>
+            <ion-button
+              @click="handleScanQrCode"
+              v-else-if="hasEventStarted() && isOwnerOfTheEvent()"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="warning"
+            >
+              Scan QR Codes
+            </ion-button>
+          </ion-col>
+        </ion-row>
         <ion-button
-          v-if="hasAttendedAndEventAsPassed()"
-          @click="handleClaimReward"
-          :disabled="hasAttended"
+          v-if="hasLimitReached() && !isOwner()"
+          :disabled="true"
           expand="block"
           fill="clear"
           shape="round"
-          color="success"
+          color="danger"
         >
-          Claim Reward
+          No more subscriptions are being accepted
         </ion-button>
         <ion-button
-          v-else-if="!isSubscribed"
+          v-else-if="!isSubscribed && !isOwner()"
           @click="handleSubscription"
           :disabled="hasAttended"
           expand="block"
@@ -71,7 +79,7 @@
           Subscribe
         </ion-button>
         <ion-button
-          v-else
+          v-else-if="!isOwner()"
           @click="handleUnsubscribe"
           expand="block"
           fill="clear"
@@ -114,52 +122,73 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonRange,
-  IonIcon,
-} from "@ionic/vue";
-import { formatDate } from "@/lib/dateFormatter";
-import { SendRequest } from "@/lib/request";
-import { onMounted, ref, computed } from "vue";
-import { useRoute } from "vue-router";
-import { toastController } from "@ionic/vue";
+  IonButtons,
+  IonBackButton,
+} from '@ionic/vue';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
+import { formatDate } from '@/lib/dateFormatter';
+import { SendRequest } from '@/lib/request';
+import { onMounted, ref, computed, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
+import { toastController } from '@ionic/vue';
+import QRCode from 'qrcode';
 
+const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
 const creator = ref<any>({});
 const numberOfSubscribers = ref(0);
 const isSubscribed = ref(false);
 const hasAttended = ref(false);
 const subbedEvent = ref<any>({});
-const hasRated = ref(false); // Adicionando a definição de hasRated
 const route = useRoute();
-const isLoggedIn = computed(() => !!localStorage.getItem("token"));
-const rating = ref<number>(0);
+const isLoggedIn = computed(() => !!localStorage.getItem('token'));
+const scanResult = ref<string | null>(null);
 
 onMounted(async () => {
   await getCurrentEvent();
   await getNumberOfSubscribers();
   const { data, response } = await getIsSubscribed();
-  if (response.ok && data && data.status === "ATTENDED") {
+  if (response.ok && data && data.status === 'ATTENDED') {
     hasAttended.value = true;
     isSubscribed.value = true;
     subbedEvent.value = data;
-  } else if (response.ok && data && data.status === "SUBSCRIBED") {
+  } else if (response.ok && data && data.status === 'SUBSCRIBED') {
     subbedEvent.value = data;
     isSubscribed.value = true;
+
+    getQrCodeIfEventHasStarted(subbedEvent.value.qrdata);
   }
 });
+
+function hasEventStarted() {
+  if (!subbedEvent.value?.event) return false;
+  const event = subbedEvent.value.event;
+
+  if (event.startDate && Array.isArray(event.startDate)) {
+    const [year, month, day] = event.startDate;
+    const startDate = new Date(year, month - 1, day);
+    return startDate <= new Date();
+  }
+  return false;
+}
+
+function isOwnerOfTheEvent() {
+  return creator.value.id === localStorage.getItem('uuid');
+}
 
 async function handleSubscription() {
   if (isSubscribed.value) return;
   const payload: Record<string, string> = {
-    uuid: localStorage.getItem("uuid") || "",
+    uuid: localStorage.getItem('uuid') || '',
     eventId: Array.isArray(route.params.id)
       ? route.params.id[0]
-      : route.params.id || "",
+      : route.params.id || '',
   };
   const response = await SendRequest(
-    "/subscription/subscribe",
-    "POST",
-    payload
+    '/subscription/subscribe',
+    'POST',
+    payload,
   );
   if (response.ok) {
     const { data } = await response.json();
@@ -171,40 +200,25 @@ async function handleSubscription() {
 async function handleClaimReward() {
   if (hasAttended.value) return;
   const response = await SendRequest(
-    `/api/rewards/claim/${localStorage.getItem("uuid")}/${route.params.id}`,
-    "POST"
+    `/api/rewards/claim/${localStorage.getItem('uuid')}/${route.params.id}`,
+    'POST',
   );
   if (response.ok) {
     hasAttended.value = true;
   }
 }
 
-function hasAttendedAndEventAsPassed() {
-  if (!subbedEvent.value?.event) return false;
-  const event = subbedEvent.value.event;
-
-  if (event.endDate && Array.isArray(event.endDate)) {
-    const [year, month, day] = event.endDate;
-    const endDate = new Date(year, month - 1, day);
-    const hasPassedEndDate = new Date() > endDate;
-
-    return hasPassedEndDate;
-  }
-
-  return false;
-}
-
 async function handleUnsubscribe() {
   if (!isSubscribed.value && hasAttended.value) return;
   if (subbedEvent.value === undefined) {
     const { data, response } = await getIsSubscribed();
-    if (response.ok && data.status === "SUBSCRIBED") {
+    if (response.ok && data.status === 'SUBSCRIBED') {
       subbedEvent.value = data;
     }
   }
   const response = await SendRequest(
     `/subscription/unsubscribe/${subbedEvent.value.id}`,
-    "POST"
+    'POST',
   );
   if (response.ok) {
     isSubscribed.value = false;
@@ -216,46 +230,72 @@ async function getIsSubscribed() {
     ? route.params.id[0]
     : route.params.id;
   const response = await SendRequest(
-    `/subscription/isSubscribed/${localStorage.getItem("uuid")}/${eventId}`,
-    "GET"
+    `/subscription/isSubscribed/${localStorage.getItem('uuid')}/${eventId}`,
+    'GET',
   );
   const { data } = await response.json();
-  if (data.rate) {
-    hasRated.value = true; // Atualizando hasRated corretamente
-  }
   return { data, response };
 }
 
 async function handlePromoteEvent() {
-  const userId = localStorage.getItem("uuid");
+  const userId = localStorage.getItem('uuid');
   const eventId = Array.isArray(route.params.id)
     ? route.params.id[0]
     : route.params.id;
 
   if (!userId || !eventId) {
-    console.error("Missing userId or eventId.");
+    console.error('Missing userId or eventId.');
     return;
   }
 
   const response = await SendRequest(
     `/api/events/${eventId}/promote?userId=${userId}`,
-    "POST"
+    'POST',
   );
 
   if (response.ok) {
-    showToast("Event promoted successfully!", "success");
+    showToast('Event promoted successfully!', 'success');
   } else {
-    showToast("You have already promoted an event.", "danger");
+    showToast('You have already promoted an event.', 'danger');
   }
 }
 
-async function showToast(message: string, color: "success" | "danger") {
+async function handleScanQrCode() {
+  try {
+    const isAvailable = Capacitor.isPluginAvailable('Camera');
+    if (!isAvailable) {
+      alert('Camera plugin not available');
+      return;
+    }
+    const result = await CapacitorBarcodeScanner.scanBarcode({
+      hint: 0 || 17,
+      cameraDirection: 1,
+    });
+
+    if (result && result.ScanResult) {
+      scanResult.value = result.ScanResult;
+      const response = await SendRequest(`${scanResult.value}`, 'POST');
+      if (response.ok) {
+        showToast('QR Code scanned successfully!', 'success');
+      } else {
+        showToast('Failed to scan QR Code', 'danger');
+      }
+    } else {
+      alert('No barcode detected');
+    }
+  } catch (error) {
+    console.error('Barcode scan error:', error);
+    alert('Failed to scan barcode');
+  }
+}
+
+async function showToast(message: string, color: 'success' | 'danger') {
   const toast = await toastController.create({
     message: message,
     duration: 2500,
-    position: "top",
+    position: 'top',
     color: color,
-    icon: "trophy-outline",
+    icon: 'trophy-outline',
   });
 
   await toast.present();
@@ -265,11 +305,11 @@ async function getCurrentEvent() {
   const eventId = Array.isArray(route.params.id)
     ? route.params.id[0]
     : route.params.id;
-  const response = await SendRequest(`/api/events/${eventId}`, "GET");
+  const response = await SendRequest(`/api/events/${eventId}`, 'GET');
   const data = await response.json();
+
   event.value = data;
   creator.value = data.creator;
-  console.log(data);
 }
 
 async function getNumberOfSubscribers() {
@@ -278,39 +318,39 @@ async function getNumberOfSubscribers() {
     : route.params.id;
   const response = await SendRequest(
     `/subscription/event/count/${eventId}`,
-    "GET"
+    'GET',
   );
   const { data } = await response.json();
   numberOfSubscribers.value = data;
 }
 
-async function handleRatingChange(reaction: CustomEvent) {
-  if (hasRated.value) {
-    showToast("You have already rated this event!", "danger");
+async function getQrCodeIfEventHasStarted(url: string) {
+  if (!hasEventStarted() || !url) return;
+
+  await nextTick();
+
+  if (!canvas.value) {
+    console.warn('Canvas still not available');
     return;
   }
-  const newRating = reaction.detail.value;
-  const payload: Record<string, string> = {
-    uuid: localStorage.getItem("uuid") || "",
-    eventId: Array.isArray(route.params.id)
-      ? route.params.id[0]
-      : route.params.id || "",
-    rating: newRating.toString(),
-  };
 
-  if (newRating != 0 && isSubscribed.value) {
-    const eventStartDate = new Date(event.value.startDate);
-    if (eventStartDate > new Date()) {
-      showToast("You can only rate events that have started!", "danger");
-      return;
-    }
-    const response = await SendRequest(`/api/events/rate`, "POST", payload);
-    if (response.ok) {
-      showToast("Event rated successfully!", "success");
-      hasRated.value = true; // Atualizando hasRated corretamente
-    }
+  const fullURL = `${url}`;
+
+  QRCode.toCanvas(canvas.value, fullURL, function (error: any) {
+    if (error) console.error(error);
+  });
+}
+function hasLimitReached() {
+  if (numberOfSubscribers.value >= event.value.limit && event.value.limit > 0) {
+    return true;
   } else {
-    showToast("You must be subscribed to rate the event!", "danger");
+    return false;
   }
 }
+
+function isOwner() {
+  return creator.value.id === localStorage.getItem('uuid');
+}
 </script>
+
+<style></style>

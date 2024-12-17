@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,43 +24,51 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class SubscribeService {
+    private static final String API_IP = "http://127.0.0.1:9091/api";
 
     @Autowired
     private SubscribeRepo subscribeRepo;
     @Autowired
-    private UserRepo userService;
+    private UserRepo userRepo;
     @Autowired
     private EventRepository eventRepo;
     @Autowired
     private SubscribeMapperImpl subscribeMapper;
 
     public Optional<Response> subscribe(String uuid, String eventId) {
-        Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
-        if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
-            return Optional.of(Response.forbidden("User already subscribed to event"));
-        }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
-            return reSubscribeAnEvent(isAlreadySubscribed.get());
-        }
-
-        Optional<User> user= userService.findById(uuid);
+        Optional<User> user= userRepo.findById(uuid);
         if(user.isEmpty()){
             return Optional.of(Response.notFound("User not found"));
         }
-
         Optional<Event> event = eventRepo.findById(eventId);
         if(event.isEmpty()){
             return Optional.of(Response.notFound("Event not found"));
         }
 
+        Optional<Subscribe> isAlreadySubscribed = subscribeRepo.findByEventIdAndUserId(eventId, uuid);
+
+        if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)) {
+            return Optional.of(Response.forbidden("User already subscribed to event"));
+        }else if (event.get().getLimit() > 0 && hasReachedLimit(event.get())){
+            return Optional.of(Response.forbidden("Event has reached its maximum capacity"));
+        }else if (isAlreadySubscribed.isPresent() && isAlreadySubscribed.get().getSubscriptionStatus().equals(SubscriptionStatus.UNSUBSCRIBED)){
+            return reSubscribeAnEvent(isAlreadySubscribed.get());
+        }
+
         Subscribe subscribeRequest = new Subscribe(user.get(), event.get());
         try {
-            subscribeRequest.setCode((int) (Math.random() * 10000));
+            String url = String.format("/api/rewards/claim/%s/%s", user.get().getId(), event.get().getId());
+            subscribeRequest.setQRData(url);
             subscribeRequest.setSubscriptionStatus(SubscriptionStatus.SUBSCRIBED);
             return Optional.of(Response.created("Subscribe Request created",
                     subscribeRepo.save(subscribeRequest).toDTO()));
         } catch (Exception e) {
             return Optional.of(Response.internalError("Error creating Subscribe Request"));
         }
+    }
+
+    public boolean hasReachedLimit(Event event){
+        return getCountOfSubscriptions(event.getId()) >= event.getLimit();
     }
 
     public Optional<Response> reSubscribeAnEvent(Subscribe subscription) {
@@ -88,8 +97,9 @@ public class SubscribeService {
 
     private int getCountOfSubscriptions(String eventId) {
         return (int) StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
-                .filter(subscribe -> subscribe.getEvent().getId().equals(eventId)
-                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
+                .filter(subscribe -> subscribe.getEvent() != null && eventId.equals(subscribe.getEvent().getId()) &&
+                        subscribe.getSubscriptionStatus() != null &&
+                        subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED))
                 .count();
     }
 
@@ -105,22 +115,16 @@ public class SubscribeService {
         List<SubscribeResponseDTO> responseDTOs = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
-                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now()))
-                .map(subscribe -> {
-                    SubscribeResponseDTO dto = subscribeMapper.toSubscribeResponseDTO(subscribe);
-                    dto.setRate(averageRates.getOrDefault(subscribe.getEvent().getId(), 0.0));
-                    return dto;
-                })
-                .toList();
-
-        return Optional.of(responseDTOs);
+                        && subscribe.getEvent().getEndDate().isAfter(LocalDateTime.now()))
+                .map(subscribeMapper::toSubscribeResponseDTO)
+                .toList());
     }
 
     public Optional<List<Event>> getAttendedEventsByUserUUID(String uuid) {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.ATTENDED)
-                        && subscribe.getEvent().getEndDate().isBefore(LocalDate.now()))
+                        && subscribe.getEvent().getEndDate().isBefore(LocalDateTime.now()))
                 .map(Subscribe::getEvent)
                 .toList());
     }

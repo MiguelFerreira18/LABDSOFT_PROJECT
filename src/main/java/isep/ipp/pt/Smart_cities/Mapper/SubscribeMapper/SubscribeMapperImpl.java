@@ -18,7 +18,7 @@ public class SubscribeMapperImpl implements SubscribeMapper {
 
         Long id = subscribe.getId();
         Event event = subscribe.getEvent();
-        int code = subscribe.getCode();
+        String code = subscribe.getQRData();
         SubscriptionStatus status = subscribe.getSubscriptionStatus();
         double rate = subscribe.getRate();
 

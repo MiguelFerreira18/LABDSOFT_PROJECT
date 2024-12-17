@@ -1,108 +1,122 @@
-import { createRouter, createWebHistory } from "@ionic/vue-router";
-import { RouteRecordRaw } from "vue-router";
-import TabsPage from "../views/TabsPage.vue";
-import LoginView from "@/views/LoginView.vue";
-import SignUpPage from "@/views/SignUpPage.vue";
-import EventDetailsView from "@/views/Events/EventDetailsView.vue";
-import EventHistoryView from "@/views/Events/EventHistoryView.vue";
-import EventsView from "@/views/Events/EventsView.vue";
-import RewardsDashboard from "@/views/RewardsDashboard.vue";
-import DashboardEventsView from "@/views/Events/DashboardEventsView.vue";
-import AddEventView from "@/views/Events/AddEventView.vue";
-import MapView from "@/views/maps/MapView.vue";
+import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { RouteRecordRaw } from 'vue-router';
+import LoginView from '@/views/LoginView.vue';
+import SignUpPage from '@/views/SignUpPage.vue';
+import EventDetailsView from '@/views/Events/EventDetailsView.vue';
+import EventHistoryView from '@/views/Events/EventHistoryView.vue';
+import EventsView from '@/views/Events/EventsView.vue';
+import RewardsDashboard from '@/views/RewardsDashboard.vue';
+import DashboardEventsView from '@/views/Events/DashboardEventsView.vue';
+import AddEventView from '@/views/Events/AddEventView.vue';
+import MapView from '@/views/maps/MapView.vue';
+import HomeView from '@/views/TabHomePage.vue';
+import ProfileView from '@/views/TabProfilePage.vue';
+import FooterComponent from '@/components/common/FooterComponent.vue';
+import { IsJWTExpired } from '@/lib/jwt';
+import { IsDataTheSame } from '@/lib/signUpUtil';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/login",
-    name: "login",
+    path: '/login',
+    name: 'login',
     component: LoginView,
     meta: { public: true },
   },
   {
-    path: "/signup",
-    name: "signup",
+    path: '/signup',
+    name: 'signup',
     component: SignUpPage,
     meta: { public: true },
   },
   {
-    path: "/",
-    component: TabsPage,
-    meta: { requiresAuth: true, roles: ["Admin", "User", "Institution"] },
+    path: '/',
+    redirect: '/home',
+  },
+  {
+    path: '/',
+    component: FooterComponent,
+    meta: { requiresAuth: true, roles: ['Admin', 'User', 'Institution'] },
     children: [
       {
-        path: "",
-        redirect: "/tabs/tabHome",
+        path: '',
+        redirect: '/home',
       },
       {
-        path: "tabs/tabHome",
-        component: () => import("@/views/TabHomePage.vue"),
+        path: 'home',
+        component: HomeView,
       },
       {
-        path: "tabs/tabEvents",
-        component: () => import("@/views/TabEventsPage.vue"),
+        path: 'search',
+        component: EventsView,
       },
       {
+        path: 'events/create',
+        component: AddEventView,
+      },
+      {
+        path: 'profile',
+        component: ProfileView,
+      },
+      {
+        path: '/events/attended',
+        name: 'AttendedEvents',
+        component: EventHistoryView,
+      },
+      {
+        path: '/events/dashboard',
+        name: 'DashboardEventsView',
+        component: DashboardEventsView,
+      },
+      {
+        path: '/event/EventDetail/:id',
+        name: 'EventDetails',
+        component: EventDetailsView,
+      },
+      {
+        path: '/events',
+        name: 'Events',
+        component: EventsView,
+      },
+      {
+        path: '/rewards',
+        name: 'Rewards',
+        component: RewardsDashboard,
         path: "tabs/tabOrganizations",
         component: () => import("@/views/TabOrganizationsPage.vue"),
       },
       {
-        path: "tabs/tabProfile",
-        component: () => import("@/views/TabProfilePage.vue"),
-      },
-      {
-        path: "events/create",
-        name: "AddEventView",
-        component: AddEventView,
-      },
-      {
-        path: "events/attended",
-        name: "AttendedEvents",
-        component: EventHistoryView,
-      },
-      {
-        path: "events/dashboard",
-        name: "DashboardEventsView",
-        component: DashboardEventsView,
-      },
-      {
-        path: "event/EventDetail/:id",
-        name: "EventDetails",
-        component: EventDetailsView,
-      },
-      {
-        path: "events",
-        name: "Events",
-        component: EventsView,
-      },
-      {
-        path: "rewards",
-        name: "Rewards",
-        component: RewardsDashboard,
-      },
-      {
-        path: "map",
-        name: "map",
+        path: '/map',
+        name: 'map',
         component: MapView,
       },
     ],
   },
-  { path: "/:pathMatch(.*)*", redirect: "/login" },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
+router.beforeEach(async (to, from, next) => {
+  const isDataTheSame = await IsDataTheSame();
+  if (!isDataTheSame) {
+    localStorage.clear();
+  }
+  const token = localStorage.getItem('token');
+  let isAuthenticated = Boolean(token);
+  const role = localStorage.getItem('role');
+  const isOutDated = IsJWTExpired(token || '');
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem("token");
-  const isAuthenticated = Boolean(token);
-  const role = localStorage.getItem("role");
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login");
+  if ((to.meta.requiresAuth && !isAuthenticated) || isOutDated) {
+    next('/login');
+  } else if (
+    to.meta.roles &&
+    role &&
     //@ts-expect-error includes might not exist on null
-  } else if (to.meta.roles && !to.meta.roles.includes(role)) {
-    next("/login");
+    !to.meta.roles.includes(role)
+  ) {
+    next('/login');
   } else {
     next();
   }

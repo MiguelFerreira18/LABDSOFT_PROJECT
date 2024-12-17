@@ -1,52 +1,65 @@
 <template>
-  <ion-page>
-    <ion-content class="ion-padding">
-      <h1 class="title">Dashboard</h1>
-
-      <div v-if="loading" class="loading-spinner">
-        <ion-spinner name="crescent"></ion-spinner>
-      </div>
+  <HeaderComponent title="Dashboard" />
+  <ion-content class="ion-padding">
+    <div v-if="loading" class="loading-spinner">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
 
       <div v-else-if="eventSummaries.length === 0" class="no-events-message">
         <p>No events available to display.</p>
       </div>
 
-      <div v-else class="dashboard-cards-container">
-        <div class="dashboard-cards">
-          <ion-card v-for="summary in eventSummaries" :key="summary.id" class="dashboard-card">
-            <ion-card-header>
-              <ion-card-title>{{ summary.title }}</ion-card-title>
-              <ion-card-subtitle>{{ formatDate(summary.date) }}</ion-card-subtitle>
-            </ion-card-header>
+    <div v-else class="dashboard-cards-container">
+      <div class="dashboard-cards">
+        <ion-card
+          v-for="summary in eventSummaries"
+          :key="summary.id"
+          class="dashboard-card"
+        >
+          <ion-card-header>
+            <ion-card-title>{{ summary.title }}</ion-card-title>
+            <ion-card-subtitle>{{
+              formatDate(summary.date)
+            }}</ion-card-subtitle>
+          </ion-card-header>
 
-            <ion-card-content>
-              <p><strong>Location:</strong> {{ summary.location }}</p>
-              <p><strong>Total Attendees:</strong> {{ summary.totalAttendees }}</p>
-            </ion-card-content>
-          </ion-card>
-        </div>
+          <ion-card-content>
+            <p><strong>Location:</strong> {{ summary.location }}</p>
+            <p>
+              <strong>Total Attendees:</strong> {{ summary.totalAttendees }}
+            </p>
+          </ion-card-content>
+        </ion-card>
       </div>
-    </ion-content>
-  </ion-page>
+    </div>
+  </ion-content>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { IonPage, IonContent, IonSpinner, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent } from '@ionic/vue';
+import { formatDate } from '@/lib/dateFormatter';
+import {
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonSpinner,
+} from '@ionic/vue';
 import { SendRequest } from '@/lib/request';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
-interface EventSummary {
-  id: string;
-  title: string;
-  date: string;
-  location: string;
-  totalAttendees: number;
-}
-
+const eventSummaries = ref<any>([]);
 const loading = ref(true);
-const eventSummaries = ref<EventSummary[]>([]);
 
-const fetchEventSummaries = async () => {
+onMounted(async () => {
+  await loadDashboard();
+});
+
+async function loadDashboard() {
+  console.log('Loading dashboard...');
+
+  const uuid = localStorage.getItem('uuid') || '';
   try {
     const response = await SendRequest('/api/events/summaries', 'GET');
     if (response.ok) {
@@ -60,16 +73,7 @@ const fetchEventSummaries = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const formatDate = (dateString: string) => {
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-onMounted(() => {
-  fetchEventSummaries();
-});
+}
 </script>
 
 <style scoped>

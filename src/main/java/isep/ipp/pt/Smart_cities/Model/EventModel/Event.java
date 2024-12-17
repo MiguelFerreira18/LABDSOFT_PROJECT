@@ -2,11 +2,7 @@ package isep.ipp.pt.Smart_cities.Model.EventModel;
 
 import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +13,7 @@ import java.time.LocalDateTime;
 
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+
 @Builder
 @Getter
 @Setter
@@ -38,11 +35,11 @@ public class Event {
 
     @FutureOrPresent(message = "Start date must not be in the past")
     @NotNull(message = "Start date is required")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @FutureOrPresent(message = "End date must be in the future")
     @NotNull(message = "End date is required")
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     @Pattern(regexp = "^(Art|Sports|Volunteering|Social|Educational|Recreational|Political)$", message = "Invalid category, please choose one from: Art, Sports, Volunteering, Social, Educational, Recreational or Political")
     private String category;
@@ -50,6 +47,9 @@ public class Event {
     @NotBlank(message = "Description is required")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
+
+    @Column(name = "event_limit")
+    private int limit;
 
     private String imagePath;
 
@@ -68,16 +68,17 @@ public class Event {
     public Event() {
     }
 
-    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator) {
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.creator = creator;
+        this.limit = 0;
     }
 
-    public Event(String title, String location, LocalDate startDate, LocalDate endDate, String description, User creator, LocalDateTime promotedUntil) {
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator, LocalDateTime promotedUntil) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
@@ -85,10 +86,11 @@ public class Event {
         this.description = description;
         this.creator = creator;
         this.promotedUntil = null;
+        this.limit = 0;
     }
 
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -99,9 +101,10 @@ public class Event {
         this.imagePath = imagePath;
         this.creator = creator;
         this.promotedUntil = null;
+        this.limit = 0;
     }
 
-    public Event(String id, String title, String location, LocalDate startDate, LocalDate endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude, float rating) {
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description,int limit, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -109,14 +112,14 @@ public class Event {
         this.endDate = endDate;
         this.category = category;
         this.description = description;
+        this.limit = limit;
         this.imagePath = imagePath;
         this.creator = creator;
-        this.promotedUntil = null;
+        this.promotedUntil = promotedUntil;
         this.latitude = latitude;
         this.longitude = longitude;
         this.rating = rating;
     }
-
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
@@ -131,8 +134,8 @@ public class Event {
         return EventRequestDTO.builder()
                 .title(title)
                 .location(location)
-                .startDate(startDate)
-                .endDate(endDate)
+                .startDate(startDate.toLocalDate())
+                .endDate(endDate.toLocalDate())
                 .description(description)
                 .category(category)
                 .creatorID(creator.getId())

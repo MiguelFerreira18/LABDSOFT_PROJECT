@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,25 +20,23 @@ public class EventSummary {
     private String id;
 
     private String title;
-    private LocalDate date;
+    private LocalDateTime date;
     private String location;
+    private int totalAttendees;
 
-    // Constructor to initialize from an Event object
     public EventSummary(Event event) {
         this.id = event.getId();
         this.title = event.getTitle();
-        this.date = event.getStartDate();  // Assuming date represents the start date
+        this.date = event.getStartDate();
         this.location = event.getLocation();
     }
 
-    // Existing constructor (optional but useful for flexibility)
-    public EventSummary(String id, String title, LocalDate date, String location, int totalAttendees) {
+    public EventSummary(String id, String title, LocalDateTime date, String location, int totalAttendees) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.location = location;
     }
     
-    // Default constructor (required by JPA)
     public EventSummary() {}
 }

@@ -25,52 +25,57 @@ public class Subscribe {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
-    private int code;
+    private String QRData;
 
-    private int rate;
+    private boolean isNotified;
 
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
 
     public Subscribe() {
+        this.isNotified = false;
+        this.subscriptionStatus = SubscriptionStatus.SUBSCRIBED;
     }
 
     public Subscribe(User user, Event event) {
         this.user = user;
         this.event = event;
+        this.isNotified = false;
     }
 
-    public Subscribe(User user, int code) {
+    public Subscribe(User user, String QRData) {
         this.user = user;
-        this.code = code;
+        this.QRData = QRData;
+        this.isNotified = false;
     }
 
-    public Subscribe(Long id, User user, int code, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, String QRData, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.user = user;
-        this.code = code;
+        this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
+        this.isNotified = false;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, SubscriptionStatus subscriptionStatus, int rate) {
+    public Subscribe(Long id, User user, Event event, String QRData, SubscriptionStatus subscriptionStatus,boolean isNotified) {
         this.id = id;
         this.user = user;
         this.event = event;
-        this.code = code;
+        this.QRData = QRData;
         this.subscriptionStatus = subscriptionStatus;
-        this.rate = rate;
+        this.isNotified = isNotified;
     }
 
-    public Subscribe(Long id, User user, Event event, int code, int rate, SubscriptionStatus subscriptionStatus) {
+    public Subscribe(Long id, User user, Event event, String QRData, boolean isNotified, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.user = user;
         this.event = event;
-        this.code = code;
-        this.rate = rate;
+        this.QRData = QRData;
+        this.isNotified = isNotified;
         this.subscriptionStatus = subscriptionStatus;
     }
 
     public SubscribeResponseDTO toDTO(){
-        return new SubscribeResponseDTO(this.id, this.event, this.code, this.subscriptionStatus, this.rate);
+        return new SubscribeResponseDTO(this.id, this.event, this.QRData, this.subscriptionStatus);
     }
 }
