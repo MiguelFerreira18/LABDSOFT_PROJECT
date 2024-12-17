@@ -74,6 +74,12 @@ public class UserMapperImpl implements UserMapper {
         user.setEmail(signUpRequest.getEmail());
         user.setName(signUpRequest.getName());
         user.setPassword(signUpRequest.getPassword());
+        if (signUpRequest.getPreferredLocation() != null) {
+            user.setPreferredLocation(signUpRequest.getPreferredLocation());
+        }
+        if (signUpRequest.getPreferredCategories() != null) {
+            user.setPreferredCategories(signUpRequest.getPreferredCategories());
+        }
 
         return user;
     }

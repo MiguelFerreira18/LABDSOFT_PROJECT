@@ -63,6 +63,14 @@ public class User implements UserDetails {
     @Column
     protected String country;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_preferred_categories", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "category")
+    protected Set<String> preferredCategories = new HashSet<>();
+
+    @Column
+    protected String preferredLocation;
+
 
     public User() {
         this.authorities = new HashSet<>();
