@@ -84,11 +84,6 @@ const routes: Array<RouteRecordRaw> = [
         component: RewardsDashboard,
       },
       {
-        path: "tabs/tabOrganizations",
-        name: "Organizations",
-        component: () => import("@/views/TabOrganizationsPage.vue"),
-      },
-      {
         path: '/map',
         name: 'map',
         component: MapView,
