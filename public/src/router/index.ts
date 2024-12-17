@@ -81,7 +81,10 @@ const routes: Array<RouteRecordRaw> = [
         path: '/rewards',
         name: 'Rewards',
         component: RewardsDashboard,
+      },
+      {
         path: "tabs/tabOrganizations",
+        name: "Organizations",
         component: () => import("@/views/TabOrganizationsPage.vue"),
       },
       {
