@@ -103,7 +103,7 @@ import {
   IonButton,
   IonIcon,
 } from "@ionic/vue";
-import { checkmarkDoneCircle, checkmarkDoneCircleOutline, personCircleOutline, trailSignOutline } from "ionicons/icons";
+import { checkmarkDoneCircleOutline, personCircleOutline, trailSignOutline } from "ionicons/icons";
 
 // Reactive state to store user information
 const userInfo = ref({

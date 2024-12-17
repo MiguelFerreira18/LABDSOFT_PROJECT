@@ -18,6 +18,7 @@ public class UserView {
     String city;
     String country;
 
+
     public UserView(String id, String name, Set<Role> authorities) {
         this.id = id;
         this.name = name;

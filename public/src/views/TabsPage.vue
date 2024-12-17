@@ -18,9 +18,9 @@
           <ion-label>Events</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/tabs/tab3">
+        <ion-tab-button tab="tab3" href="/tabs/tabOrganizations">
           <ion-icon aria-hidden="true" :icon="square" />
-          <ion-label>Tab 3</ion-label>
+          <ion-label>Organizations</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>

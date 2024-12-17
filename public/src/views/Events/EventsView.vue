@@ -94,7 +94,6 @@
 import { ref, computed, onMounted } from 'vue';
 import { fetchNonPromotedEvents, fetchPromotedEvents } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
-import { IonPage, IonContent, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle } from '@ionic/vue';
 import { categories, categoryColors } from '@/lib/categories';
 
 interface Event {

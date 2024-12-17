@@ -1,5 +1,3 @@
-
-
 package isep.ipp.pt.Smart_cities.Mapper.Initialization;
 
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
@@ -26,7 +24,7 @@ public class EventInitialization implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        // Verifica se o usuário já existe, caso contrário, cria um novo
+        // Verifica se o utlizador já existe, caso contrário, cria um novo
         if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
             User user = User.builder()
                     .email("AnyNormalUser@gmail.com")
@@ -46,8 +44,8 @@ public class EventInitialization implements CommandLineRunner {
             event1.setId("0b2f589d-b5c2-4616-958c-504eeca80e5f");
             event1.setTitle("Tech Innovators Conference");
             event1.setLocation("Lisbon, Portugal");
-            event1.setStartDate(java.time.LocalDate.of(2024, 12, 15));
-            event1.setEndDate(java.time.LocalDate.of(2024, 12, 17));
+            event1.setStartDate(java.time.LocalDate.of(2025, 12, 15));
+            event1.setEndDate(java.time.LocalDate.of(2025, 12, 17));
             event1.setDescription("A conference on the latest tech innovations.");
             event1.setCreator(user);
             event1.setCategory("Art");
@@ -76,7 +74,7 @@ public class EventInitialization implements CommandLineRunner {
             event3.setEndDate(java.time.LocalDate.of(2025, 11, 30));
             event3.setDescription("An exhibition showcasing modern art.");
             event3.setCreator(user);
-            event3.setCategory( "Social");
+            event3.setCategory("Social");
             eventRepository.save(event3);
         }
 
@@ -99,7 +97,7 @@ public class EventInitialization implements CommandLineRunner {
             event5.setTitle("Java Programming Bootcamp");
             event5.setLocation("Lisbon, Portugal");
             event5.setStartDate(java.time.LocalDate.of(2026, 8, 1));
-            event5.setEndDate(java.time.LocalDate.of(2027, 8, 7));
+            event5.setEndDate(java.time.LocalDate.of(2026, 8, 7));
             event5.setDescription("A bootcamp for learning Java programming.");
             event5.setCreator(user);
             event5.setCategory("Educational");
@@ -111,11 +109,11 @@ public class EventInitialization implements CommandLineRunner {
             event6.setId("0b2f589d-b5c2-4616-958c-504eeca80e64");
             event6.setTitle("Startup Networking Event");
             event6.setLocation("Porto, Portugal");
-            event6.setStartDate(java.time.LocalDate.of(2024, 12, 10));
-            event6.setEndDate(java.time.LocalDate.of(2024, 12, 10));
+            event6.setStartDate(java.time.LocalDate.of(2025, 12, 10));
+            event6.setEndDate(java.time.LocalDate.of(2025, 12, 11));
             event6.setDescription("A networking event for entrepreneurs and investors.");
             event6.setCreator(user);
-            event6.setCategory( "Recreational");
+            event6.setCategory("Recreational");
             eventRepository.save(event6);
         }
 
@@ -124,8 +122,8 @@ public class EventInitialization implements CommandLineRunner {
             event7.setId("0b2f589d-b5c2-4616-958c-504eeca80e65");
             event7.setTitle("Health and Wellness Seminar");
             event7.setLocation("Braga, Portugal");
-            event7.setStartDate(java.time.LocalDate.of(2024, 12, 15));
-            event7.setEndDate(java.time.LocalDate.of(2024, 12, 16));
+            event7.setStartDate(java.time.LocalDate.of(2025, 12, 15));
+            event7.setEndDate(java.time.LocalDate.of(2025, 12, 16));
             event7.setDescription("A seminar on mental and physical health improvement.");
             event7.setCreator(user);
             event7.setCategory("Political");
@@ -141,7 +139,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setEndDate(java.time.LocalDate.of(2025, 2, 16));
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
-            event8.setCategory( "Sports");
+            event8.setCategory("Sports");
             eventRepository.save(event8);
         }
 
@@ -151,7 +149,7 @@ public class EventInitialization implements CommandLineRunner {
             event9.setTitle("Charity Run for Children");
             event9.setLocation("Lisbon, Portugal");
             event9.setStartDate(java.time.LocalDate.of(2024, 12, 22));
-            event9.setEndDate(java.time.LocalDate.of(2024, 12, 22));
+            event9.setEndDate(java.time.LocalDate.of(2024, 12, 23));
             event9.setDescription("A charity run to raise funds for underprivileged children.");
             event9.setCreator(user);
             event9.setCategory("Art");
@@ -163,8 +161,8 @@ public class EventInitialization implements CommandLineRunner {
             event10.setId("0b2f589d-b5c2-4616-958c-504eeca80e68");
             event10.setTitle("Innovation and Startup Forum");
             event10.setLocation("Lisbon, Portugal");
-            event10.setStartDate(java.time.LocalDate.of(2024, 11, 25));
-            event10.setEndDate(java.time.LocalDate.of(2024, 11, 26));
+            event10.setStartDate(java.time.LocalDate.of(2025, 11, 25));
+            event10.setEndDate(java.time.LocalDate.of(2025, 11, 26));
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
             event10.setCategory("Educational");
