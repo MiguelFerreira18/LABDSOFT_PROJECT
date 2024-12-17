@@ -12,6 +12,7 @@ import MapView from '@/views/maps/MapView.vue';
 import HomeView from '@/views/TabHomePage.vue';
 import ProfileView from '@/views/TabProfilePage.vue';
 import FooterComponent from '@/components/common/FooterComponent.vue';
+import InstitutionView from '@/views/InstitutionView.vue';
 import { IsJWTExpired } from '@/lib/jwt';
 import { IsDataTheSame } from '@/lib/signUpUtil';
 
@@ -86,6 +87,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/map',
         name: 'map',
         component: MapView,
+      },
+      {
+        path: '/Institution/:id',
+        name: 'institution',
+        component: InstitutionView,
       },
     ],
   },

@@ -107,7 +107,13 @@ public class UserService implements UserDetailsService {
         String address = user.getAddress();
         String city = user.getCity();
         String country = user.getCountry();
+        float rating = 0;
 
-        return new UserView(id, name, authorities, birth, gender, address, city, country);
+        if (user instanceof Institution) { 
+            rating = ((Institution) user).getRating(); 
+        }
+    
+        return new UserView(id, name, authorities, birth, gender, address, city, country, rating);
+
     }
 }

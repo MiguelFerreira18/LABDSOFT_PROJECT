@@ -47,8 +47,8 @@ public class EventInitialization implements CommandLineRunner {
             event1.setId("0b2f589d-b5c2-4616-958c-504eeca80e5f");
             event1.setTitle("Tech Innovators Conference");
             event1.setLocation("Lisbon, Portugal");
-            event1.setStartDate(LocalDateTime.of(2024, 12, 10, 9, 0));
-            event1.setEndDate(LocalDateTime.of(2024, 12, 15, 17, 0));
+            event1.setStartDate(LocalDateTime.of(2025, 12, 10, 9, 0));
+            event1.setEndDate(LocalDateTime.of(2025, 12, 15, 17, 0));
             event1.setLimit(10);
             event1.setDescription("A conference on the latest tech innovations.");
             event1.setCreator(user);
@@ -117,8 +117,8 @@ public class EventInitialization implements CommandLineRunner {
             event6.setId("0b2f589d-b5c2-4616-958c-504eeca80e64");
             event6.setTitle("Startup Networking Event");
             event6.setLocation("Porto, Portugal");
-            event6.setStartDate(LocalDateTime.of(2024, 12, 10, 9, 0));
-            event6.setEndDate(LocalDateTime.of(2024, 12, 10, 17, 0));
+            event6.setStartDate(LocalDateTime.of(2025, 12, 10, 9, 0));
+            event6.setEndDate(LocalDateTime.of(2025, 12, 10, 17, 0));
             event6.setLimit(20);
             event6.setDescription("A networking event for entrepreneurs and investors.");
             event6.setCreator(user);
@@ -131,8 +131,8 @@ public class EventInitialization implements CommandLineRunner {
             event7.setId("0b2f589d-b5c2-4616-958c-504eeca80e65");
             event7.setTitle("Health and Wellness Seminar");
             event7.setLocation("Braga, Portugal");
-            event7.setStartDate(LocalDateTime.of(2024, 12, 15, 9, 0));
-            event7.setEndDate(LocalDateTime.of(2024, 12, 15, 17, 0));
+            event7.setStartDate(LocalDateTime.of(2026, 12, 15, 9, 0));
+            event7.setEndDate(LocalDateTime.of(2027, 12, 15, 17, 0));
             event7.setLimit(20);
             event7.setDescription("A seminar on mental and physical health improvement.");
             event7.setCreator(user);
@@ -145,8 +145,8 @@ public class EventInitialization implements CommandLineRunner {
             event8.setId("0b2f589d-b5c2-4616-958c-504eeca80e66");
             event8.setTitle("Gastronomy Festival");
             event8.setLocation("Funchal, Madeira");
-            event8.setStartDate(LocalDateTime.of(2025, 2, 10, 8, 0));
-            event8.setEndDate(LocalDateTime.of(2025, 2, 14, 23, 59));
+            event8.setStartDate(LocalDateTime.of(2029, 2, 10, 8, 0));
+            event8.setEndDate(LocalDateTime.of(2030, 2, 14, 23, 59));
             event8.setLimit(20);
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
@@ -159,8 +159,8 @@ public class EventInitialization implements CommandLineRunner {
             event9.setId("0b2f589d-b5c2-4616-958c-504eeca80e67");
             event9.setTitle("Charity Run for Children");
             event9.setLocation("Lisbon, Portugal");
-            event9.setStartDate(LocalDateTime.of(2024, 12, 22, 8, 0));
-            event9.setEndDate(LocalDateTime.of(2024, 12, 22, 12, 0));
+            event9.setStartDate(LocalDateTime.of(2034, 12, 22, 8, 0));
+            event9.setEndDate(LocalDateTime.of(2034, 12, 22, 12, 0));
             event9.setLimit(20);
             event9.setDescription("A charity run to raise funds for underprivileged children.");
             event9.setCreator(user);
@@ -173,8 +173,8 @@ public class EventInitialization implements CommandLineRunner {
             event10.setId("0b2f589d-b5c2-4616-958c-504eeca80e68");
             event10.setTitle("Innovation and Startup Forum");
             event10.setLocation("Lisbon, Portugal");
-            event10.setStartDate(LocalDateTime.of(2025, 11, 25, 9, 0));
-            event10.setEndDate(LocalDateTime.of(2025, 11, 25, 17, 0));
+            event10.setStartDate(LocalDateTime.of(2045, 11, 25, 9, 0));
+            event10.setEndDate(LocalDateTime.of(2045, 11, 25, 17, 0));
             event10.setLimit(20);
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
