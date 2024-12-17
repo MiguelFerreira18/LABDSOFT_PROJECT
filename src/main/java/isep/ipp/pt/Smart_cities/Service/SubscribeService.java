@@ -107,17 +107,19 @@ public class SubscribeService {
         Map<String, Double> averageRates = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
-                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now())
+                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now().atStartOfDay())
                         && subscribe.getRate() > 0)
                 .collect(Collectors.groupingBy(subscribe -> subscribe.getEvent().getId(),
-                        Collectors.averagingInt(Subscribe::getRate)));
+                        Collectors.averagingDouble(Subscribe::getRate)));
 
         List<SubscribeResponseDTO> responseDTOs = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
                         && subscribe.getEvent().getEndDate().isAfter(LocalDateTime.now()))
                 .map(subscribeMapper::toSubscribeResponseDTO)
-                .toList());
+                .toList();
+
+        return Optional.of(responseDTOs);
     }
 
     public Optional<List<Event>> getAttendedEventsByUserUUID(String uuid) {

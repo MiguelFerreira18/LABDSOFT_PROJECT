@@ -40,7 +40,7 @@ public class RewardsService {
     private EventRepository eventRepo;
 
     public Optional<Response> givePointsByAttendingAnEvent(String userId, String eventId){
-        return checkIfThereIsAlreadyRewards(userId,eventId).isPresent() ?
+        return checkIfThereIsAlreadyRewards(userId,eventId) ?
                 changSubscriptionStatusToAttended(userRepo.findById(userId).get(),eventRepo.findById(eventId).get())
                         .map(subscribe -> Response.ok("You have already received points for this event",subscribe.toDTO())) :
                 processRewardsIfSubscriptionIsValid(userId, eventId);

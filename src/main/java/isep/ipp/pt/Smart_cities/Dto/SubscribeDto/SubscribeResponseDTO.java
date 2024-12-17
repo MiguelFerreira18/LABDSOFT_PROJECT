@@ -13,7 +13,7 @@ public class SubscribeResponseDTO {
     public SubscribeResponseDTO() {
     }
 
-    public SubscribeResponseDTO(Long id, Event event, String QRData, SubscriptionStatus status) {
+    public SubscribeResponseDTO(Long id, Event event, String QRData, SubscriptionStatus status, Double rate) {
         this.id = id;
         this.event = event;
         this.QRData = QRData;
