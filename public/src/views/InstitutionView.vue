@@ -9,7 +9,9 @@
               <ion-icon class="img_profile" :icon="globeOutline"></ion-icon>
               <ion-col class="text-center">
                 <ion-row>
-                  <ion-card-title><b>{{ userInfo.name }}</b></ion-card-title>
+                  <ion-card-title
+                    ><b>{{ userInfo.name }}</b></ion-card-title
+                  >
                 </ion-row>
                 <ion-row>
                   <ion-card-subtitle>{{ userInfo.email }}</ion-card-subtitle>
@@ -21,15 +23,20 @@
         <ion-row>
           <ion-col size="12">
             <div class="title-with-icon">
-              <ion-icon class="icon4" aria-hidden="true" :icon="flame"></ion-icon>
+              <ion-icon
+                class="icon4"
+                aria-hidden="true"
+                :icon="flame"
+              ></ion-icon>
               <h1><b>Institution Rating</b></h1>
             </div>
             <div class="rating-icons">
-              <ion-icon 
-                v-for="(icon, index) in generateStars(institutionRating)" 
-                :key="index" 
-                :icon="icon" 
-                class="rating-icon">
+              <ion-icon
+                v-for="(icon, index) in generateStars(institutionRating)"
+                :key="index"
+                :icon="icon"
+                class="rating-icon"
+              >
               </ion-icon>
             </div>
           </ion-col>
@@ -37,7 +44,11 @@
         <ion-row>
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
-              <ion-icon class="icon3" aria-hidden="true" :icon="personCircleOutline"></ion-icon>
+              <ion-icon
+                class="icon3"
+                aria-hidden="true"
+                :icon="personCircleOutline"
+              ></ion-icon>
               <h1><b>Institution Information</b></h1>
             </div>
             <ion-list>
@@ -51,7 +62,11 @@
         <ion-row>
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
-              <ion-icon class="icon2" aria-hidden="true" :icon="trailSignOutline"></ion-icon>
+              <ion-icon
+                class="icon2"
+                aria-hidden="true"
+                :icon="trailSignOutline"
+              ></ion-icon>
               <h1><b>Location</b></h1>
             </div>
             <ion-list>
@@ -116,7 +131,7 @@ const userPoints = ref(0);
 
 // Fetch user information
 const fetchUserInfo = async () => {
-  const id = route.query.id || route.params.id; 
+  const id = route.query.id || route.params.id;
   try {
     const response = await SendRequest(`/api/users/getuser?id=${id}`, 'GET');
     if (response.ok) {
@@ -155,8 +170,8 @@ const generateStars = (rating: number) => {
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   return [
-    ...Array(fullStars).fill(star),      // Ícone de estrela cheia
-    ...(hasHalfStar ? [starHalf] : []),  // Ícone de meia estrela
+    ...Array(fullStars).fill(star), // Ícone de estrela cheia
+    ...(hasHalfStar ? [starHalf] : []), // Ícone de meia estrela
     ...Array(emptyStars).fill(starOutline), // Ícone de estrela vazia
   ];
 };
@@ -223,7 +238,6 @@ onMounted(() => {
   color: #ff6200;
   font-size: 24px;
 }
-
 
 .title-with-icon {
   display: flex;
