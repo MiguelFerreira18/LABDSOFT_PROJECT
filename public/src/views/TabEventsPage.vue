@@ -1,15 +1,19 @@
 <template>
   <ion-page>
-    <ion-header>
-    </ion-header>
+    <ion-header> </ion-header>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-      </ion-header>
+      <ion-header collapse="condense"> </ion-header>
       <ion-list>
         <ion-item button @click="navigateTo('/events')">All Events</ion-item>
-        <ion-item button @click="navigateTo('/events/create')">Create Event</ion-item>
-        <ion-item button @click="navigateTo('/events/dashboard')">Dashboard Events</ion-item>
-        <ion-item button @click="navigateTo('/events/attended')">Events History</ion-item>
+        <ion-item button @click="navigateTo('/events/create')"
+          >Create Event</ion-item
+        >
+        <ion-item button @click="navigateTo('/events/dashboard')"
+          >Dashboard Events</ion-item
+        >
+        <ion-item button @click="navigateTo('/events/attended')"
+          >Events History</ion-item
+        >
       </ion-list>
     </ion-content>
   </ion-page>

@@ -22,7 +22,13 @@
           <ion-item v-if="creatorRating !== null">
             <ion-label>Creator Rating</ion-label>
             <div class="star-rating">
-              <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= creatorRating }">&#9733;</span>
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                :class="{ filled: star <= creatorRating }"
+                >&#9733;</span
+              >
             </div>
           </ion-item>
           <ion-item>
@@ -47,13 +53,26 @@
           <ion-item>
             <ion-label>Event Rating</ion-label>
             <div class="star-rating">
-              <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= event.rating }">&#9733;</span>
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                :class="{ filled: star <= event.rating }"
+                >&#9733;</span
+              >
             </div>
           </ion-item>
           <ion-item v-if="isSubscribed && hasEventStarted()">
             <ion-label>Rate this event</ion-label>
             <div class="star-rating">
-              <span v-for="star in 5" :key="star" class="star" @click="rateEvent(star)" :class="{ filled: star <= userRating }">&#9733;</span>
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                @click="rateEvent(star)"
+                :class="{ filled: star <= userRating }"
+                >&#9733;</span
+              >
             </div>
           </ion-item>
         </ion-list>
@@ -230,14 +249,25 @@ onMounted(async () => {
 
 async function calculateCreatorRating(creatorId: string) {
   try {
-    const response = await SendRequest(`/api/events?creatorId=${creatorId}`, 'GET');
+    const response = await SendRequest(
+      `/api/events?creatorId=${creatorId}`,
+      'GET',
+    );
     const events: Event[] = await response.json();
-    const pastEvents = events.filter(event => {
-      const endDate = new Date(event.endDate[0], event.endDate[1] - 1, event.endDate[2]);
+    const pastEvents = events.filter((event) => {
+      const endDate = new Date(
+        event.endDate[0],
+        event.endDate[1] - 1,
+        event.endDate[2],
+      );
       return endDate < new Date();
     });
-    const totalRating = pastEvents.reduce((sum, event) => sum + event.rating, 0);
-    const averageRating = pastEvents.length > 0 ? totalRating / pastEvents.length : 0;
+    const totalRating = pastEvents.reduce(
+      (sum, event) => sum + event.rating,
+      0,
+    );
+    const averageRating =
+      pastEvents.length > 0 ? totalRating / pastEvents.length : 0;
     creatorRating.value = averageRating;
   } catch (error) {
     creatorRating.value = null;
@@ -245,9 +275,18 @@ async function calculateCreatorRating(creatorId: string) {
 }
 
 function hasEventStarted() {
-  if (!event.value || !event.value.startDate || !Array.isArray(event.value.startDate)) return false;
+  if (
+    !event.value ||
+    !event.value.startDate ||
+    !Array.isArray(event.value.startDate)
+  )
+    return false;
 
-  const startDate = new Date(event.value.startDate[0], event.value.startDate[1] - 1, event.value.startDate[2]);
+  const startDate = new Date(
+    event.value.startDate[0],
+    event.value.startDate[1] - 1,
+    event.value.startDate[2],
+  );
   return startDate <= new Date();
 }
 
@@ -449,7 +488,9 @@ async function rateEvent(star: number) {
 
   const payload: Record<string, string> = {
     uuid: localStorage.getItem('uuid') || '',
-    eventId: Array.isArray(route.params.id) ? route.params.id[0] : route.params.id || '',
+    eventId: Array.isArray(route.params.id)
+      ? route.params.id[0]
+      : route.params.id || '',
     rating: star.toString(),
   };
 

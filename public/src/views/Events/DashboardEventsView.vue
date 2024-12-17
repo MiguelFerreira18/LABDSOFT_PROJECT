@@ -5,9 +5,9 @@
       <ion-spinner name="crescent"></ion-spinner>
     </div>
 
-      <div v-else-if="eventSummaries.length === 0" class="no-events-message">
-        <p>No events available to display.</p>
-      </div>
+    <div v-else-if="eventSummaries.length === 0" class="no-events-message">
+      <p>No events available to display.</p>
+    </div>
 
     <div v-else class="dashboard-cards-container">
       <div class="dashboard-cards">
