@@ -166,6 +166,44 @@ const userRating = ref(0);
 const hasRated = ref(false);
 const creatorRating = ref<number | null>(null);
 
+interface Event {
+  id: string;
+  title: string;
+  location: string;
+  startDate: [number, number, number, number, number];
+  endDate: [number, number, number, number, number];
+  category: string;
+  description: string;
+  limit: number;
+  imagePath: string | null;
+  creator: {
+    id: string;
+    email: string;
+    name: string;
+    authorities: { authority: string }[];
+    password: string;
+    hasPromotedEvent: boolean;
+    lastLoginAt: number | null;
+    pushTokenMobile: string | null;
+    birthDate: number;
+    gender: string;
+    address: string;
+    city: string;
+    country: string;
+    username: string;
+    accountNonExpired: boolean;
+    credentialsNonExpired: boolean;
+    enabled: boolean;
+    accountNonLocked: boolean;
+  };
+  promotedUntil: string | null;
+  latitude: number;
+  longitude: number;
+  rating: number;
+  inCurrentMonth: boolean;
+  promoted: boolean;
+}
+
 onMounted(async () => {
   await getCurrentEvent();
   await getNumberOfSubscribers();
@@ -194,17 +232,14 @@ async function calculateCreatorRating(creatorId: string) {
   try {
     const response = await SendRequest(`/api/events?creatorId=${creatorId}`, 'GET');
     const events: Event[] = await response.json();
-    console.log('Events:', events);
     const pastEvents = events.filter(event => {
       const endDate = new Date(event.endDate[0], event.endDate[1] - 1, event.endDate[2]);
       return endDate < new Date();
     });
-    console.log('Past events:', pastEvents);
     const totalRating = pastEvents.reduce((sum, event) => sum + event.rating, 0);
     const averageRating = pastEvents.length > 0 ? totalRating / pastEvents.length : 0;
     creatorRating.value = averageRating;
   } catch (error) {
-    console.error('Erro ao calcular o rating do criador:', error);
     creatorRating.value = null;
   }
 }
