@@ -80,6 +80,7 @@ import { ref, onMounted } from 'vue';
 import { SendRequest } from '@/lib/request';
 import { globeOutline } from 'ionicons/icons';
 import { star, starHalf, starOutline, flame } from 'ionicons/icons';
+import { useRoute } from 'vue-router';
 import {
   IonPage,
   IonContent,
@@ -99,6 +100,8 @@ import {
 } from 'ionicons/icons';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
+const route = useRoute();
+
 // Reactive state to store user information
 const userInfo = ref({
   name: '',
@@ -113,15 +116,13 @@ const userPoints = ref(0);
 
 // Fetch user information
 const fetchUserInfo = async () => {
-  const userId = localStorage.getItem('userId');
-  const email = localStorage.getItem('email');
+  const id = route.query.id || route.params.id; 
   try {
-    const response = await SendRequest('/api/users/getuser?id=' + userId, 'GET');
+    const response = await SendRequest(`/api/users/getuser?id=${id}`, 'GET');
     if (response.ok) {
       const data = await response.json();
       userInfo.value = data;
-      userInfo.value.email = email || '';
-      institutionRating.value = data.rating || 0; // Buscamos o rating direto da API
+      institutionRating.value = data.rating || 0;
     } else {
       console.error('Error fetching user info:', response.statusText);
     }
@@ -129,6 +130,7 @@ const fetchUserInfo = async () => {
     console.error('Error fetching user info:', error);
   }
 };
+
 const fetchUserPoints = async () => {
   const userId = localStorage.getItem('uuid');
   try {
@@ -176,7 +178,7 @@ onMounted(() => {
 }
 
 .img_profile {
-  font-size: 80px;
+  font-size: 90px;
   border-radius: 50%;
   background-color: #f0f0f0;
   color: #4f6554;

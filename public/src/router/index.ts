@@ -89,7 +89,7 @@ const routes: Array<RouteRecordRaw> = [
         component: MapView,
       },
       {
-        path: '/Institution',
+        path: '/Institution/:id',
         name: 'institution',
         component: InstitutionView,
       },
