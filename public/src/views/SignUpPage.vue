@@ -1,57 +1,77 @@
 <template>
-  <ion-content class="ion-padding">
-    <div class="centered-square">
-      <ion-input
-        ref="email"
-        type="email"
-        fill="solid"
-        label="Email"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+  <ion-page>
+    <ion-content class="ion-padding">
+      <div class="centered-square">
+        <ion-input
+          ref="email"
+          type="email"
+          fill="solid"
+          label="Email"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-input
-        ref="name"
-        fill="solid"
-        label="Name"
-        label-placement="floating"
-        error-text="Invalid name"
-        @ionBlur="markTouched"
-      ></ion-input>
+        <ion-input
+          ref="name"
+          fill="solid"
+          label="Name"
+          label-placement="floating"
+          error-text="Invalid name"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-input
-        ref="password"
-        type="password"
-        fill="solid"
-        label="password"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+        <ion-input
+          ref="password"
+          type="password"
+          fill="solid"
+          label="password"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-input
-        ref="confirmPassword"
-        type="password"
-        fill="solid"
-        label="password"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+        <ion-input
+          ref="confirmPassword"
+          type="password"
+          fill="solid"
+          label="password"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-checkbox ref="isInstitution">Are you an institution?</ion-checkbox>
+        <ion-item lines="none">
+          <ion-label class="ion-text-wrap">Favorite Categories</ion-label>
+          <ion-select
+            v-model="selectedCategories"
+            multiple="true"
+            placeholder="Select categories"
+            @ionChange="onCategoryChange"
+          >
+            <ion-select-option
+              v-for="category in categories"
+              :key="category"
+              :value="category"
+            >
+              {{ category }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
 
-      <ion-button expand="block" @click="signUp">Submit</ion-button>
-      <ion-toast
-        :is-open="true"
-        :message="message"
-        :duration="5000"
-        :color="toastColor"
-        @didDismiss="setIsOpen(false)"
-      ></ion-toast>
-    </div>
-  </ion-content>
+        <ion-checkbox ref="isInstitution">Are you an institution?</ion-checkbox>
+
+        <ion-button expand="block" @click="signUp">Submit</ion-button>
+        <ion-toast
+          :is-open="true"
+          :message="message"
+          :duration="5000"
+          :color="toastColor"
+          @didDismiss="setIsOpen(false)"
+        ></ion-toast>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
@@ -60,6 +80,9 @@ import { ConfirmPasswordMatch, IsAGoodPassword } from '@/lib/signUpUtil';
 import router from '@/router';
 import { push } from 'ionicons/icons';
 import { ref } from 'vue';
+import { categories } from '@/lib/categories';
+
+console.log('Categorias disponíveis:', categories);
 
 const email = ref<HTMLInputElement | null>(null);
 const name = ref<HTMLInputElement | null>(null);
@@ -69,6 +92,12 @@ const isInstitution = ref<HTMLInputElement | null>(null);
 const message = ref('');
 const isOpen = ref(false);
 const toastColor = ref('primary');
+const selectedCategories = ref<string[]>([]);
+
+function onCategoryChange(event: any) {
+  console.log('Categorias selecionadas:', event.detail.value);
+  selectedCategories.value = event.detail.value;
+}
 
 async function signUp() {
   if (areFieldsEmpty()) {
@@ -89,6 +118,8 @@ async function signUp() {
     return;
   }
 
+  console.log('Categorias selecionadas:', selectedCategories.value);
+
   const payload = {
     email: email.value?.value.trim() || '',
     name: name.value?.value.trim() || '',
@@ -96,6 +127,7 @@ async function signUp() {
     pushToken: localStorage.getItem('pushToken') || '',
     repeatPassword: confirmPassword.value?.value.trim() || '',
     type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER',
+    preferredCategories: selectedCategories.value,
   };
 
   try {

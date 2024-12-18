@@ -13,10 +13,8 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-// ESTAVA FARTO DO MAPPER QUE NÃO FUNCIONAVA POR ISSO FIZ O MEU
 @Component
 public class UserMapperImpl implements UserMapper {
-
 
     @Override
     public UserView toUserView(User user) {
@@ -24,24 +22,9 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        String id = null;
-        String name = null;
-        Set<Role> authorities = null;
-        Date birthDate = null;
-        String gender = null;
-        String address = null;
-        String city = null;
-        String country = null;
-
-
-        id = user.getId();
-        name = user.getName();
-        authorities = grantedAuthorityCollectionToRoleSet(user.getAuthorities());
-        birthDate = user.getBirthDate();
-        gender = user.getGender();
-        address = user.getAddress();
-        city = user.getCity();
-        country = user.getCountry();
+        String id = user.getId();
+        String name = user.getName();
+        Set<Role> authorities = grantedAuthorityCollectionToRoleSet(user.getAuthorities());
 
         return new UserView(id, name, authorities);
     }
@@ -52,13 +35,9 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        String id = null;
-        String name = null;
-        Set<Role> authorities = null;
-
-        id = institution.getId();
-        name = institution.getName();
-        authorities = grantedAuthorityCollectionToRoleSet(institution.getAuthorities());
+        String id = institution.getId();
+        String name = institution.getName();
+        Set<Role> authorities = grantedAuthorityCollectionToRoleSet(institution.getAuthorities());
 
         return new UserView(id, name, authorities);
     }
@@ -74,6 +53,10 @@ public class UserMapperImpl implements UserMapper {
         user.setEmail(signUpRequest.getEmail());
         user.setName(signUpRequest.getName());
         user.setPassword(signUpRequest.getPassword());
+  
+        if (signUpRequest.getPreferredCategories() != null) {
+            user.setPreferredCategories(signUpRequest.getPreferredCategories());
+        }
 
         return user;
     }
@@ -98,10 +81,7 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        String authority = null;
-
-        authority = grantedAuthority.getAuthority();
-
+        String authority = grantedAuthority.getAuthority();
         return new Role(authority);
     }
 
