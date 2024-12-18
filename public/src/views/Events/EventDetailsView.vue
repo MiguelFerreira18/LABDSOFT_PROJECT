@@ -8,104 +8,115 @@
         <ion-title>Event Details</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" class="ion-padding">
-      <ion-card v-if="event">
-        <ion-card-header>
-          <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
-          <ion-card-title>{{ event.title }}</ion-card-title>
-          <ion-card-subtitle
-            >Subscribers: {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers
-            }}{{ event.limit == 0 ? '' : '/' + event.limit }}</ion-card-subtitle
-          >
-        </ion-card-header>
-        <ion-list>
-          <ion-item>
-            <ion-label>Description</ion-label>
-            {{ event.description }}
-          </ion-item>
-          <ion-item v-if="event.promotedUntil">
-            <ion-label color="tertiary">Promoted</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Date</ion-label>
+    <ion-content :fullscreen="true">
+      <ion-img
+        src="https://placehold.co/600x400"
+        alt="Placeholder image"
+      ></ion-img>
+      <div class="ion-padding">
+        <header>
+          <p>{{ event.category }}</p>
+          <h2>{{ event.title }}</h2>
+          <p>
+            Subscribers:
+            {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers }}
+            {{ event.limit == 0 ? '' : '/' + event.limit }}
+          </p>
+        </header>
+
+        <section>
+          <h3>Description</h3>
+          <p>{{ event.description }}</p>
+        </section>
+
+        <section v-if="event.promotedUntil">
+          <p><strong>Promoted</strong></p>
+        </section>
+
+        <section>
+          <h3>Date</h3>
+          <p>
             {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
-          </ion-item>
-          <ion-item>
-            <ion-label>Location</ion-label>
-            {{ event.location }}
-          </ion-item>
-          <ion-item v-if="creator">
-            <ion-label>Creator</ion-label>
-            {{ creator.name }}
-          </ion-item>
-        </ion-list>
-        <ion-row class="ion-justify-content-center">
-          <ion-col size="auto">
-            <canvas
-              v-if="hasEventStarted() && !hasAttended && !isOwnerOfTheEvent()"
-              ref="canvas"
-            ></canvas>
-            <ion-button
-              @click="handleScanQrCode"
-              v-else-if="hasEventStarted() && isOwnerOfTheEvent()"
-              expand="block"
-              fill="clear"
-              shape="round"
-              color="warning"
-            >
-              Scan QR Codes
-            </ion-button>
-          </ion-col>
-        </ion-row>
+          </p>
+        </section>
+
+        <section v-if="creator">
+          <h3>Creator</h3>
+          <p>{{ creator.name }}</p>
+        </section>
+
+        <section>
+          <h3>Location</h3>
+          <p>{{ event.location }}</p>
+        </section>
+      </div>
+
+      <section map>
+        <map-event
+          v-if="event.latitude"
+          :latitude="event.latitude"
+          :longitude="event.longitude"
+        />
+        <p v-else>Map unavailable – location not specified.</p>
+      </section>
+
+      <section qrCode class="ion-padding" v-if="hasEventStarted()">
+        <canvas
+          v-if="!hasAttended && !isOwnerOfTheEvent()"
+          ref="canvas"
+        ></canvas>
+        <ion-button
+          v-else-if="isOwnerOfTheEvent()"
+          @click="handleScanQrCode"
+          expand="block"
+          color="warning"
+        >
+          <ion-icon :icon="qrCode"></ion-icon>
+          <span class="ion-margin-start">Scan QR Codes</span>
+        </ion-button>
+      </section>
+
+      <section actions class="ion-padding">
         <ion-button
           v-if="hasLimitReached() && !isOwner()"
           :disabled="true"
           expand="block"
-          fill="clear"
-          shape="round"
           color="danger"
         >
           No more subscriptions are being accepted
         </ion-button>
+
         <ion-button
           v-else-if="!isSubscribed && !isOwner()"
           @click="handleSubscription"
           :disabled="hasAttended"
           expand="block"
-          fill="clear"
-          shape="round"
-          color="success"
         >
-          Subscribe
+          <ion-icon :icon="notifications"></ion-icon>
+          <span class="ion-margin-start">Subscribe</span>
         </ion-button>
+
         <ion-button
           v-else-if="!isOwner()"
           @click="handleUnsubscribe"
-          expand="block"
-          fill="clear"
           :disabled="hasAttended"
-          shape="round"
+          expand="block"
           color="danger"
         >
-          Unsubscribe
+          <ion-icon :icon="notificationsOff"></ion-icon>
+          <span class="ion-margin-start">Unsubscribe</span>
         </ion-button>
+
         <ion-button
           v-if="isLoggedIn"
           @click="handlePromoteEvent"
           expand="block"
-          fill="clear"
-          shape="round"
-          color="primary"
+          fill="outline"
         >
-          Promote Event
+          <ion-icon :icon="megaphone"></ion-icon>
+          <span class="ion-margin-start">Promote Event</span>
         </ion-button>
-      </ion-card>
-      <ion-card v-else>
-        <ion-card-header>
-          <ion-card-subtitle>Loading...</ion-card-subtitle>
-          <ion-card-title>Loading...</ion-card-title>
-        </ion-card-header>
-      </ion-card>
+      </section>
     </ion-content>
   </ion-page>
 </template>
@@ -114,17 +125,17 @@
 import {
   IonPage,
   IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
+  IonIcon,
   IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
   IonButtons,
   IonBackButton,
 } from '@ionic/vue';
+import {
+  megaphone,
+  notifications,
+  qrCode,
+  notificationsOff,
+} from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 import { formatDate } from '@/lib/dateFormatter';
@@ -133,6 +144,7 @@ import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
 import QRCode from 'qrcode';
+import MapEvent from '@/views/maps/MapEvent.vue';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
@@ -351,4 +363,31 @@ function isOwner() {
 }
 </script>
 
-<style></style>
+<style>
+header {
+  margin-bottom: 16px;
+}
+header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+header p {
+  margin: 4px 0;
+  color: #666;
+}
+section {
+  margin-bottom: 12px;
+}
+section h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+section p {
+  margin: 4px 0;
+  color: #444;
+}
+ion-button {
+  margin-top: 12px;
+}
+</style>
