@@ -1,5 +1,6 @@
 package isep.ipp.pt.Smart_cities.Service;
 
+import isep.ipp.pt.Smart_cities.Dto.RateDTO;
 import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Mapper.SubscribeMapper.SubscribeMapperImpl;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -31,7 +34,6 @@ public class SubscribeService {
     private EventRepository eventRepo;
     @Autowired
     private SubscribeMapperImpl subscribeMapper;
-
 
     public Optional<Response> subscribe(String uuid, String eventId) {
         Optional<User> user= userRepo.findById(uuid);
@@ -102,12 +104,22 @@ public class SubscribeService {
     }
 
     public Optional<List<SubscribeResponseDTO>> getSubscriptionsByUserUUID(String uuid) {
-        return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+        Map<String, Double> averageRates = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
+                .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
+                        && subscribe.getEvent().getEndDate().isAfter(LocalDate.now().atStartOfDay())
+                        && subscribe.getRate() > 0)
+                .collect(Collectors.groupingBy(subscribe -> subscribe.getEvent().getId(),
+                        Collectors.averagingDouble(Subscribe::getRate)));
+
+        List<SubscribeResponseDTO> responseDTOs = StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
                         && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.SUBSCRIBED)
                         && subscribe.getEvent().getEndDate().isAfter(LocalDateTime.now()))
                 .map(subscribeMapper::toSubscribeResponseDTO)
-                .toList());
+                .toList();
+
+        return Optional.of(responseDTOs);
     }
 
     public Optional<List<Event>> getAttendedEventsByUserUUID(String uuid) {
@@ -118,6 +130,7 @@ public class SubscribeService {
                 .map(Subscribe::getEvent)
                 .toList());
     }
+    
     public Optional<List<Event>> getSubscribedEventsByUserUUID(String uuid) {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
@@ -138,4 +151,31 @@ public class SubscribeService {
         subscribeRepo.deleteAll();
     }
 
+    public boolean rate(RateDTO rateDTO) {
+        List<Subscribe> subscribes = (List<Subscribe>) subscribeRepo.findAllByEventId(rateDTO.getEventId());
+        float sum_rate = 0;
+        float num_rate = 0;
+        boolean isRated = false;
+        for (Subscribe subscribe : subscribes) {
+            if (subscribe.getUser().getId().equals(rateDTO.getUuid())) {
+                subscribe.setRate(Integer.parseInt(rateDTO.getRating()));
+                subscribeRepo.save(subscribe);
+                sum_rate += Integer.parseInt(rateDTO.getRating());
+                isRated = true;
+            } else {
+                sum_rate += subscribe.getRate();
+            }
+            if(subscribe.getRate() != 0) {
+                num_rate++;
+            }
+        }
+        if (isRated) {
+            float rating = sum_rate / num_rate;
+            Event event = eventRepo.findById(rateDTO.getEventId()).get();
+            event.setRating(rating);
+            eventRepo.save(event);
+            return true;
+        }
+        return false;
+    }
 }

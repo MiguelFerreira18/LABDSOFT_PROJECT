@@ -3,14 +3,10 @@ package isep.ipp.pt.Smart_cities.Model.EventModel;
 import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
@@ -19,6 +15,8 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 @Setter
 @ToString
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
 
     @Id
@@ -33,11 +31,9 @@ public class Event {
     @Size(max = 255, message = "Location cannot exceed 255 characters")
     private String location;
 
-    @FutureOrPresent(message = "Start date must not be in the past")
     @NotNull(message = "Start date is required")
     private LocalDateTime startDate;
 
-    @FutureOrPresent(message = "End date must be in the future")
     @NotNull(message = "End date is required")
     private LocalDateTime endDate;
 
@@ -63,60 +59,7 @@ public class Event {
 
     private float longitude;
 
-    public Event() {
-    }
-
-    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
-        this.title = title;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.creator = creator;
-        this.limit = 0;
-    }
-
-    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator, LocalDateTime promotedUntil) {
-        this.title = title;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.creator = creator;
-        this.promotedUntil = null;
-        this.limit = 0;
-    }
-
-
-    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
-        this.id = id;
-        this.title = title;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.category = category;
-        this.description = description;
-        this.imagePath = imagePath;
-        this.creator = creator;
-        this.promotedUntil = null;
-        this.limit = 0;
-    }
-
-    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description,int limit, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
-        this.id = id;
-        this.title = title;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.category = category;
-        this.description = description;
-        this.limit = limit;
-        this.imagePath = imagePath;
-        this.creator = creator;
-        this.promotedUntil = promotedUntil;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+    private float rating;
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
@@ -139,5 +82,14 @@ public class Event {
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();
+    }
+
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.creator = creator;
     }
 }
