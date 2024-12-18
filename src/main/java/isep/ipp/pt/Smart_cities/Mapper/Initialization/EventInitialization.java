@@ -53,6 +53,7 @@ public class EventInitialization implements CommandLineRunner {
             event1.setCategory("Art");
             event1.setLatitude(38.710270f);
             event1.setLongitude(-9.136400f);
+            event1.setRating(4);
             eventRepository.save(event1);
         }
 
@@ -69,6 +70,7 @@ public class EventInitialization implements CommandLineRunner {
             event2.setCategory("Art");
             event2.setLatitude(41.174553f);
             event2.setLongitude(-8.601363f);
+            event2.setRating(4);
             eventRepository.save(event2);
         }
 
@@ -85,6 +87,7 @@ public class EventInitialization implements CommandLineRunner {
             event3.setCategory( "Social");
             event3.setLatitude(38.708505f);
             event3.setLongitude(-9.146837f);
+            event3.setRating(5);
             eventRepository.save(event3);
         }
 
@@ -99,6 +102,7 @@ public class EventInitialization implements CommandLineRunner {
             event4.setDescription("A football tournament with teams from across the globe.");
             event4.setCreator(user);
             event4.setCategory("Volunteering");
+            event4.setRating(2);
             eventRepository.save(event4);
         }
 
@@ -115,6 +119,7 @@ public class EventInitialization implements CommandLineRunner {
             event5.setCategory("Educational");
             event5.setLatitude(41.161172f);
             event5.setLongitude(-8.662823f);
+            event5.setRating(3);
             eventRepository.save(event5);
         }
 
@@ -147,6 +152,7 @@ public class EventInitialization implements CommandLineRunner {
             event7.setCategory("Political");
             event7.setLatitude(41.4947f);
             event7.setLongitude(-8.64426f);
+            event7.setRating(4);
             eventRepository.save(event7);
         }
 
@@ -161,6 +167,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
             event8.setCategory("Sports");
+            event8.setRating(2);
             eventRepository.save(event8);
         }
 
@@ -175,6 +182,7 @@ public class EventInitialization implements CommandLineRunner {
             event9.setDescription("A charity run to raise funds for underprivileged children.");
             event9.setCreator(user);
             event9.setCategory("Art");
+            event9.setRating(2);
             eventRepository.save(event9);
         }
 
@@ -189,6 +197,7 @@ public class EventInitialization implements CommandLineRunner {
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
             event10.setCategory("Educational");
+            event10.setRating(3);
             eventRepository.save(event10);
         }
     }

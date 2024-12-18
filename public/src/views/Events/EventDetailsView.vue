@@ -24,6 +24,19 @@
           </p>
         </header>
 
+        <section creatorRating v-if="creatorRating !== null">
+          <h3>Rating</h3>
+          <div class="star-rating">
+            <span
+              v-for="star in 5"
+              :key="star"
+              class="star"
+              :class="{ filled: star <= creatorRating }"
+              >&#9733;</span
+            >
+          </div>
+        </section>
+
         <section>
           <h3>Description</h3>
           <p>{{ event.description }}</p>
@@ -49,6 +62,18 @@
           <h3>Location</h3>
           <p>{{ event.location }}</p>
         </section>
+
+        <section Rating>
+          <div class="star-rating">
+            <span
+              v-for="star in 5"
+              :key="star"
+              class="star"
+              :class="{ filled: star <= event.rating }"
+              >&#9733;</span
+            >
+          </div>
+        </section>
       </div>
 
       <section map>
@@ -56,31 +81,6 @@
           v-if="event.latitude"
           :latitude="event.latitude"
           :longitude="event.longitude"
-          <ion-item>
-            <ion-label>Event Rating</ion-label>
-            <div class="star-rating">
-              <span
-                v-for="star in 5"
-                :key="star"
-                class="star"
-                :class="{ filled: star <= event.rating }"
-                >&#9733;</span
-              >
-            </div>
-          </ion-item>
-          <ion-item v-if="isSubscribed && hasEventStarted()">
-            <ion-label>Rate this event</ion-label>
-            <div class="star-rating">
-              <span
-                v-for="star in 5"
-                :key="star"
-                class="star"
-                @click="rateEvent(star)"
-                :class="{ filled: star <= userRating }"
-                >&#9733;</span
-              >
-            </div>
-          </ion-item>
         />
         <p v-else>Map unavailable – location not specified.</p>
       </section>
