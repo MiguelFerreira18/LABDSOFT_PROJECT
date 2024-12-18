@@ -1,17 +1,17 @@
 package isep.ipp.pt.Smart_cities.Mapper.Initialization;
 
-import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
-import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
-import isep.ipp.pt.Smart_cities.Model.UserModel.User;
-import isep.ipp.pt.Smart_cities.Respository.EventRepository;
-import isep.ipp.pt.Smart_cities.Respository.UserRepo;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
+import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+import isep.ipp.pt.Smart_cities.Respository.EventRepository;
+import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 
 @Component
 public class EventInitialization implements CommandLineRunner {
@@ -51,6 +51,9 @@ public class EventInitialization implements CommandLineRunner {
             event1.setDescription("A conference on the latest tech innovations.");
             event1.setCreator(user);
             event1.setCategory("Art");
+            event1.setLatitude(38.710270f);
+            event1.setLongitude(-9.136400f);
+            event1.setRating(4);
             eventRepository.save(event1);
         }
 
@@ -64,7 +67,10 @@ public class EventInitialization implements CommandLineRunner {
             event2.setLimit(1);
             event2.setDescription("A 3-day music festival featuring international artists.");
             event2.setCreator(user);
-            event2.setCategory("Sports");
+            event2.setCategory("Art");
+            event2.setLatitude(41.174553f);
+            event2.setLongitude(-8.601363f);
+            event2.setRating(4);
             eventRepository.save(event2);
         }
 
@@ -78,7 +84,10 @@ public class EventInitialization implements CommandLineRunner {
             event3.setLimit(5);
             event3.setDescription("An exhibition showcasing modern art.");
             event3.setCreator(user);
-            event3.setCategory("Social");
+            event3.setCategory( "Social");
+            event3.setLatitude(38.708505f);
+            event3.setLongitude(-9.146837f);
+            event3.setRating(5);
             eventRepository.save(event3);
         }
 
@@ -93,6 +102,7 @@ public class EventInitialization implements CommandLineRunner {
             event4.setDescription("A football tournament with teams from across the globe.");
             event4.setCreator(user);
             event4.setCategory("Volunteering");
+            event4.setRating(2);
             eventRepository.save(event4);
         }
 
@@ -100,13 +110,16 @@ public class EventInitialization implements CommandLineRunner {
             Event event5 = new Event();
             event5.setId("0b2f589d-b5c2-4616-958c-504eeca80e63");
             event5.setTitle("Java Programming Bootcamp");
-            event5.setLocation("Lisbon, Portugal");
+            event5.setLocation("Porto, Portugal");
             event5.setStartDate(LocalDateTime.of(2026, 8, 10, 9, 0));
             event5.setEndDate(LocalDateTime.of(2026, 8, 15, 17, 0));
             event5.setLimit(20);
             event5.setDescription("A bootcamp for learning Java programming.");
             event5.setCreator(user);
             event5.setCategory("Educational");
+            event5.setLatitude(41.161172f);
+            event5.setLongitude(-8.662823f);
+            event5.setRating(3);
             eventRepository.save(event5);
         }
 
@@ -120,7 +133,9 @@ public class EventInitialization implements CommandLineRunner {
             event6.setLimit(20);
             event6.setDescription("A networking event for entrepreneurs and investors.");
             event6.setCreator(user);
-            event6.setCategory("Recreational");
+            event6.setCategory( "Recreational");
+            event6.setLatitude(41.172524f);
+            event6.setLongitude(-8.612077f);
             eventRepository.save(event6);
         }
 
@@ -128,13 +143,16 @@ public class EventInitialization implements CommandLineRunner {
             Event event7 = new Event();
             event7.setId("0b2f589d-b5c2-4616-958c-504eeca80e65");
             event7.setTitle("Health and Wellness Seminar");
-            event7.setLocation("Braga, Portugal");
+            event7.setLocation("Barcelos, Portugal");
             event7.setStartDate(LocalDateTime.of(2026, 12, 15, 9, 0));
             event7.setEndDate(LocalDateTime.of(2027, 12, 15, 17, 0));
             event7.setLimit(20);
             event7.setDescription("A seminar on mental and physical health improvement.");
             event7.setCreator(user);
             event7.setCategory("Political");
+            event7.setLatitude(41.4947f);
+            event7.setLongitude(-8.64426f);
+            event7.setRating(4);
             eventRepository.save(event7);
         }
 
@@ -149,6 +167,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
             event8.setCategory("Sports");
+            event8.setRating(2);
             eventRepository.save(event8);
         }
 
@@ -163,6 +182,7 @@ public class EventInitialization implements CommandLineRunner {
             event9.setDescription("A charity run to raise funds for underprivileged children.");
             event9.setCreator(user);
             event9.setCategory("Art");
+            event9.setRating(2);
             eventRepository.save(event9);
         }
 
@@ -177,6 +197,7 @@ public class EventInitialization implements CommandLineRunner {
             event10.setDescription("A forum for discussing the latest innovations and startup trends.");
             event10.setCreator(user);
             event10.setCategory("Educational");
+            event10.setRating(3);
             eventRepository.save(event10);
         }
     }
