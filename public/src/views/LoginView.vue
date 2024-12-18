@@ -16,7 +16,7 @@
           ref="password"
           type="password"
           fill="solid"
-          label="password"
+          label="Password"
           label-placement="floating"
           error-text="Invalid email"
           @ionBlur="markTouched"
