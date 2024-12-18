@@ -25,7 +25,7 @@ public class EventInitialization implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        // Verifica se o usuário já existe, caso contrário, cria um novo
+        // Verifica se o utlizador já existe, caso contrário, cria um novo
         if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
             User user = User.builder()
                     .email("AnyNormalUser@gmail.com")
@@ -160,7 +160,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setLimit(20);
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
-            event8.setCategory( "Sports");
+            event8.setCategory("Sports");
             eventRepository.save(event8);
         }
 

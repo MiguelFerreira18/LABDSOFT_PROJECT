@@ -1,21 +1,18 @@
 package isep.ipp.pt.Smart_cities.Controller;
 
 import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
+import isep.ipp.pt.Smart_cities.Dto.RateDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
-import isep.ipp.pt.Smart_cities.Model.UserModel.Institution;
-import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Service.EventService;
+import isep.ipp.pt.Smart_cities.Service.SubscribeService;
 import isep.ipp.pt.Smart_cities.Service.UserService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/events")
@@ -25,6 +22,8 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SubscribeService subscribeService;
 
    @PostMapping
 public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEventRequestDto) {
@@ -92,5 +91,10 @@ public ResponseEntity<Event> createEvent(@RequestBody EventRequestDTO createEven
     @GetMapping("/non-promoted")
     public ResponseEntity<List<Event>> getNonPromotedEvents() {
         return ResponseEntity.ok(eventService.getNonPromotedEvents());
+    }
+
+    @PostMapping("/rate")
+    public boolean rateEvent(@RequestBody @Valid RateDTO rateDTO) {
+        return subscribeService.rate(rateDTO);
     }
 }

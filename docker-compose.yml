@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   mysql:
     container_name: ${LABDSOFT_DB_HOST}
     image: mysql:latest
@@ -13,7 +12,7 @@ services:
       - MYSQL_USER=${LABDSOFT_DB_USER}
       - MYSQL_PASSWORD=${LABDSOFT_DB_PASS}
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
 
@@ -31,7 +30,7 @@ services:
     container_name: labdsoft-api
     build: ./
     ports:
-    - "9092:9092"
+      - "9092:9092"
     depends_on:
       mysql:
         condition: service_healthy
