@@ -7,7 +7,7 @@ const { baseUrl } = apiConfig;
 export async function SendRequest(
   path: string,
   method: string,
-  data: Record<string, string> = {},
+  data: Record<string, any> = {},
   fieldsToEncrypt: string[] = [],
 ): Promise<Response> {
   const token = localStorage.getItem('token') || '';

@@ -165,8 +165,9 @@ public class AuthenticationApi {
             LOGGER.warn("Password and repeat password do not match for user: {}", request.name);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    
         try {
-
+    
             if (request.getType() == Types.USER) {
                 User newUser = userMapper.toUser(request);
                 return userService.saveUser(newUser)
@@ -179,7 +180,7 @@ public class AuthenticationApi {
                             LOGGER.warn("Failed to register new user: {}", newUser.getEmail());
                             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                         });
-
+    
             } else if (request.getType() == Types.INSTITUTION) {
                 Institution newInstitution = userMapper.toInstitution(request);
                 return institutionService.saveInstitution(newInstitution)
@@ -192,16 +193,16 @@ public class AuthenticationApi {
                             LOGGER.warn("Failed to register new institution: {}", newInstitution.getUsername());
                             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
                         });
-
+    
             } else {
                 LOGGER.warn("Invalid registration type requested: {}", request.getType());
                 return ResponseEntity.badRequest().build();
             }
-
+    
         } catch (Exception ex) {
             LOGGER.error("Error during registration for username: {}", request.getName(), ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    
 }

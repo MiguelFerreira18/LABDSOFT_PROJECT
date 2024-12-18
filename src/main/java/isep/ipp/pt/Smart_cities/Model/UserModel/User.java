@@ -68,10 +68,6 @@ public class User implements UserDetails {
     @Column(name = "category")
     protected Set<String> preferredCategories = new HashSet<>();
 
-    @Column
-    protected String preferredLocation;
-
-
     public User() {
         this.authorities = new HashSet<>();
     }

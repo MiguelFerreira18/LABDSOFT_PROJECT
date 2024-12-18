@@ -1,32 +1,34 @@
 <template>
-  <ion-content class="ion-padding">
-    <div class="centered-square">
-      <ion-input
-        ref="email"
-        type="email"
-        fill="solid"
-        label="Email"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+  <ion-page>
+    <ion-content class="ion-padding">
+      <div class="centered-square">
+        <ion-input
+          ref="email"
+          type="email"
+          fill="solid"
+          label="Email"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-input
-        ref="password"
-        type="password"
-        fill="solid"
-        label="password"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+        <ion-input
+          ref="password"
+          type="password"
+          fill="solid"
+          label="password"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-button expand="block" @click="login">Submit</ion-button>
-      <ion-text class="signup-link" @click="pushToSignUp">
-        <p>Sign up</p>
-      </ion-text>
-    </div>
-  </ion-content>
+        <ion-button expand="block" @click="login">Submit</ion-button>
+        <ion-text class="signup-link" @click="pushToSignUp">
+          <p>Sign up</p>
+        </ion-text>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
@@ -81,7 +83,7 @@ async function login() {
 }
 
 function pushToSignUp() {
-  router.push('/signup');
+  router.replace('/signup');
 }
 
 function markTouched() {
