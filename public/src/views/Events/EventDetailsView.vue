@@ -25,7 +25,10 @@
           <section v-if="creator">
             <ion-item lines="none" class="ion-no-padding">
               <ion-avatar aria-hidden="true" slot="start">
-                <img alt="create-avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+                <img
+                  alt="create-avatar"
+                  src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                />
               </ion-avatar>
               <ion-label>
                 <h6>{{ creator.name }}</h6>
@@ -97,7 +100,9 @@
           :latitude="event.latitude"
           :longitude="event.longitude"
         />
-        <p class="ion-padding" v-else>Map unavailable – location not specified.</p>
+        <p class="ion-padding" v-else>
+          Map unavailable – location not specified.
+        </p>
       </section>
 
       <section qrCode class="ion-padding" v-if="hasEventStarted()">
@@ -537,13 +542,13 @@ ion-button {
   height: 2em;
   justify-content: center;
   line-height: 1.5;
-  padding-left: .75em;
-  padding-right: .75em;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
   white-space: nowrap;
   color: white;
 }
 
 .star-rating-author .star {
-    font-size: 12px;
+  font-size: 12px;
 }
 </style>
