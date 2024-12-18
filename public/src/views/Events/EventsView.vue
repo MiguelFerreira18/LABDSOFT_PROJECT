@@ -161,23 +161,21 @@ interface Event {
 
 export default {
   setup() {
-    const promotedEvents = ref<Event[]>([]); // Lista de eventos promovidos
-    const nonPromotedEvents = ref<Event[]>([]); // Lista de eventos não promovidos
-    const selectedCategories = ref<string[]>([]); // Categorias selecionadas pelo usuário
-    const dateLimit = ref<string | null>(null); // Limite de data escolhido
-    const showDropdown = ref(false); // Controle de visibilidade do dropdown
+    const promotedEvents = ref<Event[]>([]);
+    const nonPromotedEvents = ref<Event[]>([]);
+    const selectedCategories = ref<string[]>([]);
+    const dateLimit = ref<string | null>(null);
+    const showDropdown = ref(false);
 
-    // Função para carregar eventos promovidos da API
     const loadPromoted = async () => {
       try {
         promotedEvents.value = await fetchPromotedEvents();
       } catch (error) {
         console.error('Erro ao buscar eventos promovidos:', error);
-        promotedEvents.value = []; // Caso de erro, deixa a lista vazia
+        promotedEvents.value = [];
       }
     };
 
-    // Função para carregar eventos não promovidos da API
     const loadNonPromoted = async () => {
       try {
         nonPromotedEvents.value = await fetchNonPromotedEvents();
@@ -187,8 +185,6 @@ export default {
       }
     };
 
-    // Computed para filtrar eventos não promovidos com base nas categorias e data
-    // Computed para filtrar e ordenar eventos não promovidos com base nas categorias e data
     const filteredNonPromotedEvents = computed(() => {
       const filteredEvents = nonPromotedEvents.value.filter((event) => {
         const isCategoryMatch =
@@ -209,7 +205,6 @@ export default {
       );
     });
 
-    // Computed para filtrar e ordenar eventos promovidos com base nas categorias e data
     const filteredPromotedEvents = computed(() => {
       const filteredEvents = promotedEvents.value.filter((event) => {
         const isCategoryMatch =
@@ -230,12 +225,10 @@ export default {
       );
     });
 
-    // Alterna a exibição do dropdown
     const toggleDropdown = () => {
       showDropdown.value = !showDropdown.value;
     };
 
-    // Alterna a seleção de uma categoria
     const toggleCategory = (category: string) => {
       const index = selectedCategories.value.indexOf(category);
       if (index >= 0) {
@@ -245,13 +238,11 @@ export default {
       }
     };
 
-    // Limpa todos os filtros aplicados
     const clearFilters = () => {
       selectedCategories.value = [];
       dateLimit.value = null;
     };
 
-    // Carrega os eventos promovidos e não promovidos ao montar o componente
     onMounted(() => {
       loadPromoted();
       loadNonPromoted();
@@ -264,7 +255,7 @@ export default {
       selectedCategories,
       dateLimit,
       filteredNonPromotedEvents,
-      filteredPromotedEvents, // Incluindo a lista filtrada de eventos promovidos
+      filteredPromotedEvents,
       toggleCategory,
       toggleDropdown,
       showDropdown,
@@ -298,19 +289,15 @@ export default {
   display: flex;
   overflow-x: auto;
   gap: 16px;
-  /* Espaço entre os cartões */
   margin-top: 10px;
 }
 
 .promoted-events-bar .clickable-card {
   width: 250px;
-  /* Largura fixa igual aos cards abaixo */
   height: 100%;
-  /* Altura fixa para os cartões */
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  /* Impede que os cartões se encolham ao exceder a largura da barra */
 }
 
 .event-cards-container {
@@ -329,7 +316,6 @@ ion-card {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 100%;
-  /* Garantir que a altura do card seja 100% do seu container */
 }
 
 ion-card-header {
@@ -363,7 +349,6 @@ ion-card-subtitle {
   display: flex;
   flex-direction: column;
   height: 100%;
-  /* Garantir que o card ocupe toda a altura disponível */
 }
 
 .dropdown-menu {
@@ -408,7 +393,6 @@ ion-card-subtitle {
   font-size: 16px;
 }
 
-/* Estilos para o botão de filtro */
 .filter-button {
   position: fixed;
   top: 80px;
@@ -438,14 +422,12 @@ ion-card-subtitle {
   opacity: 0.8;
 }
 
-/* Estilos para a seção de eventos promovidos */
 .promoted-events-section,
 .event-cards-container {
   z-index: 1;
   /* Garante que os eventos fiquem abaixo do dropdown */
 }
 
-/* Novo estilo para o título da seção de eventos promovidos */
 .promoted-events-section h2 {
   margin-top: 60px;
   /* Aumenta o espaçamento entre o ícone do filtro e o título */
@@ -453,7 +435,7 @@ ion-card-subtitle {
   /* Espaçamento inferior do título */
   font-size: 1.5rem;
   font-weight: bold;
-  color: aliceblue;
+  color: black;
 }
 
 .clear-button {
@@ -462,7 +444,6 @@ ion-card-subtitle {
   font-size: 14px;
 }
 
-/* Estilos para a seção de eventos promovidos */
 .promoted-events-section,
 .event-cards-container {
   z-index: 1;

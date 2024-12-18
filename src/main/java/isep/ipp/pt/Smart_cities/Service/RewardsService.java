@@ -2,6 +2,7 @@ package isep.ipp.pt.Smart_cities.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 

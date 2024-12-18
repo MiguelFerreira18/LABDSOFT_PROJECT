@@ -61,13 +61,15 @@ async function loadDashboard() {
 
   const uuid = localStorage.getItem('uuid') || '';
   try {
-    const response = await SendRequest(`/api/events/dashboard/${uuid}`, 'GET');
-    const data = await response.json();
-    console.log('Dashboard data:', data);
-
-    eventSummaries.value = data;
+    const response = await SendRequest('/api/events/summaries', 'GET');
+    if (response.ok) {
+      const data = await response.json();
+      eventSummaries.value = data;
+    } else {
+      console.error('Error fetching event summaries:', response.statusText);
+    }
   } catch (error) {
-    console.error('Failed to load dashboard:', error);
+    console.error('Error fetching event summaries:', error);
   } finally {
     loading.value = false;
   }
@@ -77,9 +79,6 @@ async function loadDashboard() {
 <style scoped>
 .title {
   text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
-  color: aliceblue;
   margin-bottom: 20px;
 }
 
@@ -92,22 +91,22 @@ async function loadDashboard() {
 
 .no-events-message {
   text-align: center;
-  font-size: 1.2rem;
-  color: var(--ion-color-medium);
+  margin-top: 20px;
 }
 
 .dashboard-cards-container {
-  padding: 16px;
+  display: flex;
+  justify-content: center;
 }
 
 .dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .dashboard-card {
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1 1 calc(33.333% - 20px);
+  box-sizing: border-box;
 }
 </style>
