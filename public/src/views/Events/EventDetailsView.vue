@@ -162,12 +162,13 @@ onMounted(async () => {
 });
 
 function hasEventStarted() {
-  if (!subbedEvent.value?.event) return false;
-  const event = subbedEvent.value.event;
+  if (event.value == null || event.value.event == 'undefined') return false;
+  const currentEvent = event.value;
 
-  if (event.startDate && Array.isArray(event.startDate)) {
-    const [year, month, day] = event.startDate;
+  if (currentEvent.startDate && Array.isArray(currentEvent.startDate)) {
+    const [year, month, day] = currentEvent.startDate;
     const startDate = new Date(year, month - 1, day);
+
     return startDate <= new Date();
   }
   return false;
