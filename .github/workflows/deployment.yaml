@@ -117,6 +117,14 @@ jobs:
         run: chmod +x gradlew
         working-directory: ./public/android
 
+      - name: Check for Gradle wrapper JAR
+        run: |
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Gradle wrapper JAR not found. Regenerating wrapper..."
+            ./gradlew wrapper
+          fi
+        working-directory: ./public/android
+
       - name: Build debug release with gradle
         run: ./gradlew assembleDebug
         working-directory: ./public/android
