@@ -16,28 +16,6 @@
       <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
         <h2 class="subtitle">Promoted Events</h2>
         <div class="promoted-events-bar">
-          <!-- Cartões de Eventos Promovidos -->
-          <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
-            <ion-card>
-              <ion-card-header
-                :style="{
-                  backgroundColor: categoryColors[event.category] || '#ccc',
-                }"
-              >
-                <ion-card-title>{{ event.title }}</ion-card-title>
-                <ion-card-subtitle>
-                  {{ formatDate(event.startDate) }} -
-                  {{ formatDate(event.endDate) }}
-                </ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
-                <p><strong>Location:</strong> {{ event.location }}</p>
-                <p><strong>Category:</strong> {{ event.category }}</p>
-              </ion-card-content>
-            </ion-card>
-           </ion-nav-link> -->
-
           <router-link
             v-for="event in filteredPromotedEvents"
             :key="event.id"
@@ -147,6 +125,7 @@ import { categories, categoryColors } from '@/lib/categories';
 import { IonPage } from '@ionic/vue';
 import { filterCircleOutline } from 'ionicons/icons';
 import EventDetailsView from './EventDetailsView.vue';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 interface Event {
   id: number;
@@ -157,6 +136,19 @@ interface Event {
   creator: { name: string };
   location: string;
   isPromoted: boolean;
+}
+
+const genAI = new GoogleGenerativeAI("AIzaSyCAIAOQ-T9cc3OdW-LYXJyaEnwANenGQA4");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+async function generateExplanation() {
+  try {
+    const prompt = "Explain how AI works";
+    const result = await model.generateContent(prompt);
+    console.log(result.response.text());
+  } catch (error) {
+    console.error("Erro ao chamar a API:", error);
+  }
 }
 
 export default {
@@ -198,7 +190,6 @@ export default {
         return isCategoryMatch && isDateMatch;
       });
 
-      // Ordena os eventos pela data de início do mais próximo ao mais distante
       return filteredEvents.sort(
         (a, b) =>
           new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
@@ -218,7 +209,6 @@ export default {
         return isCategoryMatch && isDateMatch;
       });
 
-      // Ordena os eventos pela data de início do mais próximo ao mais distante
       return filteredEvents.sort(
         (a, b) =>
           new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
@@ -230,11 +220,15 @@ export default {
     };
 
     const toggleCategory = (category: string) => {
-      const index = selectedCategories.value.indexOf(category);
-      if (index >= 0) {
-        selectedCategories.value.splice(index, 1);
+      if (category === 'Artificial Intelligence') {
+        generateExplanation();
       } else {
-        selectedCategories.value.push(category);
+        const index = selectedCategories.value.indexOf(category);
+        if (index >= 0) {
+          selectedCategories.value.splice(index, 1);
+        } else {
+          selectedCategories.value.push(category);
+        }
       }
     };
 

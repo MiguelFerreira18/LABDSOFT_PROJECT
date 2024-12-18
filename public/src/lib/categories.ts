@@ -1,4 +1,3 @@
-// src/constants/categories.ts
 export const categories: string[] = [
   'Art',
   'Sports',
@@ -7,6 +6,7 @@ export const categories: string[] = [
   'Educational',
   'Recreational',
   'Political',
+  'Artificial Intelligence'
 ];
 
 export const categoryColors: Record<string, string> = {
@@ -17,4 +17,5 @@ export const categoryColors: Record<string, string> = {
   Educational: '#2196f3',
   Recreational: '#795548',
   Political: '#f44336',
+  'Artificial Intelligence': '#000000'
 };
