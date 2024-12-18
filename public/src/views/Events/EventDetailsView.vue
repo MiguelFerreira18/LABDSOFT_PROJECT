@@ -15,27 +15,36 @@
       ></ion-img>
       <div class="ion-padding">
         <header>
-          <p>{{ event.category }}</p>
+          <p class="tag">{{ event.category }}</p>
           <h2>{{ event.title }}</h2>
           <p>
             Subscribers:
             {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers }}
             {{ event.limit == 0 ? '' : '/' + event.limit }}
           </p>
+          <section v-if="creator">
+            <ion-item lines="none" class="ion-no-padding">
+              <ion-avatar aria-hidden="true" slot="start">
+                <img
+                  alt="create-avatar"
+                  src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                />
+              </ion-avatar>
+              <ion-label>
+                <h6>{{ creator.name }}</h6>
+                <div class="star-rating-author" v-if="creatorRating !== null">
+                  <span
+                    v-for="star in 5"
+                    :key="star"
+                    class="star"
+                    :class="{ filled: star <= creatorRating }"
+                    >&#9733;</span
+                  >
+                </div>
+              </ion-label>
+            </ion-item>
+          </section>
         </header>
-
-        <section creatorRating v-if="creatorRating !== null">
-          <h3>Rating</h3>
-          <div class="star-rating">
-            <span
-              v-for="star in 5"
-              :key="star"
-              class="star"
-              :class="{ filled: star <= creatorRating }"
-              >&#9733;</span
-            >
-          </div>
-        </section>
 
         <section>
           <h3>Description</h3>
@@ -53,11 +62,6 @@
           </p>
         </section>
 
-        <section v-if="creator">
-          <h3>Creator</h3>
-          <p>{{ creator.name }}</p>
-        </section>
-
         <section>
           <h3>Location</h3>
           <p>{{ event.location }}</p>
@@ -73,6 +77,20 @@
               >&#9733;</span
             >
           </div>
+
+          <ion-item lines="none" v-if="isSubscribed && hasEventStarted()">
+            <ion-label>Rate this event</ion-label>
+            <div class="star-rating">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                @click="rateEvent(star)"
+                :class="{ filled: star <= userRating }"
+                >&#9733;</span
+              >
+            </div>
+          </ion-item>
         </section>
       </div>
 
@@ -82,7 +100,9 @@
           :latitude="event.latitude"
           :longitude="event.longitude"
         />
-        <p v-else>Map unavailable – location not specified.</p>
+        <p class="ion-padding" v-else>
+          Map unavailable – location not specified.
+        </p>
       </section>
 
       <section qrCode class="ion-padding" v-if="hasEventStarted()">
@@ -511,5 +531,24 @@ section p {
 }
 ion-button {
   margin-top: 12px;
+}
+
+.tag {
+  align-items: center;
+  border-radius: 0.375rem;
+  background-color: #212529;
+  display: inline-flex;
+  font-size: 0.75rem;
+  height: 2em;
+  justify-content: center;
+  line-height: 1.5;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  white-space: nowrap;
+  color: white;
+}
+
+.star-rating-author .star {
+  font-size: 12px;
 }
 </style>
