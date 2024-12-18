@@ -183,7 +183,7 @@ jobs:
       - name: Build and push backend
         run: docker push ${{ secrets.DOCKER_USERNAME }}/smart-city-api:latest
 
-    needs: [buildBackEnd]
+    needs: [lintFrontEnd, buildBackEnd]
 
   docker-scout-api:
     runs-on: ubuntu-latest
