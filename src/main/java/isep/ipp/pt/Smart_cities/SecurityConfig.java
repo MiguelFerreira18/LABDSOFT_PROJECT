@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -77,7 +78,7 @@ public class SecurityConfig {
 				)
 				.cors(cors -> cors.configurationSource(request -> {
 					CorsConfiguration config = new CorsConfiguration();
-					config.setAllowedOriginPatterns(List.of("*"));
+					config.setAllowedOrigins(List.of("https://localhost", "http://localhost:8100", "https://*.ngrok-free.app"));
 					config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "OPTIONS","PATCH"));
 					config.setAllowedHeaders(List.of("*"));
 					config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
@@ -88,6 +89,7 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						auth -> auth
+								.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
 								.requestMatchers("/subscription/**").authenticated()
 								.requestMatchers("/auth/public/signup").permitAll()
 								.requestMatchers("/auth/public/login").permitAll()

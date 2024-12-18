@@ -14,6 +14,13 @@ const config: CapacitorConfig = {
   },
   android: {
     allowMixedContent: true,
+    buildOptions: {
+      releaseType: 'APK',
+      keystoreAlias: 'my-key-alias',
+      keystorePassword: 'password',
+      keystorePath: './my-release-key.jks',
+      keystoreAliasPassword: 'password',
+    },
   },
   server: {
     allowNavigation: ['*'],

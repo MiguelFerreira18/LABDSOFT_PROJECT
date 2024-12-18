@@ -9,6 +9,8 @@ export async function fetchAllEvents(): Promise<any[]> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'X-API-KEY': apiKey,
+      'ngrok-skip-browser-warning': '69420',
+      credentials: 'include',
     };
     const response = await fetch(`${baseUrl}/api/events`, {
       method: 'GET',
@@ -31,6 +33,8 @@ export async function fetchNonPromotedEvents(): Promise<any[]> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'X-API-KEY': apiKey,
+      'ngrok-skip-browser-warning': '69420',
+      credentials: 'include',
     };
     if (token !== '' && !IsJWTExpired(token)) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -57,6 +61,8 @@ export async function fetchPromotedEvents(): Promise<any[]> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'X-API-KEY': apiKey,
+      'ngrok-skip-browser-warning': '69420',
+      credentials: 'include',
     };
     if (token !== '' && !IsJWTExpired(token)) {
       headers['Authorization'] = `Bearer ${token}`;

@@ -15,6 +15,8 @@ export async function SendRequest(
   const headers: Record<string, string> = {
     'Content-type': 'application/json',
     Authorization: '',
+    credentials: 'include',
+    'ngrok-skip-browser-warning': '69420',
   };
   headers['X-API-KEY'] = apiKey;
   if (token !== '' && !IsJWTExpired(token)) {

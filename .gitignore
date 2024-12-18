@@ -15,8 +15,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
 *.nar
 *.ear
 *.zip
@@ -30,7 +28,6 @@ replay_pid*
 # End of https://www.toptal.com/developers/gitignore/api/java
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 

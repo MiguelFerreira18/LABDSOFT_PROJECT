@@ -185,44 +185,6 @@ const userRating = ref(0);
 const hasRated = ref(false);
 const creatorRating = ref<number | null>(null);
 
-interface Event {
-  id: string;
-  title: string;
-  location: string;
-  startDate: [number, number, number, number, number];
-  endDate: [number, number, number, number, number];
-  category: string;
-  description: string;
-  limit: number;
-  imagePath: string | null;
-  creator: {
-    id: string;
-    email: string;
-    name: string;
-    authorities: { authority: string }[];
-    password: string;
-    hasPromotedEvent: boolean;
-    lastLoginAt: number | null;
-    pushTokenMobile: string | null;
-    birthDate: number;
-    gender: string;
-    address: string;
-    city: string;
-    country: string;
-    username: string;
-    accountNonExpired: boolean;
-    credentialsNonExpired: boolean;
-    enabled: boolean;
-    accountNonLocked: boolean;
-  };
-  promotedUntil: string | null;
-  latitude: number;
-  longitude: number;
-  rating: number;
-  inCurrentMonth: boolean;
-  promoted: boolean;
-}
-
 onMounted(async () => {
   await getCurrentEvent();
   await getNumberOfSubscribers();
@@ -253,8 +215,8 @@ async function calculateCreatorRating(creatorId: string) {
       `/api/events?creatorId=${creatorId}`,
       'GET',
     );
-    const events: Event[] = await response.json();
-    const pastEvents = events.filter((event) => {
+    const events: any = await response.json();
+    const pastEvents = events.filter((event: any) => {
       const endDate = new Date(
         event.endDate[0],
         event.endDate[1] - 1,
@@ -263,12 +225,13 @@ async function calculateCreatorRating(creatorId: string) {
       return endDate < new Date();
     });
     const totalRating = pastEvents.reduce(
-      (sum, event) => sum + event.rating,
+      (sum: any, event: any) => sum + event.rating,
       0,
     );
     const averageRating =
       pastEvents.length > 0 ? totalRating / pastEvents.length : 0;
     creatorRating.value = averageRating;
+    console.log('Creator rating:', creatorRating.value);
   } catch (error) {
     creatorRating.value = null;
   }
@@ -282,12 +245,14 @@ function hasEventStarted() {
   )
     return false;
 
-  const startDate = new Date(
-    event.value.startDate[0],
-    event.value.startDate[1] - 1,
-    event.value.startDate[2],
-  );
-  return startDate <= new Date();
+  const currentEvent = event.value;
+  if (currentEvent.startDate && Array.isArray(currentEvent.startDate)) {
+    const [year, month, day] = currentEvent.startDate;
+    const startDate = new Date(year, month - 1, day);
+
+    return startDate <= new Date();
+  }
+  return false;
 }
 
 function isOwnerOfTheEvent() {
