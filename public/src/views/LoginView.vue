@@ -83,7 +83,7 @@ async function login() {
 }
 
 function pushToSignUp() {
-  router.replace('/signup');
+  router.push('/signup');
 }
 
 function markTouched() {

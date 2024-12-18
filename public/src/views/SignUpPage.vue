@@ -134,7 +134,7 @@ async function signUp() {
     const response = await SendRequest('/auth/public/signup', 'POST', payload);
     if (response.ok) {
       //TODO Acceptance criteria requires for a pop up to be shown
-      router.replace('/login');
+      router.push('/login');
     }
   } catch (error) {
     console.log(error);
