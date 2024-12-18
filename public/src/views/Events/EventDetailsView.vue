@@ -13,12 +13,24 @@
         <ion-card-header>
           <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
           <ion-card-title>{{ event.title }}</ion-card-title>
-          <ion-card-subtitle
-            >Subscribers: {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers
-            }}{{ event.limit == 0 ? '' : '/' + event.limit }}</ion-card-subtitle
-          >
+          <ion-card-subtitle>
+            Subscribers: {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers
+            }}{{ event.limit == 0 ? '' : '/' + event.limit }}
+          </ion-card-subtitle>
         </ion-card-header>
         <ion-list>
+          <ion-item v-if="creatorRating !== null">
+            <ion-label>Creator Rating</ion-label>
+            <div class="star-rating">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                :class="{ filled: star <= creatorRating }"
+                >&#9733;</span
+              >
+            </div>
+          </ion-item>
           <ion-item>
             <ion-label>Description</ion-label>
             {{ event.description }}
@@ -37,6 +49,31 @@
           <ion-item v-if="creator">
             <ion-label>Creator</ion-label>
             {{ creator.name }}
+          </ion-item>
+          <ion-item>
+            <ion-label>Event Rating</ion-label>
+            <div class="star-rating">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                :class="{ filled: star <= event.rating }"
+                >&#9733;</span
+              >
+            </div>
+          </ion-item>
+          <ion-item v-if="isSubscribed && hasEventStarted()">
+            <ion-label>Rate this event</ion-label>
+            <div class="star-rating">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                @click="rateEvent(star)"
+                :class="{ filled: star <= userRating }"
+                >&#9733;</span
+              >
+            </div>
           </ion-item>
         </ion-list>
         <ion-row class="ion-justify-content-center">
@@ -144,6 +181,47 @@ const subbedEvent = ref<any>({});
 const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 const scanResult = ref<string | null>(null);
+const userRating = ref(0);
+const hasRated = ref(false);
+const creatorRating = ref<number | null>(null);
+
+interface Event {
+  id: string;
+  title: string;
+  location: string;
+  startDate: [number, number, number, number, number];
+  endDate: [number, number, number, number, number];
+  category: string;
+  description: string;
+  limit: number;
+  imagePath: string | null;
+  creator: {
+    id: string;
+    email: string;
+    name: string;
+    authorities: { authority: string }[];
+    password: string;
+    hasPromotedEvent: boolean;
+    lastLoginAt: number | null;
+    pushTokenMobile: string | null;
+    birthDate: number;
+    gender: string;
+    address: string;
+    city: string;
+    country: string;
+    username: string;
+    accountNonExpired: boolean;
+    credentialsNonExpired: boolean;
+    enabled: boolean;
+    accountNonLocked: boolean;
+  };
+  promotedUntil: string | null;
+  latitude: number;
+  longitude: number;
+  rating: number;
+  inCurrentMonth: boolean;
+  promoted: boolean;
+}
 
 onMounted(async () => {
   await getCurrentEvent();
@@ -159,18 +237,57 @@ onMounted(async () => {
 
     getQrCodeIfEventHasStarted(subbedEvent.value.qrdata);
   }
+  if (data.rate) {
+    userRating.value = data.rate;
+    hasRated.value = true;
+  }
+  if (data.event.rating) {
+    event.value.rating = data.event.rating;
+  }
+  await calculateCreatorRating(data.event.creator.id);
 });
 
-function hasEventStarted() {
-  if (!subbedEvent.value?.event) return false;
-  const event = subbedEvent.value.event;
-
-  if (event.startDate && Array.isArray(event.startDate)) {
-    const [year, month, day] = event.startDate;
-    const startDate = new Date(year, month - 1, day);
-    return startDate <= new Date();
+async function calculateCreatorRating(creatorId: string) {
+  try {
+    const response = await SendRequest(
+      `/api/events?creatorId=${creatorId}`,
+      'GET',
+    );
+    const events: Event[] = await response.json();
+    const pastEvents = events.filter((event) => {
+      const endDate = new Date(
+        event.endDate[0],
+        event.endDate[1] - 1,
+        event.endDate[2],
+      );
+      return endDate < new Date();
+    });
+    const totalRating = pastEvents.reduce(
+      (sum, event) => sum + event.rating,
+      0,
+    );
+    const averageRating =
+      pastEvents.length > 0 ? totalRating / pastEvents.length : 0;
+    creatorRating.value = averageRating;
+  } catch (error) {
+    creatorRating.value = null;
   }
-  return false;
+}
+
+function hasEventStarted() {
+  if (
+    !event.value ||
+    !event.value.startDate ||
+    !Array.isArray(event.value.startDate)
+  )
+    return false;
+
+  const startDate = new Date(
+    event.value.startDate[0],
+    event.value.startDate[1] - 1,
+    event.value.startDate[2],
+  );
+  return startDate <= new Date();
 }
 
 function isOwnerOfTheEvent() {
@@ -196,6 +313,7 @@ async function handleSubscription() {
     subbedEvent.value = data;
   }
 }
+
 async function handleClaimReward() {
   if (hasAttended.value) return;
   const response = await SendRequest(
@@ -306,10 +424,13 @@ async function getCurrentEvent() {
     : route.params.id;
   const response = await SendRequest(`/api/events/${eventId}`, 'GET');
   const data = await response.json();
-
   event.value = data;
   creator.value = data.creator;
+  if (data.rating) {
+    event.value.rating = data.rating;
+  }
 }
+
 async function getNumberOfSubscribers() {
   const eventId = Array.isArray(route.params.id)
     ? route.params.id[0]
@@ -338,6 +459,7 @@ async function getQrCodeIfEventHasStarted(url: string) {
     if (error) console.error(error);
   });
 }
+
 function hasLimitReached() {
   if (numberOfSubscribers.value >= event.value.limit && event.value.limit > 0) {
     return true;
@@ -349,6 +471,53 @@ function hasLimitReached() {
 function isOwner() {
   return creator.value.id === localStorage.getItem('uuid');
 }
+
+async function rateEvent(star: number) {
+  if (!isSubscribed.value) {
+    showToast('You must be subscribed to rate the event!', 'danger');
+    return;
+  }
+  if (!hasEventStarted()) {
+    showToast('You can only rate events that have started!', 'danger');
+    return;
+  }
+  if (hasRated.value) {
+    showToast('You have already rated this event!', 'danger');
+    return;
+  }
+
+  const payload: Record<string, string> = {
+    uuid: localStorage.getItem('uuid') || '',
+    eventId: Array.isArray(route.params.id)
+      ? route.params.id[0]
+      : route.params.id || '',
+    rating: star.toString(),
+  };
+
+  const response = await SendRequest(`/api/events/rate`, 'POST', payload);
+  if (response.ok) {
+    showToast('Event rated successfully!', 'success');
+    userRating.value = star;
+    hasRated.value = true;
+  } else {
+    showToast('Failed to rate the event', 'danger');
+  }
+}
 </script>
 
-<style></style>
+<style scoped>
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star.filled {
+  color: #f39c12;
+}
+</style>

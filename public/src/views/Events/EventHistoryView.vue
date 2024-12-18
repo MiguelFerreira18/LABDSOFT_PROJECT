@@ -117,6 +117,7 @@ interface Event {
   creator: any;
   category: string;
 }
+
 const events = ref<Event[]>([]);
 const creator = ref<any>({});
 const isSeeingAttendedEvents = ref(true);
@@ -132,6 +133,7 @@ async function fetchEvents(endpoint: any) {
     events.value = sortEventsByDate(events.value);
   }
 }
+
 function sortEventsByDate(eventsList: Event[]) {
   return eventsList.sort(
     (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
@@ -148,6 +150,7 @@ onMounted(async () => {
 async function handlePagePush(eventId: number) {
   router.push({ path: `/event/EventDetail/${eventId}` });
 }
+
 async function toggleView() {
   isSeeingAttendedEvents.value = !isSeeingAttendedEvents.value;
   const endpoint = isSeeingAttendedEvents.value
@@ -155,6 +158,7 @@ async function toggleView() {
     : '/subscription/event/';
   await fetchEvents(endpoint);
 }
+
 function formatDateRange(startDate: string, endDate: string) {
   const start = formatDate(startDate);
   const end = formatDate(endDate);

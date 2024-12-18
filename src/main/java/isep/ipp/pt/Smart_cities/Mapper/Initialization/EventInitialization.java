@@ -1,5 +1,3 @@
-
-
 package isep.ipp.pt.Smart_cities.Mapper.Initialization;
 
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
@@ -27,7 +25,7 @@ public class EventInitialization implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        // Verifica se o usuário já existe, caso contrário, cria um novo
+        // Verifica se o utlizador já existe, caso contrário, cria um novo
         if (userRepository.findByEmail("AnyNormalUser@gmail.com").isEmpty()) {
             User user = User.builder()
                     .email("AnyNormalUser@gmail.com")
@@ -80,7 +78,7 @@ public class EventInitialization implements CommandLineRunner {
             event3.setLimit(5);
             event3.setDescription("An exhibition showcasing modern art.");
             event3.setCreator(user);
-            event3.setCategory( "Social");
+            event3.setCategory("Social");
             eventRepository.save(event3);
         }
 
@@ -122,7 +120,7 @@ public class EventInitialization implements CommandLineRunner {
             event6.setLimit(20);
             event6.setDescription("A networking event for entrepreneurs and investors.");
             event6.setCreator(user);
-            event6.setCategory( "Recreational");
+            event6.setCategory("Recreational");
             eventRepository.save(event6);
         }
 
@@ -150,7 +148,7 @@ public class EventInitialization implements CommandLineRunner {
             event8.setLimit(20);
             event8.setDescription("A festival dedicated to the best food and drinks.");
             event8.setCreator(user);
-            event8.setCategory( "Sports");
+            event8.setCategory("Sports");
             eventRepository.save(event8);
         }
 

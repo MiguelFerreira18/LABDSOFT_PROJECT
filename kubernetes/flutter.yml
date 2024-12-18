@@ -5,7 +5,7 @@ metadata:
   labels:
     app: flutter-ui
 spec:
-  replicas: 1   
+  replicas: 1
   selector:
     matchLabels:
       app: flutter-ui
@@ -16,9 +16,9 @@ spec:
     spec:
       containers:
         - name: flutter-ui
-          image: 1230199/flutter-ui:latest   
+          image: 1230199/flutter-ui:latest
           ports:
-            - containerPort: 5173  
+            - containerPort: 5173
           resources:
             limits:
               memory: "512Mi"
@@ -36,6 +36,6 @@ spec:
     app: flutter-ui
   ports:
     - protocol: TCP
-      port: 5173   
+      port: 5173
       targetPort: 5173
       nodePort: 31570
