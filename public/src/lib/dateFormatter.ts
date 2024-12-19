@@ -1,32 +1,23 @@
 // Função para mapear o número do mês para a abreviação do mês
 function getMonthName(monthNumber: number): string {
   const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
   return months[monthNumber - 1] || ''; // Retorna o mês correspondente, ou uma string vazia se inválido
 }
 
-function formatDate(date: string | Date): string {
-  const d = new Date(date);
+// Função para formatar a data corretamente
+function formatDate(date: any): string {
+  // Caso a data seja um array como o retornado no JSON
+  const d = new Date(date[0], date[1] - 1, date[2], date[3], date[4]); // Ajusta para mês 0-indexed
   if (isNaN(d.getTime())) {
-    // Se não for uma data válida, retorna uma string de fallback
-    return 'Invalid date';
+    return 'Invalid date'; // Se não for uma data válida, retorna 'Invalid date'
   }
 
-  const day = d.getDate().toString().padStart(2, '0'); // Obtém o dia e garante que tenha 2 dígitos
-  const month = getMonthName(d.getMonth() + 1); // Obtém o mês, lembrando que getMonth() retorna 0-11
+  const day = d.getDate().toString().padStart(2, '0'); // Obtém o dia com 2 dígitos
+  const month = getMonthName(d.getMonth() + 1); // Obtém o mês com 1-indexed (padrão)
   const year = d.getFullYear(); // Obtém o ano
 
   return `${day} ${month} ${year}`; // Formata como "21 Feb 2024"

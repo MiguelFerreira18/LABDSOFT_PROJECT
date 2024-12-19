@@ -18,7 +18,7 @@
           </ion-item>
           <ion-item>
             <ion-label>Date</ion-label>
-            {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+            {{ formattedStartDate }} - {{ formattedEndDate }}
           </ion-item>
           <ion-item>
             <ion-label>Location</ion-label>
@@ -39,13 +39,13 @@
         </ion-row>
 
         <ion-modal :is-open="isModalOpen" @did-dismiss="isModalOpen = false" backdrop-dismiss="true">
-  <div class="modal-content">
-    <div class="modal-background" @click="closeModal">
-      <ion-img :src="modalImageUrl" alt="Expanded Image" class="modal-image" />
-    </div>
-    <div class="modal-text" @click="closeModal">Go back to the Event Page</div>
-  </div>
-</ion-modal>
+          <div class="modal-content">
+            <div class="modal-background" @click="closeModal">
+              <ion-img :src="modalImageUrl" alt="Expanded Image" class="modal-image" />
+            </div>
+            <div class="modal-text" @click="closeModal">Go back to the Event Page</div>
+          </div>
+        </ion-modal>
 
         <ion-row class="ion-justify-content-center">
           <ion-col size="auto">
@@ -59,6 +59,12 @@
         <ion-button v-if="hasLimitReached()" :disabled="true" expand="block" fill="clear" shape="round" color="danger">
           No more subscriptions are being accepted
         </ion-button>
+
+        <ion-button v-if="isOwnerOfTheEvent()" @click="handleImageUpload" expand="block" fill="clear" shape="round"
+          color="primary">
+          Add Image
+        </ion-button>
+
         <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
           fill="clear" shape="round" color="success">
           Subscribe
@@ -71,12 +77,14 @@
           color="primary">
           Promote Event
         </ion-button>
+        <input ref="fileInput" type="file" multiple @change="onFileSelected" style="display: none;">
       </ion-card>
       <ion-card v-else>
         <ion-card-header>
           <ion-card-subtitle>Loading...</ion-card-subtitle>
           <ion-card-title>Loading...</ion-card-title>
         </ion-card-header>
+
       </ion-card>
     </ion-content>
   </ion-page>
@@ -103,6 +111,7 @@ import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
 import QRCode from 'qrcode'
+import { SendFormData } from '@/lib/sendFormData';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
@@ -116,7 +125,7 @@ const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 const scanResult = ref<string | null>(null);
 const isModalOpen = ref(false);
 const modalImageUrl = ref('');
-
+const fileInput = ref<HTMLInputElement | null>(null);
 
 
 onMounted(async () => {
@@ -137,6 +146,20 @@ onMounted(async () => {
   }
 });
 
+const formattedStartDate = computed(() => {
+  if (event.value.startDate && Array.isArray(event.value.startDate)) {
+    return formatDate(event.value.startDate);  // Usando a função formatDate
+  }
+  return 'Invalid date';  // Retorna um valor padrão caso não exista data
+});
+
+const formattedEndDate = computed(() => {
+  if (event.value.endDate && Array.isArray(event.value.endDate)) {
+    return formatDate(event.value.endDate);  // Usando a função formatDate
+  }
+  return 'Invalid date';  // Retorna um valor padrão caso não exista data
+});
+
 function hasEventStarted() {
   if (!subbedEvent.value?.event) return false;
   const event = subbedEvent.value.event;
@@ -147,6 +170,38 @@ function hasEventStarted() {
     return startDate <= new Date();
   }
   return false;
+}
+
+async function handleImageUpload() {
+  await nextTick();
+  console.log(fileInput.value);
+  if (fileInput.value) {  // Verifique se a referência está definida
+    fileInput.value.click();  // Dispara o clique no input de arquivo
+  }
+}
+
+async function onFileSelected(event: Event) {
+  const fileInput = event.target as HTMLInputElement;
+  if (fileInput?.files) {
+    const files = Array.from(fileInput.files);
+    const formData = new FormData();
+
+    files.forEach(file => {
+      formData.append('image', file); // Adiciona os arquivos ao FormData
+    });
+
+    const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+
+    // Usa a função SendFormData que foi criada para enviar o FormData
+    const response = await SendFormData(`/api/events/${eventId}/images`, 'POST', formData);
+
+    if (response.ok) {
+      showToast('Imagens adicionadas com sucesso!', 'success');
+      await getCurrentEvent();  // Atualiza as imagens
+    } else {
+      showToast('Falha ao adicionar imagens!', 'danger');
+    }
+  }
 }
 
 function isOwnerOfTheEvent() {
@@ -358,7 +413,7 @@ function hasLimitReached() {
 }
 
 .modal-image {
-  max-width: 80%; 
+  max-width: 80%;
   max-height: 80%;
   object-fit: contain;
 }

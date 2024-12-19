@@ -15,8 +15,8 @@ public class EventRequestDTO {
 
     private String title;
     private String location;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int limit;
     private String description;
     private String category;
