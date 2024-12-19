@@ -13,6 +13,8 @@ export async function SendFormData(
   const headers: Record<string, string> = {
     'X-API-KEY': apiKey,
     Authorization: '',
+    credentials: 'include',
+    'ngrok-skip-browser-warning': '69420',
   };
 
   // Verifica se o token está presente e não expirado, e adiciona o header Authorization
