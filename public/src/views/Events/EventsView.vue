@@ -122,10 +122,9 @@ import {
 } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories';
-import { IonPage } from '@ionic/vue';
-import { filterCircleOutline } from 'ionicons/icons';
-import EventDetailsView from './EventDetailsView.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { SendRequest } from '@/lib/request';
+import { filterCircleOutline } from 'ionicons/icons';
 
 interface Event {
   id: number;
@@ -138,16 +137,30 @@ interface Event {
   isPromoted: boolean;
 }
 
-const genAI = new GoogleGenerativeAI("AIzaSyCAIAOQ-T9cc3OdW-LYXJyaEnwANenGQA4");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI('AIzaSyCAIAOQ-T9cc3OdW-LYXJyaEnwANenGQA4');
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-async function generateExplanation() {
+async function generateRecommendations(events: Event[]) {
+  const userId = localStorage.getItem('uuid') || '';
+  const endpoint = '/subscription/event/';
+  const response = await SendRequest(`${endpoint}${userId}`, 'GET');
+  const subscribedEvents = await response.json();
+
   try {
-    const prompt = "Explain how AI works";
+    const prompt = `Based on the following events you have attended or are subscribed to: ${JSON.stringify(subscribedEvents)}. Which of the following events do you recommend attending, excluding the ones you have attended or are subscribed to? ${JSON.stringify(events)}. Please respond with an array containing only the IDs of the recommended events in the format: [1, 2, 3].`;
+
     const result = await model.generateContent(prompt);
-    console.log(result.response.text());
+    const responseText = await result.response.text();
+
+    const sanitizedResponse = responseText
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+
+    return JSON.parse(sanitizedResponse) || [];
   } catch (error) {
-    console.error("Erro ao chamar a API:", error);
+    console.error('Erro ao chamar a API:', error);
+    return [];
   }
 }
 
@@ -158,12 +171,12 @@ export default {
     const selectedCategories = ref<string[]>([]);
     const dateLimit = ref<string | null>(null);
     const showDropdown = ref(false);
+    const recommendedEventIds = ref<number[]>([]);
 
     const loadPromoted = async () => {
       try {
         promotedEvents.value = await fetchPromotedEvents();
       } catch (error) {
-        console.error('Erro ao buscar eventos promovidos:', error);
         promotedEvents.value = [];
       }
     };
@@ -172,56 +185,40 @@ export default {
       try {
         nonPromotedEvents.value = await fetchNonPromotedEvents();
       } catch (error) {
-        console.error('Erro ao buscar eventos não promovidos:', error);
-        nonPromotedEvents.value = []; // Caso de erro, deixa a lista vazia
+        nonPromotedEvents.value = [];
       }
     };
 
     const filteredNonPromotedEvents = computed(() => {
-      const filteredEvents = nonPromotedEvents.value.filter((event) => {
-        const isCategoryMatch =
-          selectedCategories.value.length === 0 ||
-          selectedCategories.value.includes(event.category);
-
-        const isDateMatch =
-          !dateLimit.value ||
-          new Date(event.endDate) <= new Date(dateLimit.value);
-
-        return isCategoryMatch && isDateMatch;
-      });
-
-      return filteredEvents.sort(
-        (a, b) =>
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      return nonPromotedEvents.value.filter(
+        (event) =>
+          (!recommendedEventIds.value.length ||
+            recommendedEventIds.value.includes(event.id)) &&
+          (selectedCategories.value.length === 0 ||
+            selectedCategories.value.includes(event.category)) &&
+          (!dateLimit.value ||
+            new Date(event.endDate) <= new Date(dateLimit.value))
       );
     });
 
     const filteredPromotedEvents = computed(() => {
-      const filteredEvents = promotedEvents.value.filter((event) => {
-        const isCategoryMatch =
-          selectedCategories.value.length === 0 ||
-          selectedCategories.value.includes(event.category);
-
-        const isDateMatch =
-          !dateLimit.value ||
-          new Date(event.endDate) <= new Date(dateLimit.value);
-
-        return isCategoryMatch && isDateMatch;
-      });
-
-      return filteredEvents.sort(
-        (a, b) =>
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      return promotedEvents.value.filter(
+        (event) =>
+          (!recommendedEventIds.value.length ||
+            recommendedEventIds.value.includes(event.id)) &&
+          (selectedCategories.value.length === 0 ||
+            selectedCategories.value.includes(event.category)) &&
+          (!dateLimit.value ||
+            new Date(event.endDate) <= new Date(dateLimit.value))
       );
     });
 
-    const toggleDropdown = () => {
-      showDropdown.value = !showDropdown.value;
-    };
-
-    const toggleCategory = (category: string) => {
+    const toggleCategory = async (category: string) => {
       if (category === 'Artificial Intelligence') {
-        generateExplanation();
+        recommendedEventIds.value = await generateRecommendations([
+          ...promotedEvents.value,
+          ...nonPromotedEvents.value,
+        ]);
       } else {
         const index = selectedCategories.value.indexOf(category);
         if (index >= 0) {
@@ -232,9 +229,14 @@ export default {
       }
     };
 
+    const toggleDropdown = () => {
+      showDropdown.value = !showDropdown.value;
+    };
+
     const clearFilters = () => {
       selectedCategories.value = [];
       dateLimit.value = null;
+      recommendedEventIds.value = [];
     };
 
     onMounted(() => {
@@ -257,7 +259,6 @@ export default {
       clearFilters,
       categoryColors,
       filterCircleOutline,
-      EventDetailsView,
     };
   },
 };
