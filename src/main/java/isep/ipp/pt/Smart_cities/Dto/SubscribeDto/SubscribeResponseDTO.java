@@ -8,15 +8,17 @@ public class SubscribeResponseDTO {
     private Event event;
     private String QRData;
     private SubscriptionStatus status;
+    private Double rate;
 
     public SubscribeResponseDTO() {
     }
 
-    public SubscribeResponseDTO(Long id, Event event, String QRData, SubscriptionStatus status) {
+    public SubscribeResponseDTO(Long id, Event event, String QRData, SubscriptionStatus status, Double rate) {
         this.id = id;
         this.event = event;
         this.QRData = QRData;
         this.status = status;
+        this.rate = rate;
     }
 
     public Long getId() {
@@ -49,5 +51,13 @@ public class SubscribeResponseDTO {
 
     public void setStatus(SubscriptionStatus status) {
         this.status = status;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
     }
 }

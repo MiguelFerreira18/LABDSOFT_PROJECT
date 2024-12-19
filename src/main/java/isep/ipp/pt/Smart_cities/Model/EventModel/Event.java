@@ -3,10 +3,7 @@ package isep.ipp.pt.Smart_cities.Model.EventModel;
 import isep.ipp.pt.Smart_cities.Dto.EventsDto.EventRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +17,8 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 @Setter
 @ToString
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
 
     @Id
@@ -34,11 +33,9 @@ public class Event {
     @Size(max = 255, message = "Location cannot exceed 255 characters")
     private String location;
 
-    @FutureOrPresent(message = "Start date must not be in the past")
     @NotNull(message = "Start date is required")
     private LocalDateTime startDate;
 
-    @FutureOrPresent(message = "End date must be in the future")
     @NotNull(message = "End date is required")
     private LocalDateTime endDate;
 
@@ -141,6 +138,15 @@ public class Event {
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();
+    }
+
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.creator = creator;
     }
 
     public void addImage(Image image) {

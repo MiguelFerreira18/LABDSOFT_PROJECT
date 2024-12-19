@@ -1,91 +1,167 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true" class="ion-padding">
-      <ion-card v-if="event">
-        <ion-card-header>
-          <ion-card-subtitle>{{ event.category }}</ion-card-subtitle>
-          <ion-card-title>{{ event.title }}</ion-card-title>
-          <ion-card-subtitle>Subscribers: {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers }}{{ event.limit == 0 ? ''
-            : '/' + event.limit }}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-list>
-          <ion-item>
-            <ion-label>Description</ion-label>
-            {{ event.description }}
-          </ion-item>
-          <ion-item v-if="event.promotedUntil">
-            <ion-label color="tertiary">Promoted</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Date</ion-label>
-            {{ formattedStartDate }} - {{ formattedEndDate }}
-          </ion-item>
-          <ion-item>
-            <ion-label>Location</ion-label>
-            {{ event.location }}
-          </ion-item>
-          <ion-item v-if="creator">
-            <ion-label>Creator</ion-label>
-            {{ creator.name }}
-          </ion-item>
-        </ion-list>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/events"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Event Details</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content :fullscreen="true">
+      <ion-img
+        src="https://placehold.co/600x400"
+        alt="Placeholder image"
+      ></ion-img>
+      <div class="ion-padding">
+        <header>
+          <p class="tag">{{ event.category }}</p>
+          <h2>{{ event.title }}</h2>
+          <p>
+            Subscribers:
+            {{ numberOfSubscribers <= 0 ? 0 : numberOfSubscribers }}
+            {{ event.limit == 0 ? '' : '/' + event.limit }}
+          </p>
+          <section v-if="creator">
+            <ion-item lines="none" class="ion-no-padding">
+              <ion-avatar aria-hidden="true" slot="start">
+                <img
+                  alt="create-avatar"
+                  src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                />
+              </ion-avatar>
+              <ion-label>
+                <h6>{{ creator.name }}</h6>
+                <div class="star-rating-author" v-if="creatorRating !== null">
+                  <span
+                    v-for="star in 5"
+                    :key="star"
+                    class="star"
+                    :class="{ filled: star <= creatorRating }"
+                    >&#9733;</span
+                  >
+                </div>
+              </ion-label>
+            </ion-item>
+          </section>
+        </header>
 
-        <ion-row class="ion-padding">
-          <ion-col v-for="image in event.images" :key="image.id" size="6">
-            <ion-img :src="image.url" alt="Event Image" @click="openImageModal(image.url)"
-              style="width: 100%; height: 200px; object-fit: cover;">
-            </ion-img>
-          </ion-col>
-        </ion-row>
+        <section>
+          <h3>Description</h3>
+          <p>{{ event.description }}</p>
+        </section>
 
-        <ion-modal :is-open="isModalOpen" @did-dismiss="isModalOpen = false" backdrop-dismiss="true">
-          <div class="modal-content">
-            <div class="modal-background" @click="closeModal">
-              <ion-img :src="modalImageUrl" alt="Expanded Image" class="modal-image" />
-            </div>
-            <div class="modal-text" @click="closeModal">Go back to the Event Page</div>
+        <section v-if="event.promotedUntil">
+          <p><strong>Promoted</strong></p>
+        </section>
+
+        <section>
+          <h3>Date</h3>
+          <p>
+            {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
+          </p>
+        </section>
+
+        <section>
+          <h3>Location</h3>
+          <p>{{ event.location }}</p>
+        </section>
+
+        <section Rating>
+          <div class="star-rating">
+            <span
+              v-for="star in 5"
+              :key="star"
+              class="star"
+              :class="{ filled: star <= event.rating }"
+              >&#9733;</span
+            >
           </div>
-        </ion-modal>
 
-        <ion-row class="ion-justify-content-center">
-          <ion-col size="auto">
-            <canvas v-if="hasEventStarted() && !hasAttended && !isOwnerOfTheEvent()" ref="canvas"></canvas>
-            <ion-button @click="handleScanQrCode" v-else-if="hasEventStarted() && isOwnerOfTheEvent()" expand="block"
-              fill="clear" shape="round" color="warning">
-              Scan QR Codes
-            </ion-button>
-          </ion-col>
-        </ion-row>
-        <ion-button v-if="hasLimitReached()" :disabled="true" expand="block" fill="clear" shape="round" color="danger">
+          <ion-item lines="none" v-if="isSubscribed && hasEventStarted()">
+            <ion-label>Rate this event</ion-label>
+            <div class="star-rating">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="star"
+                @click="rateEvent(star)"
+                :class="{ filled: star <= userRating }"
+                >&#9733;</span
+              >
+            </div>
+          </ion-item>
+        </section>
+      </div>
+
+      <section map>
+        <map-event
+          v-if="event.latitude"
+          :latitude="event.latitude"
+          :longitude="event.longitude"
+        />
+        <p class="ion-padding" v-else>
+          Map unavailable – location not specified.
+        </p>
+      </section>
+
+      <section qrCode class="ion-padding" v-if="hasEventStarted()">
+        <canvas
+          v-if="!hasAttended && !isOwnerOfTheEvent()"
+          ref="canvas"
+        ></canvas>
+        <ion-button
+          v-else-if="isOwnerOfTheEvent()"
+          @click="handleScanQrCode"
+          expand="block"
+          color="warning"
+        >
+          <ion-icon :icon="qrCode"></ion-icon>
+          <span class="ion-margin-start">Scan QR Codes</span>
+        </ion-button>
+      </section>
+
+      <section actions class="ion-padding">
+        <ion-button
+          v-if="hasLimitReached() && !isOwner()"
+          :disabled="true"
+          expand="block"
+          color="danger"
+        >
           No more subscriptions are being accepted
         </ion-button>
 
-        <ion-button v-if="isOwnerOfTheEvent()" @click="handleImageUpload" expand="block" fill="clear" shape="round"
-          color="primary">
-          Add Image
+        <ion-button
+          v-else-if="!isSubscribed && !isOwner()"
+          @click="handleSubscription"
+          :disabled="hasAttended"
+          expand="block"
+        >
+          <ion-icon :icon="notifications"></ion-icon>
+          <span class="ion-margin-start">Subscribe</span>
         </ion-button>
 
-        <ion-button v-else-if="!isSubscribed" @click="handleSubscription" :disabled="hasAttended" expand="block"
-          fill="clear" shape="round" color="success">
-          Subscribe
+        <ion-button
+          v-else-if="!isOwner()"
+          @click="handleUnsubscribe"
+          :disabled="hasAttended"
+          expand="block"
+          color="danger"
+        >
+          <ion-icon :icon="notificationsOff"></ion-icon>
+          <span class="ion-margin-start">Unsubscribe</span>
         </ion-button>
-        <ion-button v-else @click="handleUnsubscribe" expand="block" fill="clear" :disabled="hasAttended" shape="round"
-          color="danger">
-          Unsubscribe
-        </ion-button>
-        <ion-button v-if="isLoggedIn" @click="handlePromoteEvent" expand="block" fill="clear" shape="round"
-          color="primary">
-          Promote Event
-        </ion-button>
-        <input ref="fileInput" type="file" multiple @change="onFileSelected" style="display: none;">
-      </ion-card>
-      <ion-card v-else>
-        <ion-card-header>
-          <ion-card-subtitle>Loading...</ion-card-subtitle>
-          <ion-card-title>Loading...</ion-card-title>
-        </ion-card-header>
 
-      </ion-card>
+        <ion-button
+          v-if="isLoggedIn"
+          @click="handlePromoteEvent"
+          expand="block"
+          fill="outline"
+        >
+          <ion-icon :icon="megaphone"></ion-icon>
+          <span class="ion-margin-start">Promote Event</span>
+        </ion-button>
+      </section>
     </ion-content>
   </ion-page>
 </template>
@@ -94,15 +170,17 @@
 import {
   IonPage,
   IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
+  IonIcon,
   IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/vue';
+import {
+  megaphone,
+  notifications,
+  qrCode,
+  notificationsOff,
+} from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
 import { formatDate } from '@/lib/dateFormatter';
@@ -110,7 +188,8 @@ import { SendRequest } from '@/lib/request';
 import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
-import QRCode from 'qrcode'
+import QRCode from 'qrcode';
+import MapEvent from '@/views/maps/MapEvent.vue';
 import { SendFormData } from '@/lib/sendFormData';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -123,6 +202,9 @@ const subbedEvent = ref<any>({});
 const route = useRoute();
 const isLoggedIn = computed(() => !!localStorage.getItem('token'));
 const scanResult = ref<string | null>(null);
+const userRating = ref(0);
+const hasRated = ref(false);
+const creatorRating = ref<number | null>(null);
 const isModalOpen = ref(false);
 const modalImageUrl = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -136,37 +218,63 @@ onMounted(async () => {
     hasAttended.value = true;
     isSubscribed.value = true;
     subbedEvent.value = data;
-
-  }
-  else if (response.ok && data && data.status === 'SUBSCRIBED') {
+  } else if (response.ok && data && data.status === 'SUBSCRIBED') {
     subbedEvent.value = data;
     isSubscribed.value = true;
 
     getQrCodeIfEventHasStarted(subbedEvent.value.qrdata);
   }
+  if (data.rate) {
+    userRating.value = data.rate;
+    hasRated.value = true;
+  }
+  if (data.event.rating) {
+    event.value.rating = data.event.rating;
+  }
+  await calculateCreatorRating(data.event.creator.id);
 });
 
-const formattedStartDate = computed(() => {
-  if (event.value.startDate && Array.isArray(event.value.startDate)) {
-    return formatDate(event.value.startDate);  // Usando a função formatDate
+async function calculateCreatorRating(creatorId: string) {
+  try {
+    const response = await SendRequest(
+      `/api/events?creatorId=${creatorId}`,
+      'GET',
+    );
+    const events: any = await response.json();
+    const pastEvents = events.filter((event: any) => {
+      const endDate = new Date(
+        event.endDate[0],
+        event.endDate[1] - 1,
+        event.endDate[2],
+      );
+      return endDate < new Date();
+    });
+    const totalRating = pastEvents.reduce(
+      (sum: any, event: any) => sum + event.rating,
+      0,
+    );
+    const averageRating =
+      pastEvents.length > 0 ? totalRating / pastEvents.length : 0;
+    creatorRating.value = averageRating;
+    console.log('Creator rating:', creatorRating.value);
+  } catch (error) {
+    creatorRating.value = null;
   }
-  return 'Invalid date';  // Retorna um valor padrão caso não exista data
-});
-
-const formattedEndDate = computed(() => {
-  if (event.value.endDate && Array.isArray(event.value.endDate)) {
-    return formatDate(event.value.endDate);  // Usando a função formatDate
-  }
-  return 'Invalid date';  // Retorna um valor padrão caso não exista data
-});
+}
 
 function hasEventStarted() {
-  if (!subbedEvent.value?.event) return false;
-  const event = subbedEvent.value.event;
+  if (
+    !event.value ||
+    !event.value.startDate ||
+    !Array.isArray(event.value.startDate)
+  )
+    return false;
 
-  if (event.startDate && Array.isArray(event.startDate)) {
-    const [year, month, day] = event.startDate;
+  const currentEvent = event.value;
+  if (currentEvent.startDate && Array.isArray(currentEvent.startDate)) {
+    const [year, month, day] = currentEvent.startDate;
     const startDate = new Date(year, month - 1, day);
+
     return startDate <= new Date();
   }
   return false;
@@ -236,6 +344,7 @@ async function handleSubscription() {
     subbedEvent.value = data;
   }
 }
+
 async function handleClaimReward() {
   if (hasAttended.value) return;
   const response = await SendRequest(
@@ -341,12 +450,18 @@ async function showToast(message: string, color: 'success' | 'danger') {
 }
 
 async function getCurrentEvent() {
-  const eventId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+  const eventId = Array.isArray(route.params.id)
+    ? route.params.id[0]
+    : route.params.id;
   const response = await SendRequest(`/api/events/${eventId}`, 'GET');
   const data = await response.json();
   event.value = data;
   creator.value = data.creator;
+  if (data.rating) {
+    event.value.rating = data.rating;
+  }
 }
+
 async function getNumberOfSubscribers() {
   const eventId = Array.isArray(route.params.id)
     ? route.params.id[0]
@@ -359,16 +474,13 @@ async function getNumberOfSubscribers() {
   numberOfSubscribers.value = data;
 }
 
-
-
-
 async function getQrCodeIfEventHasStarted(url: string) {
   if (!hasEventStarted() || !url) return;
 
   await nextTick();
 
   if (!canvas.value) {
-    console.warn("Canvas still not available");
+    console.warn('Canvas still not available');
     return;
   }
 
@@ -377,8 +489,8 @@ async function getQrCodeIfEventHasStarted(url: string) {
   QRCode.toCanvas(canvas.value, fullURL, function (error: any) {
     if (error) console.error(error);
   });
-
 }
+
 function hasLimitReached() {
   if (numberOfSubscribers.value >= event.value.limit && event.value.limit > 0) {
     return true;
@@ -387,9 +499,105 @@ function hasLimitReached() {
   }
 }
 
+function isOwner() {
+  return creator.value.id === localStorage.getItem('uuid');
+}
+
+async function rateEvent(star: number) {
+  if (!isSubscribed.value) {
+    showToast('You must be subscribed to rate the event!', 'danger');
+    return;
+  }
+  if (!hasEventStarted()) {
+    showToast('You can only rate events that have started!', 'danger');
+    return;
+  }
+  if (hasRated.value) {
+    showToast('You have already rated this event!', 'danger');
+    return;
+  }
+
+  const payload: Record<string, string> = {
+    uuid: localStorage.getItem('uuid') || '',
+    eventId: Array.isArray(route.params.id)
+      ? route.params.id[0]
+      : route.params.id || '',
+    rating: star.toString(),
+  };
+
+  const response = await SendRequest(`/api/events/rate`, 'POST', payload);
+  if (response.ok) {
+    showToast('Event rated successfully!', 'success');
+    userRating.value = star;
+    hasRated.value = true;
+  } else {
+    showToast('Failed to rate the event', 'danger');
+  }
+}
 </script>
 
 <style scoped>
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star.filled {
+  color: #f39c12;
+}
+
+header {
+  margin-bottom: 16px;
+}
+header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+header p {
+  margin: 4px 0;
+  color: #666;
+}
+section {
+  margin-bottom: 12px;
+}
+section h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+section p {
+  margin: 4px 0;
+  color: #444;
+}
+ion-button {
+  margin-top: 12px;
+}
+
+.tag {
+  align-items: center;
+  border-radius: 0.375rem;
+  background-color: #212529;
+  display: inline-flex;
+  font-size: 0.75rem;
+  height: 2em;
+  justify-content: center;
+  line-height: 1.5;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  white-space: nowrap;
+  color: white;
+}
+
+.star-rating-author .star {
+  font-size: 12px;
+}
+
 .modal-content {
   display: flex;
   flex-direction: column;

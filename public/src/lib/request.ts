@@ -7,7 +7,7 @@ const { baseUrl } = apiConfig;
 export async function SendRequest(
   path: string,
   method: string,
-  data: Record<string, string> = {},
+  data: Record<string, any> = {},
   fieldsToEncrypt: string[] = [],
 ): Promise<Response> {
   const token = localStorage.getItem('token') || '';
@@ -15,6 +15,8 @@ export async function SendRequest(
   const headers: Record<string, string> = {
     'Content-type': 'application/json',
     Authorization: '',
+    credentials: 'include',
+    'ngrok-skip-browser-warning': '69420',
   };
   headers['X-API-KEY'] = apiKey;
   if (token !== '' && !IsJWTExpired(token)) {

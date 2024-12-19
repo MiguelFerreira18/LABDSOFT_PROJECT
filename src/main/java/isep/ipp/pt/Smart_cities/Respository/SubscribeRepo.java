@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,4 +23,6 @@ public interface SubscribeRepo extends CrudRepository<Subscribe, Long> {
 
     @Query("SELECT s FROM Subscribe s WHERE s.user.id = ?1")
     Iterable<Subscribe> findAllByUserId(String userId);
+    @Query("SELECT s FROM Subscribe s WHERE s.event.id = ?1 AND s.subscriptionStatus = 'ATTENDED'")
+    List<Subscribe> allAttendeesFromEvent(String EventID);
 }

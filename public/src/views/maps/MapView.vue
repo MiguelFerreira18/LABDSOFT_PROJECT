@@ -2,7 +2,10 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Google Map test</ion-title>
+        <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>Select location</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -35,6 +38,8 @@ import {
   modalController,
   IonPopover,
   IonButton,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/vue';
 import { ref, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';

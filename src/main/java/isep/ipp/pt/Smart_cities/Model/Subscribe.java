@@ -4,15 +4,12 @@ import isep.ipp.pt.Smart_cities.Dto.SubscribeDto.SubscribeResponseDTO;
 import isep.ipp.pt.Smart_cities.Model.EventModel.Event;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-
+@Builder
+@AllArgsConstructor
 @Getter
 @Setter
-@Builder
 @ToString
 @Entity
 public class Subscribe {
@@ -29,6 +26,8 @@ public class Subscribe {
     private String QRData;
 
     private boolean isNotified;
+
+    private double rate;
 
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
@@ -76,10 +75,17 @@ public class Subscribe {
         this.subscriptionStatus = subscriptionStatus;
     }
 
-    public SubscribeResponseDTO toDTO(){
-        return new SubscribeResponseDTO(this.id, this.event, this.QRData, this.subscriptionStatus);
+    public Subscribe(Long id, User user, Event event, String QRData, boolean isNotified, SubscriptionStatus subscriptionStatus, double rate) {
+        this.id = id;
+        this.user = user;
+        this.event = event;
+        this.QRData = QRData;
+        this.isNotified = isNotified;
+        this.subscriptionStatus = subscriptionStatus;
+        this.rate = rate;
     }
 
-
-
+    public SubscribeResponseDTO toDTO(){
+        return new SubscribeResponseDTO(this.id, this.event, this.QRData, this.subscriptionStatus, this.rate);
+    }
 }

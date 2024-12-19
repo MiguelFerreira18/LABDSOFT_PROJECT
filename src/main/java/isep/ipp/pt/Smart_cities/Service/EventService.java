@@ -150,9 +150,11 @@ public class EventService {
         List<Event> currentEvents = eventRepository.findAll().stream()
                 .filter(event -> event.getCreator().getId().equals(userId)).toList(); // Fetch all events
         System.out.println(currentEvents);
-        return currentEvents.stream()
-                .map(EventSummary::new)
-                .toList();
+        return currentEvents.stream().map(event -> {
+                EventSummary eventSummary = new EventSummary(event);
+                eventSummary.setTotalAttendees(subscribeRepository.allAttendeesFromEvent(event.getId()).size());
+                return eventSummary;
+            }).toList();
     }
 
     public void addImageToEvent(String eventId, String imagePath) {

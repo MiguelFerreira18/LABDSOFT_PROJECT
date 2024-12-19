@@ -1,6 +1,6 @@
 on:
   workflow_dispatch:
-    
+
 permissions:
   contents: write
   pull-requests: write
@@ -31,4 +31,3 @@ jobs:
           # for more options
           release-type: simple
           package-name: labdsoft-project
-          

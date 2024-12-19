@@ -1,10 +1,6 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Daily Streak Rewards</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <HeaderComponent title="Rewards Dashboard" />
     <ion-content :fullscreen="true" class="ion-padding">
       <ion-card>
         <ion-card-header>
@@ -53,6 +49,7 @@ import {
   IonIcon,
 } from '@ionic/vue';
 import { ref, onMounted } from 'vue';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface RewardsResponse {
   points: number;

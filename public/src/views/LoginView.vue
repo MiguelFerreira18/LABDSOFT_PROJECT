@@ -1,32 +1,34 @@
 <template>
-  <ion-content class="ion-padding">
-    <div class="centered-square">
-      <ion-input
-        ref="email"
-        type="email"
-        fill="solid"
-        label="Email"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+  <ion-page>
+    <ion-content class="ion-padding">
+      <div class="centered-square">
+        <ion-input
+          ref="email"
+          type="email"
+          fill="solid"
+          label="Email"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-input
-        ref="password"
-        type="password"
-        fill="solid"
-        label="password"
-        label-placement="floating"
-        error-text="Invalid email"
-        @ionBlur="markTouched"
-      ></ion-input>
+        <ion-input
+          ref="password"
+          type="password"
+          fill="solid"
+          label="Password"
+          label-placement="floating"
+          error-text="Invalid email"
+          @ionBlur="markTouched"
+        ></ion-input>
 
-      <ion-button expand="block" @click="login">Submit</ion-button>
-      <ion-text class="signup-link" @click="pushToSignUp">
-        <p>Sign up</p>
-      </ion-text>
-    </div>
-  </ion-content>
+        <ion-button expand="block" @click="login">Submit</ion-button>
+        <ion-text class="signup-link" @click="pushToSignUp">
+          <p>Sign up</p>
+        </ion-text>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
@@ -41,46 +43,44 @@ const password = ref<HTMLInputElement | null>(null);
 const email = ref<HTMLInputElement | null>(null);
 
 async function login() {
-    const payload = {
-        email: email.value?.value || '',
-        password: password.value?.value || '',
-        pushToken: localStorage.getItem('pushToken') || ''
-    }
-    try {
-        const response = await SendRequest('/auth/public/login', 'POST', payload);
-        const user = await response.json();
-        const authHeader = response.headers.get('authorization');
-        if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
+  const payload = {
+    email: email.value?.value || '',
+    password: password.value?.value || '',
+    pushToken: localStorage.getItem('pushToken') || '',
+  };
+  try {
+    const response = await SendRequest('/auth/public/login', 'POST', payload);
+    const user = await response.json();
+    const authHeader = response.headers.get('authorization');
+    if (response.ok && authHeader && !IsJWTExpired(authHeader)) {
+      localStorage.setItem('userId', user.id);
+      SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
+      localStorage.setItem('token', authHeader);
 
-            localStorage.setItem('userId', user.id);
-            SaveJwtFieldsToLocaStorate(ParseJwt(authHeader));
-            localStorage.setItem('token', authHeader);
+      try {
+        const rewards = await dailyRewards({ id: user.id });
 
-            try {
-                const rewards = await dailyRewards({ id: user.id });
-
-                if (rewards.pointsEarned > 0) {
-                    await presentToast('top', `You earned ${rewards.pointsEarned} points for logging in!`);
-                } else {
-                    // await presentToast('bottom',`You have already claimed your daily rewards!`);
-                }
-
-                // Ensure to only fetch rewards once per login
-                localStorage.setItem('rewardsFetched', 'true');
-
-            } catch (error) {
-                console.error('Error fetching daily rewards:', error);
-            }
-
-            router.push('/tabs/tabHome');
+        if (rewards.pointsEarned > 0) {
+          await presentToast(
+            'top',
+            `You earned ${rewards.pointsEarned} points for logging in!`,
+          );
+        } else {
+          // await presentToast('bottom',`You have already claimed your daily rewards!`);
         }
-    } catch (error) {
-        console.log(error);
+
+        // Ensure to only fetch rewards once per login
+        localStorage.setItem('rewardsFetched', 'true');
+      } catch (error) {
+        console.error('Error fetching daily rewards:', error);
+      }
+
+      router.push('/tabs/tabHome');
     }
+  } catch (error) {
+    console.log(error);
+  }
 }
-
-
-
 
 function pushToSignUp() {
   router.push('/signup');
@@ -99,31 +99,39 @@ interface RewardsResponse {
   pointsEarned: number;
 }
 
-async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
-    try {
+async function dailyRewards(response: {
+  id: string;
+}): Promise<RewardsResponse> {
+  try {
+    const res = await SendRequest(
+      `/api/rewards/${response.id}/daily`,
+      'POST',
+      {},
+    );
 
-        const res = await SendRequest(`/api/rewards/${response.id}/daily`, 'POST', {});
+    const rewards: RewardsResponse = await res.json();
 
-        const rewards: RewardsResponse = await res.json();
-
-        return rewards as RewardsResponse;
-    } catch (error) {
-        console.error('Error in dailyRewards function:', error);
-        throw error;
-    }
+    return rewards as RewardsResponse;
+  } catch (error) {
+    console.error('Error in dailyRewards function:', error);
+    throw error;
+  }
 }
 
-async function presentToast(position: 'top' | 'middle' | 'bottom', message: string) {
-    const toast = await toastController.create({
-        message: message,
-        duration: 2500,
-        position: position,
-        color: 'success',
-        icon: 'trophy-outline',
-        cssClass: 'reward-toast',
-    });
+async function presentToast(
+  position: 'top' | 'middle' | 'bottom',
+  message: string,
+) {
+  const toast = await toastController.create({
+    message: message,
+    duration: 2500,
+    position: position,
+    color: 'success',
+    icon: 'trophy-outline',
+    cssClass: 'reward-toast',
+  });
 
-    await toast.present();
+  await toast.present();
 }
 </script>
 
