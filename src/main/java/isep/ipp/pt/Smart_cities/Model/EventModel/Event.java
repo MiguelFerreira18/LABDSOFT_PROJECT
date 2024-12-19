@@ -62,8 +62,7 @@ public class Event {
 
     private float longitude;
 
-    public Event() {
-    }
+    private float rating;
 
     public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
         this.title = title;
@@ -140,14 +139,6 @@ public class Event {
                 .build();
     }
 
-    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
-        this.title = title;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.creator = creator;
-    }
 
     public void addImage(Image image) {
         image.setEvent(this);
