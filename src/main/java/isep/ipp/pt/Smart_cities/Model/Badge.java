@@ -6,8 +6,11 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+
+
+
+
 @Entity
 public class Badge {
     @Id
@@ -28,10 +31,11 @@ public class Badge {
 
     @ManyToOne(optional = false)
     private User user;
-}
-public enum BadgeCategory {
-    BEGINNER_MILESTONES,
-    SOCIAL_INTERACTION,
-    FREQUENCY_LOYALTY
-}
 
+    private String iconPath; 
+
+public void  setIconPath(String st){
+this.iconPath=st;
+}
+    
+}
