@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
@@ -47,7 +49,8 @@ public class Event {
     @Column(name = "event_limit")
     private int limit;
 
-    private String imagePath;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -60,6 +63,58 @@ public class Event {
     private float longitude;
 
     private float rating;
+
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.creator = creator;
+        this.limit = 0;
+    }
+
+    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator, LocalDateTime promotedUntil) {
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.creator = creator;
+        this.promotedUntil = null;
+        this.limit = 0;
+    }
+
+
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, List<Image> images, User creator, LocalDateTime promotedUntil) {
+        this.id = id;
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.category = category;
+        this.description = description;
+        this.images = images; 
+        this.creator = creator;
+        this.promotedUntil = promotedUntil;
+        this.limit = 0;
+    }
+
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description,int limit, List<Image> images, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+        this.id = id;
+        this.title = title;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.category = category;
+        this.description = description;
+        this.limit = limit;
+        this.images = images;
+        this.creator = creator;
+        this.promotedUntil = promotedUntil;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     public Boolean isInCurrentMonth() {
         LocalDate now = LocalDate.now();
@@ -84,12 +139,16 @@ public class Event {
                 .build();
     }
 
-    public Event(String title, String location, LocalDateTime startDate, LocalDateTime endDate, String description, User creator) {
-        this.title = title;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.creator = creator;
+
+    public void addImage(Image image) {
+        image.setEvent(this);
+        this.images.add(image);
+    }
+
+    public List<Image> getImages() {
+        if (images == null) {
+            images = new ArrayList<>();
+        }
+        return images;
     }
 }

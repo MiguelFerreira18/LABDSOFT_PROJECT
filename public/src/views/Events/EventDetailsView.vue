@@ -9,10 +9,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-img
-        src="https://placehold.co/600x400"
-        alt="Placeholder image"
-      ></ion-img>
       <div class="ion-padding">
         <header>
           <p class="tag">{{ event.category }}</p>
@@ -57,9 +53,7 @@
 
         <section>
           <h3>Date</h3>
-          <p>
-            {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}
-          </p>
+          <p>{{ formattedStartDate }} - {{ formattedEndDate }}</p>
         </section>
 
         <section>
@@ -92,6 +86,37 @@
             </div>
           </ion-item>
         </section>
+        <section v-if="event.images && event.images.length > 0">
+          <h3>Event related Images:</h3>
+          <ion-row class="ion-padding">
+            <ion-col v-for="image in event.images" :key="image.id" size="6">
+              <ion-img
+                :src="image.url"
+                alt="Event Image"
+                @click="openImageModal(image.url)"
+                style="width: 100%; height: 200px; object-fit: cover"
+              >
+              </ion-img>
+            </ion-col>
+          </ion-row>
+
+          <ion-modal
+            :is-open="isModalOpen"
+            @did-dismiss="isModalOpen = false"
+            backdrop-dismiss="true"
+          >
+            <div class="modal-content">
+              <div class="modal-background" @click="closeModal">
+                <ion-img
+                  :src="modalImageUrl"
+                  alt="Expanded Image"
+                  class="modal-image"
+                />
+              </div>
+              <div class="modal-text" @click="closeModal">Back</div>
+            </div>
+          </ion-modal>
+        </section>
       </div>
 
       <section map>
@@ -104,6 +129,25 @@
           Map unavailable – location not specified.
         </p>
       </section>
+
+      <ion-button
+        v-if="isOwnerOfTheEvent()"
+        @click="handleImageUpload"
+        expand="block"
+        fill="clear"
+        shape="round"
+        color="primary"
+      >
+        Add Images
+      </ion-button>
+
+      <input
+        ref="fileInput"
+        type="file"
+        multiple
+        @change="onFileSelected"
+        style="display: none"
+      />
 
       <section qrCode class="ion-padding" v-if="hasEventStarted()">
         <canvas
@@ -190,6 +234,7 @@ import { useRoute } from 'vue-router';
 import { toastController } from '@ionic/vue';
 import QRCode from 'qrcode';
 import MapEvent from '@/views/maps/MapEvent.vue';
+import { SendFormData } from '@/lib/sendFormData';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const event = ref<any>({});
@@ -204,6 +249,9 @@ const scanResult = ref<string | null>(null);
 const userRating = ref(0);
 const hasRated = ref(false);
 const creatorRating = ref<number | null>(null);
+const isModalOpen = ref(false);
+const modalImageUrl = ref('');
+const fileInput = ref<HTMLInputElement | null>(null);
 
 onMounted(async () => {
   await getCurrentEvent();
@@ -275,9 +323,71 @@ function hasEventStarted() {
   return false;
 }
 
+async function handleImageUpload() {
+  await nextTick();
+  console.log(fileInput.value);
+  if (fileInput.value) {
+    // Verifique se a referência está definida
+    fileInput.value.click(); // Dispara o clique no input de arquivo
+  }
+}
+
+async function onFileSelected(event: Event) {
+  const fileInput = event.target as HTMLInputElement;
+  if (fileInput?.files) {
+    const files = Array.from(fileInput.files);
+    const formData = new FormData();
+
+    files.forEach((file) => {
+      formData.append('image', file); // Adiciona os arquivos ao FormData
+    });
+
+    const eventId = Array.isArray(route.params.id)
+      ? route.params.id[0]
+      : route.params.id;
+
+    // Usa a função SendFormData que foi criada para enviar o FormData
+    const response = await SendFormData(
+      `/api/events/${eventId}/images`,
+      'POST',
+      formData,
+    );
+
+    if (response.ok) {
+      showToast('Image added sucessfully!', 'success');
+      await getCurrentEvent(); // Atualiza as imagens
+    } else {
+      showToast('Error adding image!', 'danger');
+    }
+  }
+}
+
 function isOwnerOfTheEvent() {
   return creator.value.id === localStorage.getItem('uuid');
 }
+
+function openImageModal(imageUrl: string) {
+  modalImageUrl.value = imageUrl;
+  isModalOpen.value = true;
+}
+
+function closeModal() {
+  isModalOpen.value = false;
+}
+
+const formattedStartDate = computed(() => {
+  if (event.value.startDate && Array.isArray(event.value.startDate)) {
+    return formatDate(event.value.startDate); // Usando a função formatDate
+  }
+  return 'Invalid date'; // Retorna um valor padrão caso não exista data
+});
+
+const formattedEndDate = computed(() => {
+  if (event.value.endDate && Array.isArray(event.value.endDate)) {
+    return formatDate(event.value.endDate); // Usando a função formatDate
+  }
+  return 'Invalid date'; // Retorna um valor padrão caso não exista data
+});
 
 async function handleSubscription() {
   if (isSubscribed.value) return;
@@ -509,26 +619,32 @@ async function rateEvent(star: number) {
 header {
   margin-bottom: 16px;
 }
+
 header h2 {
   margin: 0;
   font-size: 1.5rem;
 }
+
 header p {
   margin: 4px 0;
   color: #666;
 }
+
 section {
   margin-bottom: 12px;
 }
+
 section h3 {
   margin: 0;
   font-size: 1.2rem;
   color: #333;
 }
+
 section p {
   margin: 4px 0;
   color: #444;
 }
+
 ion-button {
   margin-top: 12px;
 }
@@ -550,5 +666,42 @@ ion-button {
 
 .star-rating-author .star {
   font-size: 12px;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.modal-background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.modal-image {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.modal-text {
+  margin-top: 60px;
+  font-size: 1.2rem;
+  color: #5754e9;
+  cursor: pointer;
+  text-align: center;
+  z-index: 1001;
 }
 </style>

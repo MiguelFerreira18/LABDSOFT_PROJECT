@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -22,6 +23,7 @@ public class EventRequestDTO {
     private String creatorID;
     private float latitude;
     private float longitude;
+    private List<String> imagePaths;
 
     @Override
     public String toString() {
@@ -36,6 +38,7 @@ public class EventRequestDTO {
         sb.append(", creatorID='").append(creatorID).append('\'');
         sb.append(", latitude=").append(latitude);
         sb.append(", longitude=").append(longitude);
+        sb.append(", imagePaths=").append(imagePaths);
         sb.append('}');
         return sb.toString();
     }
