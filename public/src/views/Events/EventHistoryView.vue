@@ -102,7 +102,7 @@ import {
   calendarClearOutline,
 } from 'ionicons/icons';
 import { formatDate } from '@/lib/dateFormatter';
-import { IonPage} from '@ionic/vue';
+import { IonPage } from '@ionic/vue';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface Event {

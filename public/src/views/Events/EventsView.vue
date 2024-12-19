@@ -197,7 +197,7 @@ export default {
           (selectedCategories.value.length === 0 ||
             selectedCategories.value.includes(event.category)) &&
           (!dateLimit.value ||
-            new Date(event.endDate) <= new Date(dateLimit.value))
+            new Date(event.endDate) <= new Date(dateLimit.value)),
       );
     });
 
@@ -209,7 +209,7 @@ export default {
           (selectedCategories.value.length === 0 ||
             selectedCategories.value.includes(event.category)) &&
           (!dateLimit.value ||
-            new Date(event.endDate) <= new Date(dateLimit.value))
+            new Date(event.endDate) <= new Date(dateLimit.value)),
       );
     });
 
