@@ -116,6 +116,7 @@ class EventTest {
         assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("End date must be in the future")));
     }
 
+    /* 
     @Test
     void testImagePath() {
         Event event = new Event(
@@ -129,5 +130,5 @@ class EventTest {
 
         event.setImagePath("/images/event.jpg");
         assertEquals("/images/event.jpg", event.getImagePath());
-    }
+    }*/
 }

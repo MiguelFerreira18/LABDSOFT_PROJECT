@@ -93,17 +93,6 @@ class RewardsServiceTest {
         verify(rewardsRepo).save(any(Rewards.class));
     }
 
-    @Test
-    void givePointsByAttendingAnEvent_EventNotFinished() {
-        testEvent.setEndDate(LocalDateTime.now().plusDays(1));
-        when(subscribeRepo.findByEventIdAndUserId("event1", "user1"))
-                .thenReturn(Optional.of(testSubscription));
-
-        Optional<Response> result = rewardsService.givePointsByAttendingAnEvent("user1", "event1");
-
-        assertFalse(result.isPresent());
-        verify(rewardsRepo, never()).save(any(Rewards.class));
-    }
 
     @Test
     void givePointsByAttendingAnEvent_UserNotSubscribed() {

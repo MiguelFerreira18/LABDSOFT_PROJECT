@@ -10,7 +10,8 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 
@@ -51,7 +52,8 @@ public class Event {
     @Column(name = "event_limit")
     private int limit;
 
-    private String imagePath;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -88,7 +90,7 @@ public class Event {
     }
 
 
-    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, String imagePath, User creator, LocalDateTime promotedUntil) {
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description, List<Image> images, User creator, LocalDateTime promotedUntil) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -96,13 +98,13 @@ public class Event {
         this.endDate = endDate;
         this.category = category;
         this.description = description;
-        this.imagePath = imagePath;
+        this.images = images; 
         this.creator = creator;
-        this.promotedUntil = null;
+        this.promotedUntil = promotedUntil;
         this.limit = 0;
     }
 
-    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description,int limit, String imagePath, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
+    public Event(String id, String title, String location, LocalDateTime startDate, LocalDateTime endDate, String category, String description,int limit, List<Image> images, User creator, LocalDateTime promotedUntil, float latitude, float longitude) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -111,7 +113,7 @@ public class Event {
         this.category = category;
         this.description = description;
         this.limit = limit;
-        this.imagePath = imagePath;
+        this.images = images;
         this.creator = creator;
         this.promotedUntil = promotedUntil;
         this.latitude = latitude;
@@ -139,5 +141,17 @@ public class Event {
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();
+    }
+
+    public void addImage(Image image) {
+        image.setEvent(this);
+        this.images.add(image);
+    }
+
+    public List<Image> getImages() {
+        if (images == null) {
+            images = new ArrayList<>();
+        }
+        return images;
     }
 }

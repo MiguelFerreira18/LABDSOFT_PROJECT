@@ -7,6 +7,8 @@ import isep.ipp.pt.Smart_cities.Model.EventModel.EventSummary;
 import isep.ipp.pt.Smart_cities.Respository.EventRepository;
 import isep.ipp.pt.Smart_cities.Respository.SubscribeRepo;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
+import isep.ipp.pt.Smart_cities.Respository.ImageRepo;
+import isep.ipp.pt.Smart_cities.Model.EventModel.Image;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Service
 public class EventService {
@@ -29,13 +30,16 @@ public class EventService {
     @Autowired
     private UserService userService;
 
-
+    @Autowired
+    private ImageRepo imageRepository;
 
     public Event createEvent(EventRequestDTO eventRequestDTO) {
         User creator = userService.findById(eventRequestDTO.getCreatorID());
         if (creator == null) {
             throw new IllegalArgumentException("Creator not found");
         }
+        
+        // Criação do evento
         Event event = Event.builder()
                 .creator(creator)
                 .title(eventRequestDTO.getTitle())
@@ -48,10 +52,20 @@ public class EventService {
                 .latitude(eventRequestDTO.getLatitude())
                 .longitude(eventRequestDTO.getLongitude())
                 .build();
-
-        return eventRepository.save(event);
+        
+        // Salva o evento no repositório
+        Event savedEvent = eventRepository.save(event);
+    
+        // Salva as imagens associadas ao evento, se existirem
+        if (eventRequestDTO.getImagePaths() != null && !eventRequestDTO.getImagePaths().isEmpty()) {
+            for (String imagePath : eventRequestDTO.getImagePaths()) {
+                Image image = new Image(imagePath, savedEvent);
+                imageRepository.save(image);
+            }
+        }
+    
+        return savedEvent;
     }
-
 
     public Optional<Event> getEventById(String id) {
         return eventRepository.findById(id);
@@ -77,7 +91,7 @@ public class EventService {
         eventRepository.deleteAll();
     }
 
-     public void deleteEventWithSubscriptions(String eventId) {
+    public void deleteEventWithSubscriptions(String eventId) {
         Iterable<Subscribe> subscriptions = subscribeRepository.findAllSubscribedEventsFromUser(eventId);
         for (Subscribe subscription : subscriptions) {
             subscribeRepository.delete(subscription);
@@ -99,7 +113,6 @@ public class EventService {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
     }
-
 
     public void delteAllEvents() {
         eventRepository.deleteAll();
@@ -124,6 +137,7 @@ public class EventService {
 
         return event;
     }
+
     public List<Event> getPromotedEvents() {
         return eventRepository.findPromotedEvents(LocalDateTime.now());
     }
@@ -132,17 +146,28 @@ public class EventService {
         return eventRepository.findNonPromotedEvents(LocalDateTime.now());
     }
 
-
-
-
     public List<EventSummary> generateCurrentEventSummaries(String userId) {
-            List<Event> currentEvents = eventRepository.findAll().stream().filter(event -> event.getCreator().getId().equals(userId)).toList(); // Fetch all events
+        List<Event> currentEvents = eventRepository.findAll().stream()
+                .filter(event -> event.getCreator().getId().equals(userId)).toList(); // Fetch all events
         System.out.println(currentEvents);
-            return currentEvents.stream()
-                    .map(EventSummary::new)
-                    .toList();
+        return currentEvents.stream()
+                .map(EventSummary::new)
+                .toList();
     }
 
+    public void addImageToEvent(String eventId, String imagePath) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        Image image = new Image(imagePath, event);
+        imageRepository.save(image);
+    }
 
+    public List<Image> getImagesByEventId(String eventId) {
+        return imageRepository.findByEventId(eventId);
+    }
+
+    public void deleteImage(Long imageId) {
+        imageRepository.deleteById(imageId);
+    }
 
 }
