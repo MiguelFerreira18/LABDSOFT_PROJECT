@@ -93,7 +93,7 @@
             </ion-list>
           </ion-col>
         </ion-row>
-        
+
         <!-- <ion-row>
             <ion-col size="12" class="full-height">
               <ion-card class="full-height" color="card">
@@ -105,23 +105,23 @@
               </ion-card>
             </ion-col>
           </ion-row> -->
-          <ion-col size="12" class="full-height">
-            <div class="title-with-icon">
-              <ion-icon
-                class="icon3"
-                aria-hidden="true"
-                :icon="checkmarkDoneCircleOutline"
-              ></ion-icon>
-              <h1><b>Badges</b></h1>
-            </div>
-            <ion-list>
-              <ion-item v-for="badge in userBadges" :key="badge.id">
-                <ion-label>{{ badge.milestone.name }}</ion-label>
-                <ion-icon :src="badge.iconPath" slot="start" />
-              </ion-item>
-            </ion-list>
-          </ion-col>
-        
+        <ion-col size="12" class="full-height">
+          <div class="title-with-icon">
+            <ion-icon
+              class="icon3"
+              aria-hidden="true"
+              :icon="checkmarkDoneCircleOutline"
+            ></ion-icon>
+            <h1><b>Badges</b></h1>
+          </div>
+          <ion-list>
+            <ion-item v-for="badge in userBadges" :key="badge.id">
+              <ion-label>{{ badge.milestone.name }}</ion-label>
+              <ion-icon :src="badge.iconPath" slot="start" />
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
         <ion-button color="light" class="sign-out">Sign Out</ion-button>
       </ion-grid>
     </ion-content>
@@ -223,7 +223,7 @@ const fetchBadges = async () => {
   const userId = localStorage.getItem('userId');
   if (userId) {
     try {
-      const badges = await fetchUserBadges(userId);  // Call the function from the service
+      const badges = await fetchUserBadges(userId); // Call the function from the service
       userBadges.value = badges;
     } catch (error) {
       console.error('Error fetching badges:', error);
@@ -235,11 +235,9 @@ const fetchBadges = async () => {
 onMounted(() => {
   fetchUserInfo();
   fetchUserPoints();
-  fetchBadges() ;
-    });
-  
+  fetchBadges();
+});
 </script>
-
 
 <style scoped>
 .content-center {
