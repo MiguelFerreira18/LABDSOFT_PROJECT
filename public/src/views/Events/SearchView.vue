@@ -140,7 +140,7 @@ button.gm-control-active.gm-fullscreen-control {
 }
 
 .clear-button {
-margin-top: 10px;
+  margin-top: 10px;
   align-self: flex-end;
   font-size: 14px;
 }
@@ -173,5 +173,4 @@ ion-fab-button {
   border-radius: 4px;
   font-size: 16px;
 }
-
 </style>
