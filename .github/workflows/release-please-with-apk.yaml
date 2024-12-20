@@ -7,9 +7,31 @@ permissions:
   issues: write
   id-token: write
 
-name: release-please
+name: release-please-with-apk
 
 jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        with:
+          # You will want to configure a GitHub Actions secret with a
+          # Personal Access Token if you want GitHub Actions CI
+          # checks to run on Release Please PRs.
+          # The folowing assumes that you have created a personal access token
+          # (PAT) and configured it as a GitHub action secret named
+          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
+          #token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+
+          # if you dont need to trigger new workflow runs on a release please PR
+          # its fine to use GITHUB_TOKEN as folows
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+          # this is a built-in strategy in release-please, see "Action Inputs"
+          # for more options
+          release-type: simple
+          package-name: labdsoft-project
+
   lintFrontEnd:
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +84,20 @@ jobs:
         run: ./gradlew assembleDebug
         working-directory: ./public/android
 
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: ./public/android/app/build/outputs/apk/debug
+
+  uploadAPK:
+    runs-on: ubuntu-latest
+    needs: [lintFrontEnd, release-please]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-debug
+          path: ./public/android/app/build/outputs/apk/debug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
