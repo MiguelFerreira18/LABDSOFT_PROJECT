@@ -1,5 +1,94 @@
 # Changelog
 
+## [2.0.0](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/compare/v1.0.0...v2.0.0) (2024-12-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* fix nullable Event; change to be able to claim including and after the start date of the event
+* fix breaking tests due to changing to localDateTime
+
+### Features
+
+* add a map component in event details page ([c307f1f](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/c307f1f5187d0c4a86bfc603b2f122ecb4a8ba0d))
+* add event limitation to the details; add the event limitation in the creation of event ([4d28341](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/4d2834185620bfed56c72c83db853ac9c67cc2b7))
+* add event notification scheduling for subscribed users to the event ([fecfa25](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/fecfa25abec28b6ebb43bf53c573916b30111740))
+* add formatter and pre-commit hooks ([34cc06d](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/34cc06dd83e9727bfb2b3fd3658c7d33e29e8c83))
+* add function to save the mobile token on login and on sign up (only works on android) ([1149e22](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/1149e22be2063533d8476aeb6012dc7f0827eb13))
+* add limit to dto ([8cdd78d](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/8cdd78deda8163b74b210e22e15bcf5299542cb1))
+* add limit to the initialization event class ([e50c702](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/e50c702224dced3953e7cb5def9c2849fd3d97d4))
+* add map navigation for events ([4948825](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/49488253bf3f049ebd0db82026a71364bc60cb8e))
+* add modal functionality for event details and update dependencies ([94655cf](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/94655cf5f469d18d81507a84397584a921134ef2))
+* add new field to create bar codes byt storing the path ([6dd3950](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/6dd3950ac1297d0102c49b634400dae8b02beae1))
+* add ngrok skip warning header and fix small logic error ([2453adb](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/2453adbb9cf20ea3eb9f021e5be580407dc76eed))
+* add qr code to be scanned based on a url in the api ([7f20486](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/7f2048632aa59702a8d657d12f8a0c0e81c3684a))
+* add subscription limit to the event class ([ad73d16](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/ad73d16cc4588ca7682370eacbbd8e4dabb54b5b))
+* added preferences on signupt, at backend ([52e2ad6](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/52e2ad6a13ab1cc7b3f33468e7a352fc9129913a))
+* allow database to always reset, creates and deletes on start of the session and on finishing the session ([c400c71](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/c400c71d14761872a015a3aa5e610b6ab27b87f2))
+* build example trough string ([74df90b](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/74df90bc2da3e699cd30fddece82ac8850c65276))
+* Categorie preference set in frontend ([fac1a2b](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/fac1a2b1ff9c14166d3e9f958e5b27d13a57897b))
+* change events dates to local date time; add push token to user table; fix all the tests that have localDate to have localDateTime ([6b847cd](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/6b847cdef583196bb9c5d627589920a0cc6e8b95))
+* change login and sign up with the new notification token feature ([de7b73c](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/de7b73cd9e20007218ec8154f33eaf3a2a6b4b8e))
+* configure production environment for mobile app ([7fe0807](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/7fe08072d6277de3df02e6d2053d700bdc7bb37f))
+* create release for apk in main ([21bfc6e](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/21bfc6e4534be01f3488b9c14897e4fa7d9318f6))
+* enable qr code reader ([dff08ed](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/dff08eddd7de0770b463abd840e63905e8c5bf02))
+* Event creators can add images using frontend ([5913fd8](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/5913fd8e9d527ecb0ec4dddadcdef5b71f08dde7))
+* Events filtered by location ([e89bf62](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/e89bf621e6f7c02f5add5fd305e24edd8092b518))
+* Image added to Events in backend and displaying in frontend ([6becfdd](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/6becfdd5d1e5c559ef80ceffce3413f16eafa988))
+* implement event marker click handling and create event modal component ([e24333f](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/e24333f89d8b5b19845b9536fdd7be3bb3313f2d))
+* Institution Page added ([8fbc1ba](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/8fbc1badf06d3cae9e0ef4203d7ea22787f9f1c8))
+* localhost removes localstorage data on bad login or if token is expired ([3eaf924](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/3eaf924c79f76c97c50c7229dd97a15fc3c6af8f))
+* print local ip of api to use it for mobile debugging ([235eda9](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/235eda95342c0050dc2f53d32740dcb687b26f11))
+* read qr code as admin from the event details ([fc0c6fc](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/fc0c6fc139547c063fa2594424a818a653121455))
+
+
+### Bug Fixes
+
+* add all args constructor with correct order ([231cbe2](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/231cbe221ad4bcb8f8f45e4ea4b0c28a368a9dd4))
+* add cursed husky dependency ([4660b58](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/4660b58f5876553d6c19ff6a6a267615ec120a80))
+* add LocalDateTime to events ([b51adce](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/b51adce606b67b2be1d159b46549a9fbea4ca251))
+* add missing newline at end of file in MapComponent.vue ([a254dc8](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/a254dc8ec36784c1268e2ffab3aeba6ce4390875))
+* add total attendees for event summary ([e1247e2](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/e1247e2b36fa63977dd406b1249a55d8eef6567c))
+* added relative path to web Config and headers to sendFormData.ts ([8426d53](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/8426d5316e17f4a97e84040ecdf975fb73ab3c14))
+* change a but of the ui ([271cb2f](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/271cb2fc18620150c54a1e60cccd3fb3c714177c))
+* change subscription endpoint to only add the request url to the column qrcode ([3a596bb](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/3a596bb078a73898db1181422ce4ab9ffada880e))
+* change to a recent version of upload-artifact from v2 to v4 ([ce97782](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/ce9778290610f49fb0707f44315c0e9fdbe4d986))
+* correct label casing in LoginView ([e50098f](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/e50098ff07a1098abbc503fa7aba402aa9542f99))
+* dateFormatter formated ([071e0fc](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/071e0fcdff8bd97455ae9b8ca82e2321af5391e8))
+* deleted 2 images ([55c8ee9](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/55c8ee9da63b940b4f530945acaa1c60ba4b1d0e))
+* fix additional request functions (should've been used the SendRequest...), after api reset no longer stays logged in ([2140417](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/2140417f623ca050425f859663cd4b89238f6e8a))
+* fix breaking tests due to changing to localDateTime ([3265dfb](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/3265dfbd075cc91a8e2a3549099e61ea99f88c56))
+* fix create events after adding localDateTime ([e0d9a7b](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/e0d9a7b9d0b1f0f62ee91929c5df6ff71efc602a))
+* fix creator of event being able to subscribe ([0dfa5ef](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/0dfa5ef6b62b2251b5b44bbd1e41aea379170090))
+* fix date that recently changed causing an error ([7690f75](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/7690f750964a0b833a82236bfd6b858141118622))
+* fix formatation issues ([06917d1](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/06917d1b7d57435637d86644db9d502079c3be79))
+* fix logix of disabled button when event is full ([fe8f0b4](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/fe8f0b4025a042ed6a58d6210ffc48152a6dbd05))
+* fix nullable Event; change to be able to claim including and after the start date of the event ([63a5aa3](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/63a5aa3b19c41707117b9d2085329846d17ac773))
+* fix pre commit hook ([8c49aef](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/8c49aef61c959767799716e5897209b99df13804))
+* fix prettier config ([3cf7c7b](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/3cf7c7b2c99fbd8a17efcfa7b521aa3c8e240de4))
+* fix subscription filtering, sometimes could be null ([9cbdb2c](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/9cbdb2c628929460c8c0b2467968639ac92d3638))
+* fix tests that used to see the end date (mvp) ([7d93936](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/7d9393696766b288a059bc5076f1bdb5546f97d6))
+* fix upload apk ([66935dd](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/66935dd5c65f5def516f563086082cb2d6f39e63))
+* fix wrong formatting function ([b21c1b0](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/b21c1b0912d1f34aff6979ac1c191522026da595))
+* improve visibility of AI event recomendation; allow users to see attended events even if event hasn't finished ([8b91c82](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/8b91c828bf39d7ba74b2ac041147215da5d36462))
+* Institution page found by id ([0782c2f](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/0782c2f4768d34776f73dc71e9dd3517c7e099b6))
+* map component with prettier ([3a36647](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/3a36647b1a63998757ecfe1a8a6f53ad2400c8e8))
+* prettier run ([2d298d2](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/2d298d253a84ebf8734c97ed2a485773fdaf568d))
+* prettier run ([8a56689](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/8a5668969e486388cbd7d40dc6b5c0c0da4a8576))
+* remove unnecessary loggin ([1a39b07](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/1a39b07e811881f11ff524557e387cbea9b40db6))
+* remove useless comments ([f06b6bd](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/f06b6bd662c4c52c7b3c5416b8f9e2e1047fcefd))
+* remove useless gradle permission ([75d7863](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/75d78634dd65cfaab32fd3f93c509d7833540c04))
+* replace "replace" with "push" ([97518b4](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/97518b4362af885fb9cdf488e3c303b1229a37f5))
+* run prettier to format institution view file ([bb0a9dd](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/bb0a9dde7e481bd912994e64d83aa28ff91fb50b))
+* search view with prettier ([9c43c47](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/9c43c47d6403dad4afb8dec97edce107119d6878))
+* searchview css modified ([d213be5](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/d213be5ace5075674c1ee76f9b4fb583ff7b518a))
+* some files were not commited ([6bf0838](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/6bf0838e5fe27fc3ddfedd9ae9c0cb346189da06))
+
+
+### Reverts
+
+* revert to number ([34c9762](https://github.com/MiguelFerreira18/LABDSOFT_PROJECT/commit/34c97625194129a568f4a23987b0b449aa4aa516))
+
 ## 1.0.0 (2024-11-25)
 
 ### ⚠ BREAKING CHANGES
