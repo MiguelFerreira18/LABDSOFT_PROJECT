@@ -130,17 +130,6 @@
         </p>
       </section>
 
-      <ion-button
-        v-if="isOwnerOfTheEvent()"
-        @click="handleImageUpload"
-        expand="block"
-        fill="clear"
-        shape="round"
-        color="primary"
-      >
-        Add Images
-      </ion-button>
-
       <input
         ref="fileInput"
         type="file"
@@ -205,6 +194,17 @@
           <ion-icon :icon="megaphone"></ion-icon>
           <span class="ion-margin-start">Promote Event</span>
         </ion-button>
+
+        <ion-button
+          v-if="isOwnerOfTheEvent()"
+          @click="handleImageUpload"
+          expand="block"
+          fill="outline"
+          color="primary"
+        >
+          <ion-icon :icon="images"></ion-icon>
+          <span class="ion-margin-start">Add Images</span>
+        </ion-button>
       </section>
     </ion-content>
   </ion-page>
@@ -224,6 +224,7 @@ import {
   notifications,
   qrCode,
   notificationsOff,
+  images,
 } from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
