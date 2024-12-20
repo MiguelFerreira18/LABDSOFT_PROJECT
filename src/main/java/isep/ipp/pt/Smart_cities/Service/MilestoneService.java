@@ -70,10 +70,7 @@ public class MilestoneService {
     }
 
     // Update an existing milestone
-    public Milestone updateMilestone(String milestoneId, Milestone milestone) {
-        milestone.setId(milestoneId);
-        return milestoneRepository.save(milestone);
-    }
+  
 
     // Delete a milestone by ID
     public boolean deleteMilestone(String milestoneId) {
