@@ -6,7 +6,49 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-fab horizontal="end">
+
+      <ion-button id="open-modal" expand="block">Open Sheet Modal</ion-button>
+
+      <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5]">
+        <ion-content class="ion-padding">
+          <ion-item>
+            <ion-avatar slot="start">
+              <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
+            </ion-avatar>
+            <ion-label>
+              <h2>Connor Smith</h2>
+              <p>Sales Rep</p>
+            </ion-label>
+          </ion-item>
+        </ion-content>
+      </ion-modal>
+
+      <div v-for="event in events" :key="event.id">
+        <ion-button :id="'open-modal-' + event.id" expand="block">
+          {{ event.title }}
+        </ion-button>
+
+        <ion-modal :trigger="'open-modal-' + event.id" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5]">
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-label>
+                <h2>{{ event.title }}</h2>
+                <p>Category: {{ event.category }}</p>
+                <p>
+                  Dates: {{ event.startDate }} - {{ event.endDate }}
+                </p>
+                <p>Location: {{ event.location }}</p>
+                <p>Created by: {{ event.creator.name }}</p>
+                <RouterLink :key="event.id" :to="`/event/EventDetail/${event.id}`">
+                  <ion-button @click="dismissModalBeforeNavigation()">View Event Details</ion-button>
+                </RouterLink>
+              </ion-label>
+            </ion-item>
+          </ion-content>
+        </ion-modal>
+      </div>
+
+      <ion-fab horizontal="end" vertical="bottom">
         <ion-fab-button @click="toggleDropdown">
           <ion-icon :icon="filterCircleOutline"></ion-icon>
         </ion-fab-button>
@@ -54,12 +96,15 @@ import {
   IonTitle,
   IonContent,
   IonButton,
+  IonModal,
+  modalController,
 } from '@ionic/vue';
 import { filterCircleOutline } from 'ionicons/icons';
 import { fetchNonPromotedEvents } from '@/lib/eventRequests';
 import { Geolocation } from '@capacitor/geolocation';
 import MapComponent from '@/components/maps/MapComponent.vue';
 import { Event } from '@/domain/Event';
+import { useRoute } from 'vue-router';
 
 const currentPosition = ref<{ latitude: number; longitude: number } | null>(
   null,
@@ -70,6 +115,8 @@ const showDropdown = ref(false);
 const searchQuery = ref('');
 
 const mapZoom = ref<number>(12);
+
+const router = useRoute();
 
 const getCurrentLocation = async () => {
   try {
@@ -109,6 +156,11 @@ const updateZoom = (distance: string) => {
   mapZoom.value = zoomLevel;
 };
 
+//Dismiss the modal before navigating to the event details page
+const dismissModalBeforeNavigation = async () => {
+  await modalController.dismiss();
+};
+
 onMounted(() => {
   getCurrentLocation();
   fetchEvents();
@@ -131,6 +183,7 @@ ion-content {
 body {
   background: transparent;
 }
+
 button.gm-control-active.gm-fullscreen-control {
   display: none;
 }
@@ -139,17 +192,14 @@ button.gm-control-active.gm-fullscreen-control {
   display: none;
 }
 
+.gmnoprint {
+    display: none;
+}
+
 .clear-button {
   margin-top: 10px;
   align-self: flex-end;
   font-size: 14px;
-}
-
-ion-fab-button {
-  position: fixed;
-  top: 300px;
-  right: 20px;
-  z-index: 10;
 }
 
 .dropdown-menu {
