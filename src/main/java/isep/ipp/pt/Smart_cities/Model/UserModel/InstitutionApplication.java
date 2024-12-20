@@ -1,5 +1,7 @@
 package isep.ipp.pt.Smart_cities.Model.UserModel;
 
+
+/*
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
@@ -68,3 +70,5 @@ public class InstitutionApplication {
         this.contactInformation = contactInformation;
     }
 }
+*/
+

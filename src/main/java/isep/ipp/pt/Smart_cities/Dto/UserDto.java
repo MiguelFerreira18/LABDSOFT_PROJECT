@@ -1,6 +1,5 @@
 package isep.ipp.pt.Smart_cities.Dto;
 
-import isep.ipp.pt.Smart_cities.Model.UserModel.Role;
 import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import lombok.*;
 
