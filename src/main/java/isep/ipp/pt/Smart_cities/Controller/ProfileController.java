@@ -1,6 +1,5 @@
 package isep.ipp.pt.Smart_cities.Controller;
 
-
 import isep.ipp.pt.Smart_cities.Model.Badge;
 import isep.ipp.pt.Smart_cities.Model.BadgeCategory;
 import isep.ipp.pt.Smart_cities.Model.Milestone;
@@ -8,9 +7,11 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Service.BadgeService;
 import isep.ipp.pt.Smart_cities.Service.MilestoneService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -22,10 +23,16 @@ public class ProfileController {
     @Autowired
     private MilestoneService milestoneService;
 
-    // Endpoint to get user badges
+    // Endpoint to get all user badges
     @GetMapping("/badges")
     public List<Badge> getUserBadges(@RequestParam User user) {
         return badgeService.getUserBadges(user);
+    }
+
+    // Endpoint to get all badges (admin or public use)
+    @GetMapping("/badges/all")
+    public List<Badge> getAllBadges() {
+        return badgeService.getAllBadges();
     }
 
     // Endpoint to get milestones by category
@@ -34,7 +41,13 @@ public class ProfileController {
         return milestoneService.getMilestonesByCategory(category);
     }
 
-    // Endpoint to notify no milestones earned
+    // Endpoint to get all milestones (admin or public use)
+    @GetMapping("/milestones/all")
+    public List<Milestone> getAllMilestones() {
+        return milestoneService.getAllMilestones();
+    }
+
+    // Endpoint to check if a user has earned any milestones
     @GetMapping("/milestones/none")
     public String noMilestonesEarned(@RequestParam User user) {
         List<Badge> badges = badgeService.getUserBadges(user);
@@ -47,10 +60,66 @@ public class ProfileController {
 
     // Endpoint to assign an icon to a badge
     @PostMapping("/badges/icon")
-    public Badge assignIconToBadge(@RequestParam Long badgeId, @RequestParam String iconPath) {
+    public Badge assignIconToBadge(@RequestParam String badgeId, @RequestParam String iconPath) {
         Badge badge = badgeService.getBadgeById(badgeId);
-        badgeService.assignIconToBadge(badge, iconPath);
-        return badge;
+        return badgeService.assignIconToBadge(badge, iconPath);
+    }
+
+    // Endpoint to create a new badge
+    @PostMapping("/badges")
+    public ResponseEntity<Badge> createBadge(@RequestBody Badge badge) {
+        Badge createdBadge = badgeService.createBadge(badge);
+        return ResponseEntity.ok(createdBadge);
+    }
+
+    // Endpoint to update an existing badge
+    @PutMapping("/badges/{badgeId}")
+    public ResponseEntity<Badge> updateBadge(@PathVariable String badgeId, @RequestBody Badge badge) {
+        Optional<Badge> existingBadge = badgeService.getBadgeByIdOptional(badgeId);
+        if (existingBadge.isPresent()) {
+            Badge updatedBadge = badgeService.updateBadge(badgeId, badge);
+            return ResponseEntity.ok(updatedBadge);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Endpoint to delete a badge
+    @DeleteMapping("/badges/{badgeId}")
+    public ResponseEntity<Void> deleteBadge(@PathVariable String badgeId) {
+        if (badgeService.deleteBadge(badgeId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Endpoint to create a new milestone
+    @PostMapping("/milestones")
+    public ResponseEntity<Milestone> createMilestone(@RequestBody Milestone milestone) {
+        Milestone createdMilestone = milestoneService.saveMilestone(milestone);
+        return ResponseEntity.ok(createdMilestone);
+    }
+
+    // Endpoint to update an existing milestone
+    @PutMapping("/milestones/{milestoneId}")
+    public ResponseEntity<Milestone> updateMilestone(@PathVariable String milestoneId, @RequestBody Milestone milestone) {
+        Optional<Milestone> existingMilestone = milestoneService.getMilestoneByIdOptional(milestoneId);
+        if (existingMilestone.isPresent()) {
+            Milestone updatedMilestone = milestoneService.updateMilestone(milestoneId, milestone);
+            return ResponseEntity.ok(updatedMilestone);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Endpoint to delete a milestone
+    @DeleteMapping("/milestones/{milestoneId}")
+    public ResponseEntity<Void> deleteMilestone(@PathVariable String milestoneId) {
+        if (milestoneService.deleteMilestone(milestoneId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
-

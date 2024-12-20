@@ -2,11 +2,34 @@ package isep.ipp.pt.Smart_cities.Model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;  // Import missing
+import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
+@Entity
+@Table(name = "milestone")
 public class Milestone {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
+
     private String name;
     private String description;
     private BadgeCategory category;
-    private LocalDate completionDate;
+    private String icon;  // Store the icon as a string (e.g., emoji, icon code, or path to image)
+
+   
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
 
     // Getters and setters
     public String getName() {
@@ -33,11 +56,6 @@ public class Milestone {
         this.category = category;
     }
 
-    public LocalDate getCompletionDate() {
-        return completionDate;
-    }
+   
 
-    public void setCompletionDate(LocalDate completionDate) {
-        this.completionDate = completionDate;
-    }
 }
