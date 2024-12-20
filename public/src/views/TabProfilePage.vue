@@ -3,6 +3,7 @@
     <HeaderComponent title="Profile" />
     <ion-content class="content-center">
       <ion-grid class="profileInfo">
+        <!-- Profile Section -->
         <ion-row class="profile1">
           <ion-col size="12" class="profile1">
             <ion-row>
@@ -12,22 +13,24 @@
               />
               <ion-col class="text-center">
                 <ion-row>
-                  <ion-card-title
-                    ><b>{{ userInfo.name }}</b></ion-card-title
-                  >
+                  <ion-card-title>
+                    <b>{{ userInfo.name }}</b>
+                  </ion-card-title>
                 </ion-row>
                 <ion-row>
                   <ion-card-subtitle>{{ userInfo.email }}</ion-card-subtitle>
                 </ion-row>
                 <ion-row>
-                  <ion-card-subtitle
-                    >Points: {{ userPoints }}</ion-card-subtitle
-                  >
+                  <ion-card-subtitle>
+                    Points: {{ userPoints }}
+                  </ion-card-subtitle>
                 </ion-row>
               </ion-col>
             </ion-row>
           </ion-col>
         </ion-row>
+
+        <!-- Bio Section -->
         <ion-row>
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
@@ -46,6 +49,8 @@
               connections and urban living.
             </ion-text>
           </ion-col>
+
+          <!-- Location Section -->
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
               <ion-icon
@@ -70,8 +75,8 @@
               </ion-item>
             </ion-list>
           </ion-col>
-        </ion-row>
-        <ion-row>
+
+          <!-- Personal Information Section -->
           <ion-col size="12" class="full-height">
             <div class="title-with-icon">
               <ion-icon
@@ -92,18 +97,33 @@
               </ion-item>
             </ion-list>
           </ion-col>
+
+          <!-- Display the Badges -->
+          <ion-col size="12">
+            <div class="title-with-icon">
+              <ion-icon
+                class="icon1"
+                aria-hidden="true"
+                :icon="checkmarkDoneCircle"
+              ></ion-icon>
+              <h1><b>Badges</b></h1>
+            </div>
+
+            <!-- Render Badges -->
+            <ion-list>
+              <ion-item v-for="badge in badges" :key="badge.id">
+                <ion-label>
+                  <h2>{{ badge.milestone.name }}</h2>
+                  <p>{{ badge.category }}</p>
+                  <p>{{ badge.milestone.description }}</p>
+                  
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+
         </ion-row>
-        <!-- <ion-row>
-            <ion-col size="12" class="full-height">
-              <ion-card class="full-height" color="card">
-                <ion-card-header>
-                  <ion-card-title><b>Favourite Events</b></ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-          </ion-row> -->
+
         <ion-button color="light" class="sign-out">Sign Out</ion-button>
       </ion-grid>
     </ion-content>
@@ -123,6 +143,10 @@ import {
   IonCardSubtitle,
   IonButton,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonText,
+  IonList,
 } from '@ionic/vue';
 import {
   checkmarkDoneCircle,
@@ -131,8 +155,9 @@ import {
   trailSignOutline,
 } from 'ionicons/icons';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
+import { RefSymbol } from '@vue/reactivity';
 
-// Reactive state to store user information
+// Reactive state to store user information and badges
 const userInfo = ref({
   name: '',
   email: '',
@@ -143,6 +168,7 @@ const userInfo = ref({
   country: '',
 });
 const userPoints = ref(0);
+const badges = ref([]); // Add this for badges
 
 // Fetch user information
 const fetchUserInfo = async () => {
@@ -164,6 +190,8 @@ const fetchUserInfo = async () => {
     console.error('Error fetching user info:', error);
   }
 };
+
+// Fetch user points
 const fetchUserPoints = async () => {
   const userId = localStorage.getItem('uuid');
   try {
@@ -179,10 +207,30 @@ const fetchUserPoints = async () => {
   }
 };
 
+// Fetch user badges
+const fetchUserBadges = async () => {
+  const userId = localStorage.getItem('userId');
+  try {
+    const response = await SendRequest(`/api/profile/badges`, 'POST', {
+      userId,
+    });
+    if (response.ok) {
+      const data = await response.json();
+      badges.value = data || [];
+      console.log(badges.value);
+    } else {
+      console.error('Error fetching user badges:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching user badges:', error);
+  }
+};
+
 // Fetch data on component mount
 onMounted(() => {
   fetchUserInfo();
   fetchUserPoints();
+  fetchUserBadges(); // Call fetchUserBadges to load the badges
 });
 </script>
 

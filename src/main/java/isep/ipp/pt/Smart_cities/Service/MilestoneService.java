@@ -13,11 +13,10 @@ import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-@Service
+import java.util.Optional;@Service
 public class MilestoneService {
 
     @Autowired
@@ -51,7 +50,7 @@ public class MilestoneService {
             Badge userBadge = new Badge();
             userBadge.setUser(user);
             userBadge.setMilestone(milestone);
-            userBadge.setCompletionDate(LocalDate.now());  // Set completion date
+            userBadge.setCompletionDate(LocalDateTime.now());  // Set completion date
 
             badgeRepository.save(userBadge);  // Save the badge
         } else {

@@ -9,7 +9,7 @@ import isep.ipp.pt.Smart_cities.Respository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,29 +42,40 @@ public class BadgeService {
     }
 
     // Assign a badge to the user when a milestone is achieved
-    public void assignBadgeToUser(String userId, String milestoneId) {
+    public void assignBadgeToUser(String userId, String milestoneName) {
+        // Find the user by their ID
         Optional<User> userOpt = userRepository.findById(userId);
-        Optional<Milestone> milestoneOpt = milestoneRepository.findById(milestoneId);
-
-        if (userOpt.isEmpty() || milestoneOpt.isEmpty()) {
-            throw new IllegalArgumentException("User or Milestone not found");
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
         }
-
+    
         User user = userOpt.get();
+    
+        // Find the milestone by its name
+        Optional<Milestone> milestoneOpt = milestoneRepository.findByName(milestoneName);
+        if (milestoneOpt.isEmpty()) {
+            throw new IllegalArgumentException("Milestone not found");
+        }
+    
         Milestone milestone = milestoneOpt.get();
-
+    
         // Check if the user has already earned a badge for this milestone
         Optional<Badge> existingBadge = badgeRepository.findByUserAndMilestone(user, milestone);
         if (existingBadge.isPresent()) {
             return; // Badge already exists
         }
-
+    
+        // Create and assign the badge to the user
         Badge userBadge = new Badge();
         userBadge.setUser(user);
         userBadge.setMilestone(milestone);
-        userBadge.setCompletionDate(LocalDate.now());
+        userBadge.setCategory(milestone.getCategory());
+        userBadge.setCompletionDate(LocalDateTime.now());
         userBadge.setIconPath("/path/to/icon"); // Placeholder for badge icon
+     
+   
 
+        // Save the badge
         badgeRepository.save(userBadge);
     }
 

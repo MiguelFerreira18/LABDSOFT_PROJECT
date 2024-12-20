@@ -7,11 +7,17 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 import isep.ipp.pt.Smart_cities.Service.BadgeService;
 import isep.ipp.pt.Smart_cities.Service.MilestoneService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+
+
+
 
 @RestController
 @RequestMapping("/api/profile")
@@ -23,11 +29,25 @@ public class ProfileController {
     @Autowired
     private MilestoneService milestoneService;
 
-    // Endpoint to get all user badges
-    @GetMapping("/badges")
-    public List<Badge> getUserBadges(@RequestParam User user) {
-        return badgeService.getUserBadges(user);
-    }
+  // Endpoint to assign a badge to a user based on milestone name and user id
+  @PostMapping("/badge/assign")
+  public String assignBadgeToUser(@RequestBody BadgeAssignmentRequest request) {
+      try {
+          badgeService.assignBadgeToUser(request.getUserId(), request.getMilestoneName());
+          return "Badge assigned successfully";
+      } catch (IllegalArgumentException e) {
+          return "Error: " + e.getMessage();
+      }
+  }
+ 
+  @PostMapping("/badges")
+  public ResponseEntity<List<Badge>> getUserBadges(@RequestBody BadgeAssignmentRequest request) {
+      List<Badge> badges = badgeService.getBadgesForUser(request.getUserId());
+      if (badges.isEmpty()) {
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+      }
+      return ResponseEntity.ok(badges);
+  }
 
     // Endpoint to get all badges (admin or public use)
     @GetMapping("/badges/all")
@@ -66,7 +86,7 @@ public class ProfileController {
     }
 
     // Endpoint to create a new badge
-    @PostMapping("/badges")
+    @PostMapping("/badge/create")
     public ResponseEntity<Badge> createBadge(@RequestBody Badge badge) {
         Badge createdBadge = badgeService.createBadge(badge);
         return ResponseEntity.ok(createdBadge);

@@ -11,16 +11,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface MilestoneRepository extends JpaRepository<Milestone, String> {
-    // Find milestones by category (assuming BadgeCategory is an enum or class).
-    List<Milestone> findByCategory(BadgeCategory category);
-
-    // You can add more queries here based on your business requirements.
-
-  
-
-String findByName(String name);
+ @Repository
+    public interface MilestoneRepository extends JpaRepository<Milestone, String> {
+        // Find milestones by category (assuming BadgeCategory is an enum or class).
+        List<Milestone> findByCategory(BadgeCategory category);
+    
+        // Find milestones by name
+        Optional<Milestone> findByName(String name);
+    }
 
     //
-}

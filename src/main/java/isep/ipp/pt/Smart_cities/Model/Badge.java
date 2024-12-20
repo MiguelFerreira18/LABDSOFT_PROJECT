@@ -14,12 +14,11 @@ import isep.ipp.pt.Smart_cities.Model.UserModel.User;
 public class Badge {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private BadgeCategory category;  // This defines the category of the badge (e.g., social, frequency, etc.)
+    private BadgeCategory category;   // This defines the category of the badge (e.g., social, frequency, etc.)
 
     private LocalDateTime completionDate;  // Date when the badge was awarded
 

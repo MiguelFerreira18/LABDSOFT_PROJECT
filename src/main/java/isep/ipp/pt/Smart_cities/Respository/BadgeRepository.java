@@ -12,6 +12,5 @@ public interface BadgeRepository extends JpaRepository<Badge, String> {
     List<Badge> findByUser(User user);
     List<Badge> findByUserId(String userId);
 
-    // New method to find a badge by user and milestone
-    Optional<Badge> findByUserAndMilestone(User user, Milestone milestone);
-}
+     Optional<Badge> findByUserAndMilestone(User user, Milestone milestone);
+    }
