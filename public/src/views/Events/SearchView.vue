@@ -116,37 +116,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
-ion-fab-button {
-  position: fixed;
-  top: 300px;
-  right: 20px;
-  z-index: 10;
+ion-content {
+  --background: transparent !important;
 }
 
-.dropdown-menu {
-  position: fixed;
-  top: 130px;
-  right: 16px;
-  background: var(--ion-color-light);
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 200px;
-  z-index: 100;
+ion-content {
+  background: transparent !important;
 }
 
-#search-input {
-  padding: 8px;
-  border: 1px solid var(--ion-color-medium);
-  border-radius: 4px;
-  font-size: 16px;
+ion-content {
+  --background: transparent;
+}
+
+body {
+  background: transparent;
+}
+button.gm-control-active.gm-fullscreen-control {
+  display: none;
+}
+
+.gmnoprint.gm-style-mtc-bbw {
+  display: none;
 }
 
 .clear-button {
-  margin-top: 10px;
+margin-top: 10px;
   align-self: flex-end;
   font-size: 14px;
 }

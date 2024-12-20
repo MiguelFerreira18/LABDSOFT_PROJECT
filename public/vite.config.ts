@@ -9,7 +9,7 @@ import { defineConfig } from 'vite';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const envFiles = {
-    develomepnt: '.env.development',
+    development: '.env.development',
     production: '.env.production',
   };
 
