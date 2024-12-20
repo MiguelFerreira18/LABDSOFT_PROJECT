@@ -53,7 +53,22 @@
 import { SendRequest } from '@/lib/request';
 import { ref, onMounted } from 'vue';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
-import { getAllMilestones } from '@/lib/badgesService'; // Importing from milestoneService.ts
+import { getAllMilestones } from '@/lib/badgesService';
+import {
+  IonPage,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardTitle,
+  IonIcon,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonList,
+  IonItem,
+  IonLabel,
+} from '@ionic/vue';
 
 // Rewards data interface
 interface RewardsResponse {

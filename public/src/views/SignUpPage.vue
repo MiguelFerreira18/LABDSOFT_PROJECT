@@ -3,7 +3,7 @@
     <ion-content class="ion-padding">
       <div class="centered-square">
         <ion-input
-          ref="email"
+          v-model="email"
           type="email"
           fill="solid"
           label="Email"
@@ -13,7 +13,7 @@
         ></ion-input>
 
         <ion-input
-          ref="name"
+          v-model="name"
           fill="solid"
           label="Name"
           label-placement="floating"
@@ -22,20 +22,20 @@
         ></ion-input>
 
         <ion-input
-          ref="password"
+          v-model="password"
           type="password"
           fill="solid"
-          label="password"
+          label="Password"
           label-placement="floating"
           error-text="Invalid email"
           @ionBlur="markTouched"
         ></ion-input>
 
         <ion-input
-          ref="confirmPassword"
+          v-model="confirmPassword"
           type="password"
           fill="solid"
-          label="password"
+          label="Repeat Password"
           label-placement="floating"
           error-text="Invalid email"
           @ionBlur="markTouched"
@@ -59,11 +59,14 @@
           </ion-select>
         </ion-item>
 
-        <ion-checkbox ref="isInstitution">Are you an institution?</ion-checkbox>
+        <ion-checkbox v-model="isInstitution"
+          >Are you an institution?</ion-checkbox
+        >
 
         <ion-button expand="block" @click="signUp">Submit</ion-button>
+
         <ion-toast
-          :is-open="true"
+          :is-open="isOpen"
           :message="message"
           :duration="5000"
           :color="toastColor"
@@ -78,17 +81,28 @@
 import { SendRequest } from '@/lib/request';
 import { ConfirmPasswordMatch, IsAGoodPassword } from '@/lib/signUpUtil';
 import router from '@/router';
-import { push } from 'ionicons/icons';
 import { ref } from 'vue';
 import { categories } from '@/lib/categories';
+import {
+  IonPage,
+  IonContent,
+  IonInput,
+  IonButton,
+  IonCheckbox,
+  IonSelect,
+  IonSelectOption,
+  IonToast,
+  IonItem,
+  IonLabel,
+} from '@ionic/vue';
 
 console.log('Categorias disponíveis:', categories);
 
-const email = ref<HTMLInputElement | null>(null);
-const name = ref<HTMLInputElement | null>(null);
-const password = ref<HTMLInputElement | null>(null);
-const confirmPassword = ref<HTMLInputElement | null>(null);
-const isInstitution = ref<HTMLInputElement | null>(null);
+const email = ref<string>('');
+const name = ref<string>('');
+const password = ref<string>('');
+const confirmPassword = ref<string>('');
+const isInstitution = ref<boolean>(false);
 const message = ref('');
 const isOpen = ref(false);
 const toastColor = ref('primary');
@@ -100,20 +114,22 @@ function onCategoryChange(event: any) {
 }
 
 async function signUp() {
+  console.log('Signing up');
+  console.log('Email:', email.value);
   if (areFieldsEmpty()) {
     callToast('danger', 'Please fill all fields');
     return;
   }
   if (
     !ConfirmPasswordMatch(
-      password.value?.value.trim() || '0',
-      confirmPassword.value?.value.trim() || '1',
+      password.value.trim() || '0',
+      confirmPassword.value.trim() || '1',
     )
   ) {
     callToast('danger', 'Passwords do not match');
     return;
   }
-  if (!IsAGoodPassword(password.value?.value.trim() || '')) {
+  if (!IsAGoodPassword(password.value.trim() || '')) {
     callToast('danger', 'Password is not strong enough');
     return;
   }
@@ -121,12 +137,12 @@ async function signUp() {
   console.log('Categorias selecionadas:', selectedCategories.value);
 
   const payload = {
-    email: email.value?.value.trim() || '',
-    name: name.value?.value.trim() || '',
-    password: password.value?.value.trim() || '',
+    email: email.value.trim() || '',
+    name: name.value.trim() || '',
+    password: password.value.trim() || '',
     pushToken: localStorage.getItem('pushToken') || '',
-    repeatPassword: confirmPassword.value?.value.trim() || '',
-    type: isInstitution.value?.checked ? 'INSTITUTION' : 'USER',
+    repeatPassword: confirmPassword.value.trim() || '',
+    type: isInstitution.value ? 'INSTITUTION' : 'USER',
     preferredCategories: selectedCategories.value,
   };
 
@@ -143,10 +159,10 @@ async function signUp() {
 
 function areFieldsEmpty() {
   return (
-    email.value?.value.trim() === '' ||
-    name.value?.value.trim() === '' ||
-    password.value?.value.trim() === '' ||
-    confirmPassword.value?.value.trim() === ''
+    email.value.trim() === '' ||
+    name.value.trim() === '' ||
+    password.value.trim() === '' ||
+    confirmPassword.value.trim() === ''
   );
 }
 
