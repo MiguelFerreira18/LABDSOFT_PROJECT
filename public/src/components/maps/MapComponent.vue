@@ -115,3 +115,10 @@ watch(
   },
 );
 </script>
+
+<style>
+.gmnoprint {
+  display: none !important;
+  position: relative !important;
+}
+</style>
