@@ -72,11 +72,10 @@ async function initializeMap() {
 
   // Handle marker click, send event back to parent
   mapInstance.setOnMarkerClickListener((data) => {
-
     //I'm retriving the event from the collection
     const event = props.events.find((e) => e.id === data.title);
 
-    if(event) {
+    if (event) {
       emits('onMarkerClicked', event);
     }
   });

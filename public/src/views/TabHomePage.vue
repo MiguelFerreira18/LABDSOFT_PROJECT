@@ -1,10 +1,6 @@
 <template>
   <ion-page>
-    <ion-header collapse="condense">
-      <ion-toolbar>
-        <ion-title size="large">Home Page</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <header-component title="Home Page" />
     <ion-content :fullscreen="true" id="main-content">
       <RewardsOverview />
       <EventsView />
@@ -20,7 +16,7 @@ import {
   IonTitle,
   IonContent,
 } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
 import RewardsOverview from '@/components/RewardsOverview.vue';
 import EventsView from './Events/EventsView.vue';
+import HeaderComponent from '@/components/common/HeaderComponent.vue';
 </script>

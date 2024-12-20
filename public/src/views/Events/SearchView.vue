@@ -166,7 +166,7 @@ button.gm-control-active.gm-fullscreen-control {
 }
 
 .gmnoprint {
-    display: none;
+  display: none;
 }
 
 .clear-button {

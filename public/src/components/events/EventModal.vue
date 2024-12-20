@@ -1,14 +1,17 @@
 <template>
-    <ion-content class="ion-padding">
-        <ion-item>
-        <ion-label>
-            <p class="tag">{{ event.category }}</p>
-            <h2>{{ event.title }}</h2>
-            <p>Dates: {{ formatDate(event.startDate) }} - {{ formatDate(event.endDate) }}</p>
-            <ion-button @click="goToEventDetail">View Event Details</ion-button>
-        </ion-label>
-        </ion-item>
-    </ion-content>
+  <ion-content class="ion-padding">
+    <ion-item>
+      <ion-label>
+        <p class="tag">{{ event.category }}</p>
+        <h2>{{ event.title }}</h2>
+        <p>
+          Dates: {{ formatDate(event.startDate) }} -
+          {{ formatDate(event.endDate) }}
+        </p>
+        <ion-button @click="goToEventDetail">View Event Details</ion-button>
+      </ion-label>
+    </ion-item>
+  </ion-content>
 </template>
 
 <script setup lang="ts">
@@ -21,8 +24,8 @@ const props = defineProps<{ event: Event }>();
 const router = useRouter();
 
 const goToEventDetail = async () => {
-    await modalController.dismiss();
-    router.push(`/event/EventDetail/${props.event.id}`);
+  await modalController.dismiss();
+  router.push(`/event/EventDetail/${props.event.id}`);
 };
 </script>
 
