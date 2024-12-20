@@ -97,7 +97,9 @@ onMounted(async () => {
 });
 
 // Function to fetch daily rewards
-async function dailyRewards(response: { id: string }): Promise<RewardsResponse> {
+async function dailyRewards(response: {
+  id: string;
+}): Promise<RewardsResponse> {
   try {
     const res = await SendRequest(
       `/api/rewards/${response.id}/daily`,

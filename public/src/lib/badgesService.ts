@@ -39,7 +39,8 @@ const getUserIdFromLocalStorage = (): string => {
 export const getUserBadges = async (): Promise<BadgesResponse> => {
   try {
     const userId = getUserIdFromLocalStorage(); // Get userId from localStorage
-    const response = await fetch(`${baseUrl}/api/profile/badges`, { // Fixed the URL concatenation
+    const response = await fetch(`${baseUrl}/api/profile/badges`, {
+      // Fixed the URL concatenation
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,4 +80,3 @@ export const getAllMilestones = async (): Promise<MilestonesResponse> => {
     throw error;
   }
 };
-

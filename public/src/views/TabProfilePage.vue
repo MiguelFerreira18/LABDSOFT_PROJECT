@@ -116,12 +116,10 @@
                   <h2>{{ badge.milestone.name }}</h2>
                   <p>{{ badge.category }}</p>
                   <p>{{ badge.milestone.description }}</p>
-                  
                 </ion-label>
               </ion-item>
             </ion-list>
           </ion-col>
-
         </ion-row>
 
         <ion-button color="light" class="sign-out">Sign Out</ion-button>
@@ -155,7 +153,6 @@ import {
   trailSignOutline,
 } from 'ionicons/icons';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
-import { RefSymbol } from '@vue/reactivity';
 
 // Reactive state to store user information and badges
 const userInfo = ref({

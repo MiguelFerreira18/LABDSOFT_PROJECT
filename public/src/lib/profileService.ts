@@ -88,32 +88,32 @@ interface BadgesResponse {
 
 // Fetch User Badges with additional checks
 export const fetchUserBadges = async (userId: string): Promise<Badge[]> => {
-    try {
-      // Send a POST request to fetch badges based on the userId
-      const response = await fetch(`${baseUrl}/api/profile/badges`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId }), // Send the userId in the request body
-      });
-  
-      // Check if the response is okay
-      if (!response.ok) {
-        throw new Error('Error fetching user badges');
-      }
-  
-      // Parse the response JSON
-      const data = await response.json();
-      console.log('Fetched badges data:', data); // Log the data for debugging
-  
-      // Return the badges array if available, otherwise return an empty array
-      return Array.isArray(data.badges) ? data.badges : [];
-    } catch (error) {
-      console.error('Error fetching user badges:', error);
-      return [];
+  try {
+    // Send a POST request to fetch badges based on the userId
+    const response = await fetch(`${baseUrl}/api/profile/badges`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId }), // Send the userId in the request body
+    });
+
+    // Check if the response is okay
+    if (!response.ok) {
+      throw new Error('Error fetching user badges');
     }
-  };
+
+    // Parse the response JSON
+    const data = await response.json();
+    console.log('Fetched badges data:', data); // Log the data for debugging
+
+    // Return the badges array if available, otherwise return an empty array
+    return Array.isArray(data.badges) ? data.badges : [];
+  } catch (error) {
+    console.error('Error fetching user badges:', error);
+    return [];
+  }
+};
 
 // Fetch All Badges (Admin/General Use)
 export async function fetchAllBadges(): Promise<Badge[]> {
@@ -135,7 +135,7 @@ export async function fetchAllBadges(): Promise<Badge[]> {
     }
 
     const { badges } = await response.json();
-    console.log(badges)
+    console.log(badges);
     return badges || [];
   } catch (error) {
     console.error('Error fetching all badges:', error);
