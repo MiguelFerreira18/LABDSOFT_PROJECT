@@ -9,7 +9,7 @@
         shape="round"
         @click="toggleView"
       >
-        See Subscribed Events
+        See Attended Events
       </ion-button>
       <ion-button
         v-else
@@ -18,8 +18,11 @@
         shape="round"
         @click="toggleView"
       >
-        See Attended Events
+        See Subscribed Events
       </ion-button>
+      <h2 class="ion-padding-top ion-padding-horizontal">
+        {{ isSeeingAttendedEvents ? 'Attended' : 'Subscribed' }} Events
+      </h2>
       <ion-list v-if="events.length > 0">
         <!-- Events list -->
         <div class="event-grid">
@@ -106,7 +109,7 @@ import { IonPage } from '@ionic/vue';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface Event {
-  id: number;
+  id: string;
   title: string;
   name: string;
   endDate: string;

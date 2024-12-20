@@ -47,6 +47,9 @@
 
       <!-- Dropdown com filtros de categoria e data -->
       <div v-if="showDropdown" class="dropdown-menu">
+        <ion-button color="warning" shape="round" @click="getAiRecomendations"
+          >Ask Our Ai</ion-button
+        >
         <label for="category-limit">Filter by Category:</label>
         <ion-button
           v-for="category in categories"
@@ -214,21 +217,21 @@ export default {
     });
 
     const toggleCategory = async (category: string) => {
-      if (category === 'Artificial Intelligence') {
-        recommendedEventIds.value = await generateRecommendations([
-          ...promotedEvents.value,
-          ...nonPromotedEvents.value,
-        ]);
+      const index = selectedCategories.value.indexOf(category);
+      if (index >= 0) {
+        selectedCategories.value.splice(index, 1);
       } else {
-        const index = selectedCategories.value.indexOf(category);
-        if (index >= 0) {
-          selectedCategories.value.splice(index, 1);
-        } else {
-          selectedCategories.value.push(category);
-        }
+        selectedCategories.value.push(category);
       }
     };
 
+    async function getAiRecomendations() {
+      clearFilters();
+      recommendedEventIds.value = await generateRecommendations([
+        ...promotedEvents.value,
+        ...nonPromotedEvents.value,
+      ]);
+    }
     const toggleDropdown = () => {
       showDropdown.value = !showDropdown.value;
     };
@@ -252,6 +255,7 @@ export default {
       dateLimit,
       filteredNonPromotedEvents,
       filteredPromotedEvents,
+      getAiRecomendations,
       toggleCategory,
       toggleDropdown,
       showDropdown,
