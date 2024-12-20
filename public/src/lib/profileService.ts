@@ -108,7 +108,7 @@ export const fetchUserBadges = async (userId: string): Promise<Badge[]> => {
     console.log('Fetched badges data:', data); // Log the data for debugging
 
     // Return the badges array if available, otherwise return an empty array
-    return Array.isArray(data.badges) ? data.badges : [];
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error('Error fetching user badges:', error);
     return [];

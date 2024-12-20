@@ -93,6 +93,7 @@
             </ion-list>
           </ion-col>
         </ion-row>
+        
         <!-- <ion-row>
             <ion-col size="12" class="full-height">
               <ion-card class="full-height" color="card">
@@ -104,6 +105,23 @@
               </ion-card>
             </ion-col>
           </ion-row> -->
+          <ion-col size="12" class="full-height">
+            <div class="title-with-icon">
+              <ion-icon
+                class="icon3"
+                aria-hidden="true"
+                :icon="checkmarkDoneCircleOutline"
+              ></ion-icon>
+              <h1><b>Badges</b></h1>
+            </div>
+            <ion-list>
+              <ion-item v-for="badge in userBadges" :key="badge.id">
+                <ion-label>{{ badge.milestone.name }}</ion-label>
+                <ion-icon :src="badge.iconPath" slot="start" />
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        
         <ion-button color="light" class="sign-out">Sign Out</ion-button>
       </ion-grid>
     </ion-content>
@@ -123,16 +141,34 @@ import {
   IonCardSubtitle,
   IonButton,
   IonIcon,
+  IonLabel,
+  IonList,
+  IonItem,
 } from '@ionic/vue';
 import {
-  checkmarkDoneCircle,
   checkmarkDoneCircleOutline,
   personCircleOutline,
   trailSignOutline,
 } from 'ionicons/icons';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
+import { fetchUserBadges } from '@/lib/profileService';
 
-// Reactive state to store user information
+// Define Badge type for TypeScript
+interface Badge {
+  id: string;
+  category: string;
+  completionDate: string[];
+  iconPath: string;
+  user: any;
+  milestone: {
+    name: string;
+    description: string;
+    category: string;
+    icon: string | null;
+  };
+}
+
+// Reactive state
 const userInfo = ref({
   name: '',
   email: '',
@@ -143,8 +179,9 @@ const userInfo = ref({
   country: '',
 });
 const userPoints = ref(0);
+const userBadges = ref<Badge[]>([]);
 
-// Fetch user information
+// Fetch User Info
 const fetchUserInfo = async () => {
   const userId = localStorage.getItem('userId');
   const email = localStorage.getItem('email');
@@ -164,6 +201,8 @@ const fetchUserInfo = async () => {
     console.error('Error fetching user info:', error);
   }
 };
+
+// Fetch User Points
 const fetchUserPoints = async () => {
   const userId = localStorage.getItem('uuid');
   try {
@@ -179,12 +218,28 @@ const fetchUserPoints = async () => {
   }
 };
 
-// Fetch data on component mount
+// Fetch User Badges
+const fetchBadges = async () => {
+  const userId = localStorage.getItem('userId');
+  if (userId) {
+    try {
+      const badges = await fetchUserBadges(userId);  // Call the function from the service
+      userBadges.value = badges;
+    } catch (error) {
+      console.error('Error fetching badges:', error);
+    }
+  }
+};
+
+// Fetch all data on component mount
 onMounted(() => {
   fetchUserInfo();
   fetchUserPoints();
-});
+  fetchBadges() ;
+    });
+  
 </script>
+
 
 <style scoped>
 .content-center {
