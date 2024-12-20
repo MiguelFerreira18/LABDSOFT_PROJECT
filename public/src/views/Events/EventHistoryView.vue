@@ -109,7 +109,7 @@ import { IonPage } from '@ionic/vue';
 import HeaderComponent from '@/components/common/HeaderComponent.vue';
 
 interface Event {
-  id: string;
+  id: number;
   title: string;
   name: string;
   endDate: string;
