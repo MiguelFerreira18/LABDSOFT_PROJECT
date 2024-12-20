@@ -20,6 +20,11 @@ const props = defineProps<{
   zoom?: number; // Make zoom optional
 }>();
 
+// EVENTS - Events allow us to emit data from the component
+const emits = defineEmits<{
+  (event: 'onMarkerClicked', info: any): void;
+}>();
+
 const mapRef = ref<HTMLElement>();
 const imageSrc = ref('');
 let mapInstance: GoogleMap;
@@ -57,13 +62,23 @@ async function initializeMap() {
       lat: props.latitude,
       lng: props.longitude,
     },
-    title: 'Event Location',
-    snippet: 'Event Location',
+    title: 'User Location',
     iconUrl: imageSrc.value,
     iconSize: {
       width: 36,
       height: 36,
     },
+  });
+
+  // Handle marker click, send event back to parent
+  mapInstance.setOnMarkerClickListener((data) => {
+
+    //I'm retriving the event from the collection
+    const event = props.events.find((e) => e.id === data.title);
+
+    if(event) {
+      emits('onMarkerClicked', event);
+    }
   });
 
   await addMarkersToMap();
@@ -76,7 +91,8 @@ async function addMarkersToMap() {
         lat: event.latitude,
         lng: event.longitude,
       },
-      title: event.title,
+      //I'm storing the event id in the title property
+      title: event.id,
     }));
 
     await mapInstance.addMarkers(markers);

@@ -6,48 +6,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-
-      <ion-button id="open-modal" expand="block">Open Sheet Modal</ion-button>
-
-      <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5]">
-        <ion-content class="ion-padding">
-          <ion-item>
-            <ion-avatar slot="start">
-              <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
-            </ion-avatar>
-            <ion-label>
-              <h2>Connor Smith</h2>
-              <p>Sales Rep</p>
-            </ion-label>
-          </ion-item>
-        </ion-content>
-      </ion-modal>
-
-      <div v-for="event in events" :key="event.id">
-        <ion-button :id="'open-modal-' + event.id" expand="block">
-          {{ event.title }}
-        </ion-button>
-
-        <ion-modal :trigger="'open-modal-' + event.id" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5]">
-          <ion-content class="ion-padding">
-            <ion-item>
-              <ion-label>
-                <h2>{{ event.title }}</h2>
-                <p>Category: {{ event.category }}</p>
-                <p>
-                  Dates: {{ event.startDate }} - {{ event.endDate }}
-                </p>
-                <p>Location: {{ event.location }}</p>
-                <p>Created by: {{ event.creator.name }}</p>
-                <RouterLink :key="event.id" :to="`/event/EventDetail/${event.id}`">
-                  <ion-button @click="dismissModalBeforeNavigation()">View Event Details</ion-button>
-                </RouterLink>
-              </ion-label>
-            </ion-item>
-          </ion-content>
-        </ion-modal>
-      </div>
-
       <ion-fab horizontal="end" vertical="bottom">
         <ion-fab-button @click="toggleDropdown">
           <ion-icon :icon="filterCircleOutline"></ion-icon>
@@ -75,6 +33,7 @@
           :longitude="currentPosition.longitude"
           :events="events"
           :zoom="mapZoom"
+          @onMarkerClicked="markedClicked"
         />
       </div>
       <div v-else-if="errorMessage">
@@ -96,7 +55,6 @@ import {
   IonTitle,
   IonContent,
   IonButton,
-  IonModal,
   modalController,
 } from '@ionic/vue';
 import { filterCircleOutline } from 'ionicons/icons';
@@ -104,7 +62,7 @@ import { fetchNonPromotedEvents } from '@/lib/eventRequests';
 import { Geolocation } from '@capacitor/geolocation';
 import MapComponent from '@/components/maps/MapComponent.vue';
 import { Event } from '@/domain/Event';
-import { useRoute } from 'vue-router';
+import EventModal from '@/components/events/EventModal.vue';
 
 const currentPosition = ref<{ latitude: number; longitude: number } | null>(
   null,
@@ -115,8 +73,6 @@ const showDropdown = ref(false);
 const searchQuery = ref('');
 
 const mapZoom = ref<number>(12);
-
-const router = useRoute();
 
 const getCurrentLocation = async () => {
   try {
@@ -154,6 +110,23 @@ const updateZoom = (distance: string) => {
   let zoomLevel = 20 - Math.log(radiusInKm + 1) * 3;
 
   mapZoom.value = zoomLevel;
+};
+
+//Event handler for when a marker is clicked
+const markedClicked = async (event: Event) => {
+  console.log('Event clicked:', event);
+
+  // Open the modal with the event details
+  const modal = await modalController.create({
+    component: EventModal,
+    componentProps: {
+      event,
+    },
+    initialBreakpoint: 0.2,
+    breakpoints: [0, 0.2, 0.5],
+  });
+
+  await modal.present();
 };
 
 //Dismiss the modal before navigating to the event details page
