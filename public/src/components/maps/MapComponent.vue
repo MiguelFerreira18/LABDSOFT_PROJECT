@@ -8,28 +8,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onUpdated, onBeforeMount } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import { GoogleMap } from '@capacitor/google-maps';
 import { Event } from '@/domain/Event';
 
-// Props for latitude and longitude
+// Props for latitude, longitude, events, and zoom
 const props = defineProps<{
   latitude: number;
   longitude: number;
   events: Event[];
+  zoom?: number; // Make zoom optional
 }>();
 
 const mapRef = ref<HTMLElement>();
 const imageSrc = ref('');
 let mapInstance: GoogleMap;
 
+const initialZoom = props.zoom ?? 12;
+
 onMounted(async () => {
-  console.log('Start mouting map');
+  console.log('Start mounting map');
 
   const basePath = window.location.origin;
   imageSrc.value = `${basePath}/assets/man.png`;
 
-  await nextTick(); // Wait for DOM to render
+  await nextTick();
   await initializeMap();
 });
 
@@ -45,7 +48,7 @@ async function initializeMap() {
         lat: props.latitude,
         lng: props.longitude,
       },
-      zoom: 12,
+      zoom: initialZoom,
     },
   });
 
@@ -81,4 +84,19 @@ async function addMarkersToMap() {
     console.log(error);
   }
 }
+
+watch(
+  () => props.zoom,
+  (newZoom) => {
+    if (mapInstance) {
+      mapInstance.setCamera({
+        coordinate: {
+          lat: props.latitude,
+          lng: props.longitude,
+        },
+        zoom: newZoom,
+      });
+    }
+  },
+);
 </script>
