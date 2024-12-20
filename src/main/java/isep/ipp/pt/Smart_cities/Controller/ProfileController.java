@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-
-
-
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
@@ -93,16 +90,7 @@ public class ProfileController {
     }
 
     // Endpoint to update an existing badge
-    @PutMapping("/badges/{badgeId}")
-    public ResponseEntity<Badge> updateBadge(@PathVariable String badgeId, @RequestBody Badge badge) {
-        Optional<Badge> existingBadge = badgeService.getBadgeByIdOptional(badgeId);
-        if (existingBadge.isPresent()) {
-            Badge updatedBadge = badgeService.updateBadge(badgeId, badge);
-            return ResponseEntity.ok(updatedBadge);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+   
 
     // Endpoint to delete a badge
     @DeleteMapping("/badges/{badgeId}")

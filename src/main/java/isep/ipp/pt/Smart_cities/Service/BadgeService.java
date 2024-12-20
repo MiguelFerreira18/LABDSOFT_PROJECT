@@ -90,11 +90,7 @@ public class BadgeService {
         return badgeRepository.save(badge);
     }
 
-    // Update an existing badge
-    public Badge updateBadge(String badgeId, Badge badge) {
-        badge.setId(badgeId);
-        return badgeRepository.save(badge);
-    }
+  
 
     // Delete a badge by ID
     public boolean deleteBadge(String badgeId) {
