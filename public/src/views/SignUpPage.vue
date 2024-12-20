@@ -45,7 +45,7 @@
           <ion-label class="ion-text-wrap">Favorite Categories</ion-label>
           <ion-select
             v-model="selectedCategories"
-            multiple="true"
+            :multiple="true"
             placeholder="Select categories"
             @ionChange="onCategoryChange"
           >
