@@ -79,11 +79,7 @@ public class BadgeService {
         badgeRepository.save(userBadge);
     }
 
-    // Method to assign an icon to an existing badge
-    public Badge assignIconToBadge(Badge badge, String iconPath) {
-        badge.setIconPath(iconPath);
-        return badgeRepository.save(badge);
-    }
+   
 
     // Create a new badge
     public Badge createBadge(Badge badge) {

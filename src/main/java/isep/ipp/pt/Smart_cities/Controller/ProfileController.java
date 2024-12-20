@@ -105,17 +105,7 @@ public class ProfileController {
         return ResponseEntity.ok(createdMilestone);
     }
 
-    // Endpoint to update an existing milestone
-    @PutMapping("/milestones/{milestoneId}")
-    public ResponseEntity<Milestone> updateMilestone(@PathVariable String milestoneId, @RequestBody Milestone milestone) {
-        Optional<Milestone> existingMilestone = milestoneService.getMilestoneByIdOptional(milestoneId);
-        if (existingMilestone.isPresent()) {
-            Milestone updatedMilestone = milestoneService.updateMilestone(milestoneId, milestone);
-            return ResponseEntity.ok(updatedMilestone);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+   
 
     // Endpoint to delete a milestone
     @DeleteMapping("/milestones/{milestoneId}")
