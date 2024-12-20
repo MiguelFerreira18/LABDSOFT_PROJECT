@@ -196,7 +196,7 @@
         </ion-button>
 
         <ion-button
-          v-if="isOwnerOfTheEvent()" 
+          v-if="isOwnerOfTheEvent()"
           @click="handleImageUpload"
           expand="block"
           fill="outline"
@@ -224,7 +224,7 @@ import {
   notifications,
   qrCode,
   notificationsOff,
-  images
+  images,
 } from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorBarcodeScanner } from '@capacitor/barcode-scanner';
