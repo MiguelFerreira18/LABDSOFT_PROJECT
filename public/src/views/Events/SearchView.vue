@@ -5,21 +5,19 @@
         <ion-title>Search Events</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
-      <div v-if="currentPosition">
-        <MapComponent
-          :latitude="currentPosition.latitude"
-          :longitude="currentPosition.longitude"
-          :events="events"
-        />
-      </div>
-      <div v-else-if="errorMessage">
-        <p>Error: {{ errorMessage }}</p>
-      </div>
-      <div v-else>
-        <p>Fetching location...</p>
-      </div>
-    </ion-content>
+    <div v-if="currentPosition">
+      <MapComponent
+        :latitude="currentPosition.latitude"
+        :longitude="currentPosition.longitude"
+        :events="events"
+      />
+    </div>
+    <div v-else-if="errorMessage">
+      <p>Error: {{ errorMessage }}</p>
+    </div>
+    <div v-else>
+      <p>Fetching location...</p>
+    </div>
   </ion-page>
 </template>
 
@@ -70,7 +68,22 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
+ion-content {
+  --background: transparent !important;
+}
+
+ion-content {
+  background: transparent !important;
+}
+
+ion-content {
+  --background: transparent;
+}
+
+body {
+  background: transparent;
+}
 button.gm-control-active.gm-fullscreen-control {
   display: none;
 }

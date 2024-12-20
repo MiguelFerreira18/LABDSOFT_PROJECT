@@ -8,7 +8,7 @@
         <ion-title>Select location</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
+    <ion-content class="map-content">
       <my-map
         :markerData="markerData"
         @onMapClicked="mapClicked"
@@ -176,7 +176,23 @@ async function fetchAddress(): Promise<string | null> {
 }
 </script>
 
-<style>
+<style scoped>
+ion-content {
+  --background: transparent !important;
+}
+
+ion-content {
+  background: transparent !important;
+}
+
+ion-content {
+  --background: transparent;
+}
+
+body {
+  background: transparent;
+}
+
 #map-container {
   width: 100%;
   height: 100%;
