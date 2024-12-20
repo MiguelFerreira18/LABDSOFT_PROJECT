@@ -16,9 +16,9 @@ public class InstitutionApplication {
     @GeneratedValue(strategy = GenerationType.UUID)  // Automatically generate an ID if it's not provided
     private String id;
 
-    @isep.ipp.pt.Smart_cities.Model.UserModel.NotBlank
+  
     private String institutionName;
-    @isep.ipp.pt.Smart_cities.Model.UserModel.NotBlank
+  
     private String userId;
 
     private String status;
@@ -40,8 +40,8 @@ public class InstitutionApplication {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserId(String user) {
+        this.userId = user;
     }
 
     public String getStatus() {
