@@ -224,4 +224,11 @@ public class User implements UserDetails {
             id = UUID.randomUUID().toString();
         }
     }
+    public String getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
