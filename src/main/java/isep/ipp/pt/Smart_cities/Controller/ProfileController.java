@@ -76,11 +76,7 @@ public class ProfileController {
     }
 
     // Endpoint to assign an icon to a badge
-    @PostMapping("/badges/icon")
-    public Badge assignIconToBadge(@RequestParam String badgeId, @RequestParam String iconPath) {
-        Badge badge = badgeService.getBadgeById(badgeId);
-        return badgeService.assignIconToBadge(badge, iconPath);
-    }
+    
 
     // Endpoint to create a new badge
     @PostMapping("/badge/create")
