@@ -125,8 +125,7 @@ public class SubscribeService {
     public Optional<List<Event>> getAttendedEventsByUserUUID(String uuid) {
         return Optional.of(StreamSupport.stream(subscribeRepo.findAll().spliterator(), false)
                 .filter(subscribe -> subscribe.getUser().getId().equals(uuid)
-                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.ATTENDED)
-                        && subscribe.getEvent().getEndDate().isBefore(LocalDateTime.now()))
+                        && subscribe.getSubscriptionStatus().equals(SubscriptionStatus.ATTENDED))
                 .map(Subscribe::getEvent)
                 .toList());
     }

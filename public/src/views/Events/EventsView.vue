@@ -16,28 +16,6 @@
       <div v-if="filteredPromotedEvents.length" class="promoted-events-section">
         <h2 class="subtitle">Promoted Events</h2>
         <div class="promoted-events-bar">
-          <!-- Cartões de Eventos Promovidos -->
-          <!-- <ion-nav-link v-for="event in filteredPromotedEvents" :key="event.id" :component="EventDetailsView" router-direction="forward" class="clickable-card">
-            <ion-card>
-              <ion-card-header
-                :style="{
-                  backgroundColor: categoryColors[event.category] || '#ccc',
-                }"
-              >
-                <ion-card-title>{{ event.title }}</ion-card-title>
-                <ion-card-subtitle>
-                  {{ formatDate(event.startDate) }} -
-                  {{ formatDate(event.endDate) }}
-                </ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <p><strong>Creator:</strong> {{ event.creator.name }}</p>
-                <p><strong>Location:</strong> {{ event.location }}</p>
-                <p><strong>Category:</strong> {{ event.category }}</p>
-              </ion-card-content>
-            </ion-card>
-           </ion-nav-link> -->
-
           <router-link
             v-for="event in filteredPromotedEvents"
             :key="event.id"
@@ -69,6 +47,9 @@
 
       <!-- Dropdown com filtros de categoria e data -->
       <div v-if="showDropdown" class="dropdown-menu">
+        <ion-button color="warning" shape="round" @click="getAiRecomendations"
+          >Ask Our Ai</ion-button
+        >
         <label for="category-limit">Filter by Category:</label>
         <ion-button
           v-for="category in categories"
@@ -144,9 +125,9 @@ import {
 } from '@/lib/eventRequests';
 import { formatDate } from '@/lib/dateFormatter';
 import { categories, categoryColors } from '@/lib/categories';
-import { IonPage } from '@ionic/vue';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { SendRequest } from '@/lib/request';
 import { filterCircleOutline } from 'ionicons/icons';
-import EventDetailsView from './EventDetailsView.vue';
 
 interface Event {
   id: number;
@@ -159,6 +140,33 @@ interface Event {
   isPromoted: boolean;
 }
 
+const genAI = new GoogleGenerativeAI('AIzaSyCAIAOQ-T9cc3OdW-LYXJyaEnwANenGQA4');
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+async function generateRecommendations(events: Event[]) {
+  const userId = localStorage.getItem('uuid') || '';
+  const endpoint = '/subscription/event/';
+  const response = await SendRequest(`${endpoint}${userId}`, 'GET');
+  const subscribedEvents = await response.json();
+
+  try {
+    const prompt = `Based on the following events you have attended or are subscribed to: ${JSON.stringify(subscribedEvents)}. Which of the following events do you recommend attending, excluding the ones you have attended or are subscribed to? ${JSON.stringify(events)}. Please respond with an array containing only the IDs of the recommended events in the format: [1, 2, 3].`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = await result.response.text();
+
+    const sanitizedResponse = responseText
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+
+    return JSON.parse(sanitizedResponse) || [];
+  } catch (error) {
+    console.error('Erro ao chamar a API:', error);
+    return [];
+  }
+}
+
 export default {
   setup() {
     const promotedEvents = ref<Event[]>([]);
@@ -166,12 +174,12 @@ export default {
     const selectedCategories = ref<string[]>([]);
     const dateLimit = ref<string | null>(null);
     const showDropdown = ref(false);
+    const recommendedEventIds = ref<number[]>([]);
 
     const loadPromoted = async () => {
       try {
         promotedEvents.value = await fetchPromotedEvents();
       } catch (error) {
-        console.error('Erro ao buscar eventos promovidos:', error);
         promotedEvents.value = [];
       }
     };
@@ -180,56 +188,35 @@ export default {
       try {
         nonPromotedEvents.value = await fetchNonPromotedEvents();
       } catch (error) {
-        console.error('Erro ao buscar eventos não promovidos:', error);
-        nonPromotedEvents.value = []; // Caso de erro, deixa a lista vazia
+        nonPromotedEvents.value = [];
       }
     };
 
     const filteredNonPromotedEvents = computed(() => {
-      const filteredEvents = nonPromotedEvents.value.filter((event) => {
-        const isCategoryMatch =
-          selectedCategories.value.length === 0 ||
-          selectedCategories.value.includes(event.category);
-
-        const isDateMatch =
-          !dateLimit.value ||
-          new Date(event.endDate) <= new Date(dateLimit.value);
-
-        return isCategoryMatch && isDateMatch;
-      });
-
-      // Ordena os eventos pela data de início do mais próximo ao mais distante
-      return filteredEvents.sort(
-        (a, b) =>
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      return nonPromotedEvents.value.filter(
+        (event) =>
+          (!recommendedEventIds.value.length ||
+            recommendedEventIds.value.includes(event.id)) &&
+          (selectedCategories.value.length === 0 ||
+            selectedCategories.value.includes(event.category)) &&
+          (!dateLimit.value ||
+            new Date(event.endDate) <= new Date(dateLimit.value)),
       );
     });
 
     const filteredPromotedEvents = computed(() => {
-      const filteredEvents = promotedEvents.value.filter((event) => {
-        const isCategoryMatch =
-          selectedCategories.value.length === 0 ||
-          selectedCategories.value.includes(event.category);
-
-        const isDateMatch =
-          !dateLimit.value ||
-          new Date(event.endDate) <= new Date(dateLimit.value);
-
-        return isCategoryMatch && isDateMatch;
-      });
-
-      // Ordena os eventos pela data de início do mais próximo ao mais distante
-      return filteredEvents.sort(
-        (a, b) =>
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      return promotedEvents.value.filter(
+        (event) =>
+          (!recommendedEventIds.value.length ||
+            recommendedEventIds.value.includes(event.id)) &&
+          (selectedCategories.value.length === 0 ||
+            selectedCategories.value.includes(event.category)) &&
+          (!dateLimit.value ||
+            new Date(event.endDate) <= new Date(dateLimit.value)),
       );
     });
 
-    const toggleDropdown = () => {
-      showDropdown.value = !showDropdown.value;
-    };
-
-    const toggleCategory = (category: string) => {
+    const toggleCategory = async (category: string) => {
       const index = selectedCategories.value.indexOf(category);
       if (index >= 0) {
         selectedCategories.value.splice(index, 1);
@@ -238,9 +225,21 @@ export default {
       }
     };
 
+    async function getAiRecomendations() {
+      clearFilters();
+      recommendedEventIds.value = await generateRecommendations([
+        ...promotedEvents.value,
+        ...nonPromotedEvents.value,
+      ]);
+    }
+    const toggleDropdown = () => {
+      showDropdown.value = !showDropdown.value;
+    };
+
     const clearFilters = () => {
       selectedCategories.value = [];
       dateLimit.value = null;
+      recommendedEventIds.value = [];
     };
 
     onMounted(() => {
@@ -256,6 +255,7 @@ export default {
       dateLimit,
       filteredNonPromotedEvents,
       filteredPromotedEvents,
+      getAiRecomendations,
       toggleCategory,
       toggleDropdown,
       showDropdown,
@@ -263,7 +263,6 @@ export default {
       clearFilters,
       categoryColors,
       filterCircleOutline,
-      EventDetailsView,
     };
   },
 };
