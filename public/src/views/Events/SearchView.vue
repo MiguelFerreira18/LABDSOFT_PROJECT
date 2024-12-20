@@ -6,7 +6,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-fab horizontal="end">
+      <ion-fab horizontal="end" vertical="bottom">
         <ion-fab-button @click="toggleDropdown">
           <ion-icon :icon="filterCircleOutline"></ion-icon>
         </ion-fab-button>
@@ -33,6 +33,7 @@
           :longitude="currentPosition.longitude"
           :events="events"
           :zoom="mapZoom"
+          @onMarkerClicked="markedClicked"
         />
       </div>
       <div v-else-if="errorMessage">
@@ -54,12 +55,14 @@ import {
   IonTitle,
   IonContent,
   IonButton,
+  modalController,
 } from '@ionic/vue';
 import { filterCircleOutline } from 'ionicons/icons';
 import { fetchNonPromotedEvents } from '@/lib/eventRequests';
 import { Geolocation } from '@capacitor/geolocation';
 import MapComponent from '@/components/maps/MapComponent.vue';
 import { Event } from '@/domain/Event';
+import EventModal from '@/components/events/EventModal.vue';
 
 const currentPosition = ref<{ latitude: number; longitude: number } | null>(
   null,
@@ -109,6 +112,28 @@ const updateZoom = (distance: string) => {
   mapZoom.value = zoomLevel;
 };
 
+//Event handler for when a marker is clicked
+const markedClicked = async (event: Event) => {
+  console.log('Event clicked:', event);
+
+  // Open the modal with the event details
+  const modal = await modalController.create({
+    component: EventModal,
+    componentProps: {
+      event,
+    },
+    initialBreakpoint: 0.2,
+    breakpoints: [0, 0.2, 0.5],
+  });
+
+  await modal.present();
+};
+
+//Dismiss the modal before navigating to the event details page
+const dismissModalBeforeNavigation = async () => {
+  await modalController.dismiss();
+};
+
 onMounted(() => {
   getCurrentLocation();
   fetchEvents();
@@ -131,6 +156,7 @@ ion-content {
 body {
   background: transparent;
 }
+
 button.gm-control-active.gm-fullscreen-control {
   display: none;
 }
@@ -139,17 +165,14 @@ button.gm-control-active.gm-fullscreen-control {
   display: none;
 }
 
+.gmnoprint {
+  display: none;
+}
+
 .clear-button {
   margin-top: 10px;
   align-self: flex-end;
   font-size: 14px;
-}
-
-ion-fab-button {
-  position: fixed;
-  top: 300px;
-  right: 20px;
-  z-index: 10;
 }
 
 .dropdown-menu {
