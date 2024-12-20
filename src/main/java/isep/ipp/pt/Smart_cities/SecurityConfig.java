@@ -78,7 +78,8 @@ public class SecurityConfig {
 				)
 				.cors(cors -> cors.configurationSource(request -> {
 					CorsConfiguration config = new CorsConfiguration();
-					config.setAllowedOrigins(List.of("https://localhost", "http://localhost:8100", "https://*.ngrok-free.app"));
+//					config.setAllowedOrigins(List.of("https://localhost", "http://localhost:8100", "https://*.ngrok-free.app", "http://localhost:*", "http://localhost"));
+					config.setAllowedOriginPatterns(List.of("*"));
 					config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "OPTIONS","PATCH"));
 					config.setAllowedHeaders(List.of("*"));
 					config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
